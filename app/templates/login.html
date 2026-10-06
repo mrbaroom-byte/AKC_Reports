@@ -14,7 +14,7 @@ button{margin-top:14px;width:100%;font:600 15px inherit;font-family:inherit;padd
 <body><form method="post" action="/login">
 <h1>البيانات الربعية</h1><p>صناديق أسواق المال · شركة الخبير المالية</p>
 {% if not configured %}<p class="e">لم تُضبط كلمة المرور بعد. أضف المتغير ADMIN_PASSWORD في إعدادات الخدمة على Railway.</p>{% endif %}
-<label for="pw">كلمة المرور</label><input id="pw" type="password" name="password" autocomplete="current-password" required autofocus>
+<label for="pw">كلمة المرور</label><input id="pw" type="password" name="password" autocomplete="current-password" autocapitalize="off" autocorrect="off" spellcheck="false" required autofocus>
 <button type="submit">دخول</button>
 {% if err %}<div class="e">كلمة المرور غير صحيحة.</div>{% endif %}
 </form></body></html>

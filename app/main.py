@@ -42,8 +42,8 @@ def login_page(req: Request, e: str = ''):
 
 @app.post('/login')
 def login(password: str = Form(...)):
-    pw = os.environ.get('ADMIN_PASSWORD', '')
-    if not pw or not hmac.compare_digest(password.encode(), pw.encode()):
+    pw = os.environ.get('ADMIN_PASSWORD', '').strip().strip('"').strip("'").strip()
+    if not pw or not hmac.compare_digest(password.strip().encode(), pw.encode()):
         return RedirectResponse('/login?e=1', status_code=303)
     r = RedirectResponse('/', status_code=303)
     r.set_cookie('akcq', SER.dumps('admin'), httponly=True, secure=os.environ.get('RAILWAY_ENVIRONMENT') is not None, samesite='lax', max_age=60 * 60 * 12)
