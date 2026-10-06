@@ -1,0 +1,1068 @@
+[
+ {
+  "fig": "ex06-about",
+  "doc": "exec",
+  "page": 6,
+  "kind": "icons",
+  "inventory_id": "exec.ar.p6.1",
+  "title_ar": "عن \"الخبير المالية\"",
+  "title_en": "About Alkhabeer Capital",
+  "files": {
+   "ar": "graphics/figures/ex06-about.ar.html",
+   "en": "graphics/figures/ex06-about.en.html"
+  },
+  "replaced_blocks": {
+   "ar": [
+    {
+     "i": 14,
+     "t": "p",
+     "text": "\"الخبير المالية\" هي شركة إدارة أصول، تقدم خدمات وحلولًا استثمارية مبتك"
+    },
+    {
+     "i": 15,
+     "t": "p",
+     "text": "تستخدم \"الخبير المالية\" فرق عمل خبيرة، تتميز بالدراية المتنوعة، والخبر"
+    },
+    {
+     "i": 16,
+     "t": "p",
+     "text": "استثمارات \"الخبير المالية\" متنوعة جغرافيًا في الأسواق المحلية والإقليم"
+    }
+   ],
+   "en": [
+    {
+     "i": 14,
+     "t": "p",
+     "text": "Alkhabeer Capital is an asset management company that provides innovat"
+    },
+    {
+     "i": 15,
+     "t": "p",
+     "text": "Alkhabeer Capital employs expert teams with diverse know-how and exten"
+    },
+    {
+     "i": 16,
+     "t": "p",
+     "text": "Alkhabeer Capital’s investments are geographically diversified across "
+    }
+   ]
+  }
+ },
+ {
+  "fig": "ex06-about",
+  "doc": "factsheet",
+  "page": 2,
+  "kind": "icons",
+  "inventory_id": "factsheet.ar.p2.1",
+  "title_ar": "عن \"الخبير المالية\"",
+  "title_en": "About Alkhabeer Capital",
+  "files": {
+   "ar": "graphics/figures/ex06-about.ar.html",
+   "en": "graphics/figures/ex06-about.en.html"
+  },
+  "replaced_blocks": {
+   "ar": [
+    {
+     "i": 5,
+     "t": "p",
+     "text": "\"الخبير المالية\" هي شركة إدارة أصول، تقدم خدمات وحلولًا استثمارية مبتك"
+    },
+    {
+     "i": 6,
+     "t": "p",
+     "text": "تستخدم \"الخبير المالية\" فرق عمل خبيرة، تتميز بالدراية المتنوعة، والخبر"
+    },
+    {
+     "i": 7,
+     "t": "p",
+     "text": "استثمارات \"الخبير المالية\" متنوعة جغرافيًا في الأسواق المحلية والإقليم"
+    }
+   ],
+   "en": [
+    {
+     "i": 5,
+     "t": "p",
+     "text": "Alkhabeer Capital is an asset management company that provides innovat"
+    },
+    {
+     "i": 6,
+     "t": "p",
+     "text": "Alkhabeer Capital employs expert teams with diverse know-how and exten"
+    },
+    {
+     "i": 7,
+     "t": "p",
+     "text": "Alkhabeer Capital’s investments are geographically diversified across "
+    }
+   ]
+  }
+ },
+ {
+  "fig": "ex06-kpi",
+  "doc": "exec",
+  "page": 6,
+  "kind": "infographic",
+  "inventory_id": "exec.ar.p6.2",
+  "title_ar": "عن \"الخبير المالية\"",
+  "title_en": "About Alkhabeer Capital",
+  "files": {
+   "ar": "graphics/figures/ex06-kpi.ar.html",
+   "en": "graphics/figures/ex06-kpi.en.html"
+  },
+  "replaced_blocks": {
+   "ar": [
+    {
+     "i": 17,
+     "t": "kv",
+     "text": "سنة التأسيس | رقم ترخيص هيئة السوق المالية | المقر الرئيسي"
+    }
+   ],
+   "en": [
+    {
+     "i": 17,
+     "t": "kv",
+     "text": "Year of Establishment | CMA License No. | Head Office"
+    }
+   ]
+  }
+ },
+ {
+  "fig": "ex06-kpi",
+  "doc": "factsheet",
+  "page": 2,
+  "kind": "infographic",
+  "inventory_id": "factsheet.ar.p2.2",
+  "title_ar": "عن \"الخبير المالية\"",
+  "title_en": "About Alkhabeer Capital",
+  "files": {
+   "ar": "graphics/figures/ex06-kpi.ar.html",
+   "en": "graphics/figures/ex06-kpi.en.html"
+  },
+  "replaced_blocks": {
+   "ar": [
+    {
+     "i": 8,
+     "t": "kv",
+     "text": "سنة التأسيس | رقم ترخيص هيئة السوق المالية | المقر الرئيسي"
+    }
+   ],
+   "en": [
+    {
+     "i": 8,
+     "t": "kv",
+     "text": "Year of Establishment | CMA License No. | Head Office"
+    }
+   ]
+  }
+ },
+ {
+  "fig": "ex07-platform",
+  "doc": "exec",
+  "page": 7,
+  "kind": "diagram",
+  "inventory_id": "exec.ar.p7.1",
+  "title_ar": "منصة استثمار الأسواق المالية",
+  "title_en": "Capital Markets Investment Platform",
+  "files": {
+   "ar": "graphics/figures/ex07-platform.ar.html",
+   "en": "graphics/figures/ex07-platform.en.html"
+  },
+  "replaced_blocks": {
+   "ar": [
+    {
+     "i": 20,
+     "t": "ul",
+     "kind": "diagram",
+     "text": "الخبير المالية"
+    },
+    {
+     "i": 21,
+     "t": "ul",
+     "kind": "diagram",
+     "text": "فئات الأصول"
+    },
+    {
+     "i": 22,
+     "t": "ul",
+     "kind": "diagram",
+     "text": "مقدمو الخدمات"
+    }
+   ],
+   "en": [
+    {
+     "i": 20,
+     "t": "ul",
+     "kind": "diagram",
+     "text": "Alkhabeer Capital"
+    },
+    {
+     "i": 21,
+     "t": "ul",
+     "kind": "diagram",
+     "text": "Asset Classes"
+    },
+    {
+     "i": 22,
+     "t": "ul",
+     "kind": "diagram",
+     "text": "Service Providers"
+    }
+   ]
+  }
+ },
+ {
+  "fig": "ex11-characteristics",
+  "doc": "exec",
+  "page": 11,
+  "kind": "icons",
+  "inventory_id": "exec.ar.p11.1",
+  "title_ar": "الخصائص الرئيسية",
+  "title_en": "Main Characteristics",
+  "files": {
+   "ar": "graphics/figures/ex11-characteristics.ar.html",
+   "en": "graphics/figures/ex11-characteristics.en.html"
+  },
+  "replaced_blocks": {
+   "ar": [
+    {
+     "i": 37,
+     "t": "ul",
+     "text": "مدة الاستحقاق المحددة: للصندوق تاريخ استحقاق محدد، ولذلك يعمل مدير الص"
+    }
+   ],
+   "en": [
+    {
+     "i": 37,
+     "t": "ul",
+     "text": "Fixed Maturity: The Fund has a fixed maturity date. Accordingly, the F"
+    }
+   ]
+  }
+ },
+ {
+  "fig": "ex11-characteristics",
+  "doc": "factsheet",
+  "page": 5,
+  "kind": "icons",
+  "inventory_id": "factsheet.ar.p5.1",
+  "title_ar": "الخصائص الرئيسية",
+  "title_en": "Main Characteristics",
+  "files": {
+   "ar": "graphics/figures/ex11-characteristics.ar.html",
+   "en": "graphics/figures/ex11-characteristics.en.html"
+  },
+  "replaced_blocks": {
+   "ar": [
+    {
+     "i": 23,
+     "t": "ul",
+     "text": "مدة الاستحقاق المحددة: للصندوق تاريخ استحقاق محدد، ولذلك يعمل مدير الص"
+    }
+   ],
+   "en": [
+    {
+     "i": 23,
+     "t": "ul",
+     "text": "Fixed Maturity: The Fund has a fixed maturity date. Accordingly, the F"
+    }
+   ]
+  }
+ },
+ {
+  "fig": "ex14-fund-platform",
+  "doc": "exec",
+  "page": 14,
+  "kind": "diagram",
+  "inventory_id": "exec.ar.p14.1",
+  "title_ar": "منصة الصندوق الاستثمارية",
+  "title_en": "Fund Investment Platform",
+  "files": {
+   "ar": "graphics/figures/ex14-fund-platform.ar.html",
+   "en": "graphics/figures/ex14-fund-platform.en.html"
+  },
+  "replaced_blocks": {
+   "ar": [
+    {
+     "i": 43,
+     "t": "ul",
+     "kind": "diagram",
+     "text": "الصندوق | الخبير المالية | مدير الصندوق"
+    }
+   ],
+   "en": [
+    {
+     "i": 43,
+     "t": "ul",
+     "kind": "diagram",
+     "text": "The Fund | Alkhabeer Capital | Fund Manager"
+    }
+   ]
+  }
+ },
+ {
+  "fig": "ex14-fund-platform",
+  "doc": "factsheet",
+  "page": 7,
+  "kind": "diagram",
+  "inventory_id": "factsheet.ar.p7.1",
+  "title_ar": "منصة الصندوق الاستثمارية",
+  "title_en": "Fund Investment Platform",
+  "files": {
+   "ar": "graphics/figures/ex14-fund-platform.ar.html",
+   "en": "graphics/figures/ex14-fund-platform.en.html"
+  },
+  "replaced_blocks": {
+   "ar": [
+    {
+     "i": 29,
+     "t": "ul",
+     "kind": "diagram",
+     "text": "الصندوق | الخبير المالية | مدير الصندوق"
+    }
+   ],
+   "en": [
+    {
+     "i": 29,
+     "t": "ul",
+     "kind": "diagram",
+     "text": "The Fund | Alkhabeer Capital | Fund Manager"
+    }
+   ]
+  }
+ },
+ {
+  "fig": "ex15-limits",
+  "doc": "exec",
+  "page": 15,
+  "kind": "infographic",
+  "inventory_id": "exec.ar.p15.1",
+  "title_ar": "أنواع وحدود الاستثمارات",
+  "title_en": "Investment Types and Limits",
+  "files": {
+   "ar": "graphics/figures/ex15-limits.ar.html",
+   "en": "graphics/figures/ex15-limits.en.html"
+  },
+  "replaced_blocks": {
+   "ar": [
+    {
+     "i": 48,
+     "t": "table",
+     "text": "صكوك | الديون المدعومة بالأصول | أدوات الدخل المهيكلة"
+    }
+   ],
+   "en": [
+    {
+     "i": 48,
+     "t": "table",
+     "text": "Sukuk | Asset Backed Debts | Structured Income Instruments"
+    }
+   ]
+  }
+ },
+ {
+  "fig": "ex16-types",
+  "doc": "exec",
+  "page": 16,
+  "kind": "infographic",
+  "inventory_id": "exec.ar.p16.1",
+  "title_ar": "وصف أنواع الاستثمارات",
+  "title_en": "Description of Investment Types",
+  "files": {
+   "ar": "graphics/figures/ex16-types.ar.html",
+   "en": "graphics/figures/ex16-types.en.html"
+  },
+  "replaced_blocks": {
+   "ar": [
+    {
+     "i": 50,
+     "t": "h3",
+     "text": "صكوك"
+    },
+    {
+     "i": 51,
+     "t": "ul",
+     "text": "توزيع الصكوك عالميًا يشمل مصدرين سياديين وشركات. | عند استثمار رأس الم"
+    },
+    {
+     "i": 52,
+     "t": "h3",
+     "text": "الديون المدعومة بالأصول"
+    },
+    {
+     "i": 53,
+     "t": "ul",
+     "text": "التعرضات لسوق الديون المدعومة من خلال شرائح مصنفة ائتمانيًا، مع التأكد"
+    },
+    {
+     "i": 54,
+     "t": "h3",
+     "text": "صفقات عقود التمويل التجاري"
+    },
+    {
+     "i": 55,
+     "t": "ul",
+     "text": "محفظة متنوعة من صفقات التمويل التجاري، قصيرة الأجل، ومدعومة بالأصول، و"
+    },
+    {
+     "i": 56,
+     "t": "h3",
+     "text": "صناديق الدخل"
+    },
+    {
+     "i": 57,
+     "t": "ul",
+     "text": "التعرضات لصناديق الدخل: الائتمان الخاص، والدين العقاري، والإجارة، و/أو"
+    },
+    {
+     "i": 58,
+     "t": "h3",
+     "text": "صفقات الإجارة"
+    },
+    {
+     "i": 59,
+     "t": "ul",
+     "text": "تكون الاستثمارات في محفظة متنوعة من صفقات الإجارة، متوسطة الأجل، لتموي"
+    },
+    {
+     "i": 60,
+     "t": "h3",
+     "text": "صفقات المرابحة"
+    },
+    {
+     "i": 61,
+     "t": "ul",
+     "text": "تخصيص قصير الأجل، يسمح بإدارة السيولة بكفاءة، لتفادي تراجع الأداء. | ي"
+    },
+    {
+     "i": 62,
+     "t": "h3",
+     "text": "أدوات الدخل المهيكلة"
+    },
+    {
+     "i": 63,
+     "t": "ul",
+     "text": "هي أوراق مالية يرتبط عائدها أو يتأثر بأوراق مالية ائتمانية قد تصدرها ا"
+    }
+   ],
+   "en": [
+    {
+     "i": 50,
+     "t": "h3",
+     "text": "Sukuk"
+    },
+    {
+     "i": 51,
+     "t": "ul",
+     "text": "Global Sukuk allocation covering sovereign and corporate issuers. | Up"
+    },
+    {
+     "i": 52,
+     "t": "h3",
+     "text": "Asset Backed Debts"
+    },
+    {
+     "i": 53,
+     "t": "ul",
+     "text": "Exposure to the asset-backed debt market through rated tranches, ensur"
+    },
+    {
+     "i": 54,
+     "t": "h3",
+     "text": "Trade Finance Contracts Transactions"
+    },
+    {
+     "i": 55,
+     "t": "ul",
+     "text": "A diversified portfolio of short-term, asset-backed and credit-insured"
+    },
+    {
+     "i": 56,
+     "t": "h3",
+     "text": "Income Funds"
+    },
+    {
+     "i": 57,
+     "t": "ul",
+     "text": "Exposure to Income Funds: private credit, real estate debt, leasing an"
+    },
+    {
+     "i": 58,
+     "t": "h3",
+     "text": "Leasing Transactions"
+    },
+    {
+     "i": 59,
+     "t": "ul",
+     "text": "Investments will be made in a diversified portfolio of medium-term Lea"
+    },
+    {
+     "i": 60,
+     "t": "h3",
+     "text": "Murabaha Transactions"
+    },
+    {
+     "i": 61,
+     "t": "ul",
+     "text": "A short-term allocation that allows efficient liquidity management, to"
+    },
+    {
+     "i": 62,
+     "t": "h3",
+     "text": "Structured Income Instruments"
+    },
+    {
+     "i": 63,
+     "t": "ul",
+     "text": "These are securities whose returns are linked to, or affected by, cred"
+    }
+   ]
+  }
+ },
+ {
+  "fig": "ex19-risk-level",
+  "doc": "exec",
+  "page": 19,
+  "kind": "risk-scale",
+  "inventory_id": "exec.ar.p19.1",
+  "title_ar": "مستوى مخاطر أصول الصندوق",
+  "title_en": "Risk Level of the Fund’s Assets",
+  "files": {
+   "ar": "graphics/figures/ex19-risk-level.ar.html",
+   "en": "graphics/figures/ex19-risk-level.en.html"
+  },
+  "replaced_blocks": {
+   "ar": [
+    {
+     "i": 76,
+     "t": "kv",
+     "text": "مستوى مخاطر أصول الصندوق"
+    }
+   ],
+   "en": [
+    {
+     "i": 76,
+     "t": "kv",
+     "text": "Risk Level of the Fund’s Assets"
+    }
+   ]
+  }
+ },
+ {
+  "fig": "ex19-risk-alloc",
+  "doc": "exec",
+  "page": 19,
+  "kind": "risk-scale",
+  "inventory_id": "exec.ar.p19.2",
+  "title_ar": "توزيع المخاطر بحسب فئة الأصول",
+  "title_en": "Risk Allocation by Asset Type",
+  "files": {
+   "ar": "graphics/figures/ex19-risk-alloc.ar.html",
+   "en": "graphics/figures/ex19-risk-alloc.en.html"
+  },
+  "replaced_blocks": {
+   "ar": [
+    {
+     "i": 78,
+     "t": "table",
+     "text": "صكوك | الديون المدعومة بالأصول | أدوات الدخل المهيكلة"
+    }
+   ],
+   "en": [
+    {
+     "i": 78,
+     "t": "table",
+     "text": "Sukuk | Asset Backed Debts | Structured Income Instruments"
+    }
+   ]
+  }
+ },
+ {
+  "fig": "ex26-sukuk",
+  "doc": "exec",
+  "page": 26,
+  "kind": "diagram",
+  "inventory_id": "exec.ar.p26.1",
+  "title_ar": "هيكلية الصكوك",
+  "title_en": "Sukuk Structure",
+  "files": {
+   "ar": "graphics/figures/ex26-sukuk.ar.html",
+   "en": "graphics/figures/ex26-sukuk.en.html"
+  },
+  "replaced_blocks": {
+   "ar": [
+    {
+     "i": 104,
+     "t": "ul",
+     "kind": "diagram",
+     "text": "الصكوك | حملة الصكوك/ المستثمرون | إقرار الوكالة"
+    }
+   ],
+   "en": [
+    {
+     "i": 104,
+     "t": "ul",
+     "kind": "diagram",
+     "text": "Sukuk | Sukukholders/Investors | Declaration of Agency"
+    }
+   ]
+  }
+ },
+ {
+  "fig": "ex29-trade-finance",
+  "doc": "exec",
+  "page": 29,
+  "kind": "diagram",
+  "inventory_id": "exec.ar.p29.1",
+  "title_ar": "صفقات سلع التمويل التجاري",
+  "title_en": "Trade Finance Commodity Transactions",
+  "files": {
+   "ar": "graphics/figures/ex29-trade-finance.ar.html",
+   "en": "graphics/figures/ex29-trade-finance.en.html"
+  },
+  "replaced_blocks": {
+   "ar": [
+    {
+     "i": 118,
+     "t": "ul",
+     "kind": "diagram",
+     "text": "المستثمر | رأس المال | العائد"
+    }
+   ],
+   "en": [
+    {
+     "i": 118,
+     "t": "ul",
+     "kind": "diagram",
+     "text": "Investor | Capital | Return"
+    }
+   ]
+  }
+ },
+ {
+  "fig": "ex30-leasing",
+  "doc": "exec",
+  "page": 30,
+  "kind": "diagram",
+  "inventory_id": "exec.ar.p30.1",
+  "title_ar": "صفقات الإجارة",
+  "title_en": "Leasing Transactions",
+  "files": {
+   "ar": "graphics/figures/ex30-leasing.ar.html",
+   "en": "graphics/figures/ex30-leasing.en.html"
+  },
+  "replaced_blocks": {
+   "ar": [
+    {
+     "i": 124,
+     "t": "ul",
+     "kind": "diagram",
+     "text": "المستثمر | رأس المال | العوائد"
+    }
+   ],
+   "en": [
+    {
+     "i": 124,
+     "t": "ul",
+     "kind": "diagram",
+     "text": "Investor | Capital | Returns"
+    }
+   ]
+  }
+ },
+ {
+  "fig": "ex32-sii",
+  "doc": "exec",
+  "page": 32,
+  "kind": "diagram",
+  "inventory_id": "exec.ar.p32.1",
+  "title_ar": "المعلومات الأساسية عن أدوات الدخل المهيكلة",
+  "title_en": "Key Information on Structured Income Instruments",
+  "files": {
+   "ar": "graphics/figures/ex32-sii.ar.html",
+   "en": "graphics/figures/ex32-sii.en.html"
+  },
+  "replaced_blocks": {
+   "ar": [
+    {
+     "i": 133,
+     "t": "ul",
+     "kind": "diagram",
+     "text": "التخصيص | مبالغ التوزيع الدوري | مبلغ أصل الدين عند الاستحقاق"
+    }
+   ],
+   "en": [
+    {
+     "i": 133,
+     "t": "ul",
+     "kind": "diagram",
+     "text": "Allocation | Periodic Distribution Amounts | Principal Amount at Matur"
+    }
+   ]
+  }
+ },
+ {
+  "fig": "ex33-capital-structure",
+  "doc": "exec",
+  "page": 33,
+  "kind": "infographic",
+  "inventory_id": "exec.ar.p33.1",
+  "title_ar": "الديون المدعومة بالأصول",
+  "title_en": "Asset Backed Debts",
+  "files": {
+   "ar": "graphics/figures/ex33-capital-structure.ar.html",
+   "en": "graphics/figures/ex33-capital-structure.en.html"
+  },
+  "replaced_blocks": {
+   "ar": [
+    {
+     "i": 139,
+     "t": "ul",
+     "kind": "diagram",
+     "text": "هيكلية رأس مال الديون المدعومة بالأصول"
+    },
+    {
+     "i": 140,
+     "t": "ul",
+     "kind": "diagram",
+     "text": "هيكلية رأس مال الشركة"
+    }
+   ],
+   "en": [
+    {
+     "i": 139,
+     "t": "ul",
+     "kind": "diagram",
+     "text": "Asset Backed Debt Capital Structure"
+    },
+    {
+     "i": 140,
+     "t": "ul",
+     "kind": "diagram",
+     "text": "Corporate Capital Structure"
+    }
+   ]
+  }
+ },
+ {
+  "fig": "ex34-abd-structure",
+  "doc": "exec",
+  "page": 34,
+  "kind": "diagram",
+  "inventory_id": "exec.ar.p34.1",
+  "title_ar": "هيكلية الاستثمار",
+  "title_en": "Investment Structure",
+  "files": {
+   "ar": "graphics/figures/ex34-abd-structure.ar.html",
+   "en": "graphics/figures/ex34-abd-structure.en.html"
+  },
+  "replaced_blocks": {
+   "ar": [
+    {
+     "i": 142,
+     "t": "ol",
+     "kind": "diagram",
+     "text": "الصندوق | الشركة ذات الأغراض الخاصة للديون الممتازة المدعومة | برامج ا"
+    },
+    {
+     "i": 143,
+     "t": "ul",
+     "kind": "diagram",
+     "text": "التخصيص | استلام التوزيعات المستهدفة | الاستثمار في البرامج"
+    }
+   ],
+   "en": [
+    {
+     "i": 142,
+     "t": "ol",
+     "kind": "diagram",
+     "text": "The Fund | Senior Backed Debt Special Purpose Vehicle | Syndicated Deb"
+    },
+    {
+     "i": 143,
+     "t": "ul",
+     "kind": "diagram",
+     "text": "Allocation | Receipt of Target Distributions | Investment in Programs"
+    }
+   ]
+  }
+ },
+ {
+  "fig": "ex36-selection",
+  "doc": "exec",
+  "page": 36,
+  "kind": "icons",
+  "inventory_id": "exec.ar.p36.1",
+  "title_ar": "سوف يتم تقييم صناديق الدخل باعتماد معايير اختيار مختلفة",
+  "title_en": "Income Funds will be evaluated using various selection criteria",
+  "files": {
+   "ar": "graphics/figures/ex36-selection.ar.html",
+   "en": "graphics/figures/ex36-selection.en.html"
+  },
+  "replaced_blocks": {
+   "ar": [
+    {
+     "i": 152,
+     "t": "p",
+     "text": "الصندوق"
+    },
+    {
+     "i": 153,
+     "t": "p",
+     "text": "الملاءمة:"
+    },
+    {
+     "i": 154,
+     "t": "ul",
+     "text": "العائد المستهدف وتوافقه مع أهداف الصندوق. | الهدف الاستثماري والاسترات"
+    },
+    {
+     "i": 155,
+     "t": "p",
+     "text": "مديرو الصناديق"
+    },
+    {
+     "i": 156,
+     "t": "p",
+     "text": "نبذة عن مديري الصناديق:"
+    },
+    {
+     "i": 157,
+     "t": "ul",
+     "text": "مرخصين من قبل الهيئة أو جهات إشرافية مماثلة. | سجل الشركة السابق في إد"
+    },
+    {
+     "i": 158,
+     "t": "p",
+     "text": "الأداء"
+    },
+    {
+     "i": 159,
+     "t": "p",
+     "text": "سجل الإنجازات السابقة:"
+    },
+    {
+     "i": 160,
+     "t": "ul",
+     "text": "العوائد التاريخية التي سبق تحقيقها متوافقة مع العوائد المستهدفة | توزي"
+    }
+   ],
+   "en": [
+    {
+     "i": 152,
+     "t": "p",
+     "text": "The Fund"
+    },
+    {
+     "i": 153,
+     "t": "p",
+     "text": "Suitability:"
+    },
+    {
+     "i": 154,
+     "t": "ul",
+     "text": "Target return and its consistency with the Fund’s objectives. | Invest"
+    },
+    {
+     "i": 155,
+     "t": "p",
+     "text": "Fund Managers"
+    },
+    {
+     "i": 156,
+     "t": "p",
+     "text": "Fund Manager Profile:"
+    },
+    {
+     "i": 157,
+     "t": "ul",
+     "text": "Licensed by the CMA or comparable supervisory authorities. | Track rec"
+    },
+    {
+     "i": 158,
+     "t": "p",
+     "text": "Performance"
+    },
+    {
+     "i": 159,
+     "t": "p",
+     "text": "Track Record:"
+    },
+    {
+     "i": 160,
+     "t": "ul",
+     "text": "Historical returns consistent with the target returns | Stable distrib"
+    }
+   ]
+  }
+ },
+ {
+  "fig": "ex37-murabaha",
+  "doc": "exec",
+  "page": 37,
+  "kind": "diagram",
+  "inventory_id": "exec.ar.p37.1",
+  "title_ar": "صفقات المرابحة",
+  "title_en": "Murabaha Transactions",
+  "files": {
+   "ar": "graphics/figures/ex37-murabaha.ar.html",
+   "en": "graphics/figures/ex37-murabaha.en.html"
+  },
+  "replaced_blocks": {
+   "ar": [
+    {
+     "i": 164,
+     "t": "ul",
+     "kind": "diagram",
+     "text": "اتفاقية الاستثمار | الموردون | مدير الاستثمار / البنك"
+    }
+   ],
+   "en": [
+    {
+     "i": 164,
+     "t": "ul",
+     "kind": "diagram",
+     "text": "Investment Agreement | Suppliers | Investment Manager/Bank"
+    }
+   ]
+  }
+ },
+ {
+  "fig": "faq05-benefits",
+  "doc": "faq",
+  "page": 5,
+  "kind": "icons",
+  "inventory_id": "faq.en.p5.1",
+  "title_ar": "ما هي مميزات ومنافع صندوق الخبير للدخل المتنوع 2030 المتداول ؟",
+  "title_en": "What are the advantages and benefits of Alkhabeer Diversified Income Traded Fund 2030?",
+  "files": {
+   "ar": "graphics/figures/faq05-benefits.ar.html",
+   "en": "graphics/figures/faq05-benefits.en.html"
+  },
+  "replaced_blocks": {
+   "ar": [
+    {
+     "i": 25,
+     "t": "h3",
+     "text": "مدة الاستحقاق الثابتة"
+    },
+    {
+     "i": 26,
+     "t": "p",
+     "text": "للصندوق تاريخ استحقاق محدد، ولذلك يعمل مدير الصندوق على تكوين المحفظة "
+    },
+    {
+     "i": 27,
+     "t": "h3",
+     "text": "عدد ثابت من الوحدات"
+    },
+    {
+     "i": 28,
+     "t": "p",
+     "text": "على عكس صناديق الاستثمار المشتركة المفتوحة، فإن صناديق الاستثمار المغل"
+    },
+    {
+     "i": 29,
+     "t": "h3",
+     "text": "التداول في السوق الرئيسية (تداول)"
+    },
+    {
+     "i": 30,
+     "t": "p",
+     "text": "يتم إدراج الوحدات وتداولها في السوق الرئيسية (تداول). فإذا كان الطلب ع"
+    },
+    {
+     "i": 31,
+     "t": "h3",
+     "text": "السيولة"
+    },
+    {
+     "i": 32,
+     "t": "p",
+     "text": "يعمل مدير الصندوق على توزيع صافي الدخل الناتج عن استثمارات الصندوق الم"
+    },
+    {
+     "i": 33,
+     "t": "h3",
+     "text": "إدارة المحفظة"
+    },
+    {
+     "i": 34,
+     "t": "p",
+     "text": "مدير الصندوق مسؤول عن إدارة محفظة الاستثمارات، والتأكد من تحقيقها لأهد"
+    },
+    {
+     "i": 35,
+     "t": "h3",
+     "text": "المستثمرون المستهدفون"
+    },
+    {
+     "i": 36,
+     "t": "p",
+     "text": "الصناديق المقفلة ذات آجال الاستحقاق المحدد مصممة للمستثمرين الذين يسته"
+    }
+   ],
+   "en": [
+    {
+     "i": 25,
+     "t": "h3",
+     "text": "Fixed Maturity"
+    },
+    {
+     "i": 26,
+     "t": "p",
+     "text": "The Fund has a fixed maturity date. As such, the Fund Manager seeks to"
+    },
+    {
+     "i": 27,
+     "t": "h3",
+     "text": "Fixed Number of Units"
+    },
+    {
+     "i": 28,
+     "t": "p",
+     "text": "Unlike open-ended mutual Funds, closed-ended investment Funds issue a "
+    },
+    {
+     "i": 29,
+     "t": "h3",
+     "text": "Liquidity"
+    },
+    {
+     "i": 30,
+     "t": "p",
+     "text": "The Fund Manager seeks to distribute the net income generated from the"
+    },
+    {
+     "i": 31,
+     "t": "h3",
+     "text": "Trading on the Main Exchange (Saudi Tadawul)"
+    },
+    {
+     "i": 32,
+     "t": "p",
+     "text": "Units are listed and traded on the main market (Saudi Tadawul). If dem"
+    },
+    {
+     "i": 33,
+     "t": "h3",
+     "text": "Portfolio Management"
+    },
+    {
+     "i": 34,
+     "t": "p",
+     "text": "The Fund Manager is responsible for managing the investment portfolio "
+    },
+    {
+     "i": 35,
+     "t": "h3",
+     "text": "Target Investors"
+    },
+    {
+     "i": 36,
+     "t": "p",
+     "text": "Closed-ended Funds with fixed maturities are designed for investors se"
+    }
+   ]
+  }
+ }
+]

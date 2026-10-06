@@ -1,0 +1,43 @@
+{% extends "base.html" %}
+{% block nav %}<a class="l" href="{{ doc_centre }}" target="_blank" rel="noopener">مركز المستندات</a>{% endblock %}
+{% block head %}<style>
+.qbar{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:18px}
+.cards{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:14px}
+.card{background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:18px 20px;display:flex;flex-direction:column;gap:10px;text-decoration:none;color:inherit;border-top:3px solid #3B7DD8}
+.card:hover{border-color:var(--sky)}
+.card .n{font:600 16px/1.4 var(--display);color:var(--navy)}
+.card .en{font-size:12.5px;color:var(--muted);direction:ltr;text-align:right}
+.row{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+.steps{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:10px;margin:0;padding:0;list-style:none;counter-reset:s}
+.steps li{background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:12px 14px;font-size:13.5px;counter-increment:s}
+.steps li::before{content:counter(s);display:inline-grid;place-items:center;width:22px;height:22px;border-radius:50%;background:var(--soft);color:var(--accent);font-weight:600;margin-inline-end:8px;font-size:12px}
+</style>{% endblock %}
+{% block body %}
+<div class="qbar">
+  <a class="btn" href="/?q={{ prevq }}" aria-label="الربع السابق">‹</a>
+  <div><h1>{{ ql }}</h1><div class="muted">آخر موعد للنشر وفق المادة 78 (د): {{ due }}</div></div>
+  <a class="btn" href="/?q={{ nextq }}" aria-label="الربع التالي">›</a>
+</div>
+<div class="cards">
+{% for c in cards %}
+  <a class="card" href="/s/{{ c.fund }}/{{ q }}">
+    <div><div class="n">{{ c.name }}</div><div class="en">{{ c.en }}</div></div>
+    <div class="row">
+      <span class="pill {{ 'ok' if c.st=='final' else ('warn' if c.st in ('draft','generated') else '') }}">{{ c.status }}</span>
+      {% if c.blocks %}<span class="pill bad">{{ c.blocks }} نقص يمنع الإصدار</span>{% endif %}
+      {% if c.warns %}<span class="pill warn">{{ c.warns }} تنبيه</span>{% endif %}
+      {% if not c.base_ok %}<span class="pill bad">لا يوجد بيان معتمد للربع السابق</span>{% endif %}
+    </div>
+    {% if c.updated %}<div class="muted">آخر تعديل: {{ c.updated }}</div>{% endif %}
+  </a>
+{% endfor %}
+</div>
+<h2 style="margin-top:26px">دورة الربع</h2>
+<ol class="steps">
+  <li>FACO: حجم الصندوق، وصافي قيمة الوحدة، والمصاريف، والتوزيعات.</li>
+  <li>إدارة أسواق المال: التعليق باللغتين، والملكية، وأكبر الاستثمارات، والتصنيف، وتوزيع الأصول، والعائد والمخاطر.</li>
+  <li>تداول: سعر الوحدة في نهاية الربع وأسعار نهاية كل شهر.</li>
+  <li>التحقق الآلي، ثم إصدار المسودات بالعربية والإنجليزية (PDF وWord).</li>
+  <li>جمع الملاحظات، ثم اعتماد النسخة النهائية، فتصبح أساس الربع التالي.</li>
+</ol>
+{% endblock %}

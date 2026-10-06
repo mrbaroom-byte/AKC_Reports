@@ -1,0 +1,194 @@
+{% extends "base.html" %}
+{% block title %}{{ meta.name }} · {{ meta.ql }}{% endblock %}
+{% block nav %}<a class="l" href="/">كل الصناديق</a><a class="l" href="{{ doc_centre }}" target="_blank" rel="noopener">مركز المستندات</a>{% endblock %}
+{% block head %}<style>
+.hd{display:flex;gap:12px;align-items:flex-start;flex-wrap:wrap;margin-bottom:14px}
+.hd .t{flex:1;min-width:240px}
+.acts{display:flex;gap:8px;flex-wrap:wrap}
+.lay{display:grid;grid-template-columns:minmax(0,1fr) 330px;gap:16px;align-items:start}
+@media (max-width:980px){.lay{grid-template-columns:1fr}.side{position:static!important}}
+.side{position:sticky;top:12px;display:flex;flex-direction:column;gap:12px}
+nav.tabs{display:flex;gap:4px;border-bottom:1px solid var(--line);margin-bottom:14px;overflow-x:auto}
+nav.tabs button{font:600 14px var(--body);background:none;border:0;border-bottom:2px solid transparent;padding:9px 14px;color:var(--muted);cursor:pointer;white-space:nowrap}
+nav.tabs button[aria-selected=true]{color:var(--navy);border-bottom-color:var(--sky)}
+.src{font-size:12px;color:var(--muted);margin:-6px 0 12px}
+.fg{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:12px 16px}
+.f label{display:block;font-size:13px;font-weight:600;margin-bottom:4px}
+.f .pv{font-size:12px;color:var(--muted);margin-top:3px}
+.f .pv b{font-weight:500;direction:ltr;unicode-bidi:isolate}
+.der{display:grid;grid-template-columns:1fr auto;gap:4px 10px;font-size:13.5px}
+.der b{direction:ltr;unicode-bidi:isolate;font-weight:600}
+.val li{margin-bottom:6px;font-size:13.5px}
+.val{list-style:none;margin:0;padding:0}
+.val .block::before{content:'●';color:#C0504D;margin-inline-end:6px}
+.val .warn::before{content:'●';color:#C98A2B;margin-inline-end:6px}
+.files a{display:inline-block;margin:2px 0 2px 8px;font-size:13.5px}
+.mini td input{padding:5px 7px}
+.mini td.p{width:110px}
+.x{background:none;border:0;color:var(--muted);cursor:pointer;font-size:16px}
+.lang2{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+@media (max-width:700px){.lang2{grid-template-columns:1fr}}
+.bar{position:fixed;inset-inline:0;bottom:0;background:var(--surface);border-top:1px solid var(--line);padding:10px 16px;display:flex;gap:10px;align-items:center;justify-content:flex-end;z-index:5}
+.bar .msg{flex:1;font-size:13px;color:var(--muted)}
+.sum{font-size:12.5px;color:var(--muted);margin-top:6px}
+</style>{% endblock %}
+{% block body %}
+<div class="hd">
+  <div class="t"><h1>{{ meta.name }}</h1><div class="muted">{{ meta.ql }} · يُبنى على البيان المعتمد للربع السابق ({{ meta.pql }}) · الحالة: <span class="pill" id="stPill">{{ status }}</span></div></div>
+</div>
+<div class="lay">
+<div>
+  <nav class="tabs" role="tablist">
+    <button role="tab" aria-selected="true" data-t="faco">FACO</button>
+    <button role="tab" aria-selected="false" data-t="cm">إدارة أسواق المال</button>
+    <button role="tab" aria-selected="false" data-t="mkt">{{ 'تداول' if meta.traded else 'رسم الأداء' }}</button>
+    <button role="tab" aria-selected="false" data-t="notes">الملاحظات</button>
+  </nav>
+  <section data-p="faco"></section>
+  <section data-p="cm" hidden></section>
+  <section data-p="mkt" hidden></section>
+  <section data-p="notes" hidden>
+    <div class="box"><h2>ملاحظات المراجعين</h2>
+      <p class="muted">اجمع هنا ملاحظات تطوير المنتجات والالتزام وأسواق المال على المسودة، ثم عدّل البيانات وأعد الإصدار.</p>
+      <textarea id="notes">{{ s.notes or '' }}</textarea>
+      <div style="margin-top:8px"><button class="btn" id="saveNotes">حفظ الملاحظات</button> <span class="muted" id="notesMsg"></span></div>
+    </div>
+    <div class="box"><h2>السجل</h2><ul class="val" id="evs">{% for e in events %}<li>{{ e.at }} · {{ e.what }}</li>{% else %}<li class="muted">لا شيء بعد.</li>{% endfor %}</ul></div>
+  </section>
+</div>
+<aside class="side">
+  <div class="box"><h2>المحسوب آليًا</h2><div class="der" id="der"></div></div>
+  <div class="box"><h2>التحقق</h2><ul class="val" id="val"><li class="muted">يُحسب…</li></ul></div>
+  <div class="box"><h2>الملفات</h2><div id="files" class="files"><span class="muted">لم تصدر مسودة بعد.</span></div><div class="sum" id="jobMsg"></div></div>
+</aside>
+</div>
+<div class="bar"><span class="msg" id="msg"></span>
+  <button class="btn" id="save">حفظ</button>
+  <button class="btn primary" id="gen">إصدار المسودات</button>
+  <button class="btn" id="fin">اعتماد النسخة النهائية</button>
+</div>
+<script>
+const META={{ meta_json|safe }}, PREV={{ prev_json|safe }};
+let D={{ data_json|safe }};
+const $=s=>document.querySelector(s), $$=s=>[...document.querySelectorAll(s)];
+const esc=s=>String(s??'').replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const nf=(v,dp)=>v==null||v===''?'—':Number(v).toLocaleString('en-US',{minimumFractionDigits:dp,maximumFractionDigits:dp});
+const get=(p)=>p.split('.').reduce((o,k)=>o==null?o:o[k],D);
+function set(p,v){const ks=p.split('.');let o=D;for(let i=0;i<ks.length-1;i++){const k=ks[i];if(o[k]==null)o[k]=/^\d+$/.test(ks[i+1])?[]:{};o=o[k]}o[ks.at(-1)]=v}
+function inp(p,cls='num',ph=''){const v=get(p);return `<input class="${cls}" data-p="${p}" value="${esc(v??'')}" placeholder="${esc(ph)}" inputmode="${cls==='num'?'decimal':'text'}">`}
+function field(label,p,prev,dp,note){return `<div class="f"><label>${label}</label>${inp(p)}<div class="pv">${prev!==undefined?'الربع السابق: <b>'+nf(prev,dp)+'</b>':''}${note?' · '+note:''}</div></div>`}
+
+function rFaco(){
+  let h=`<div class="box"><h2>التقويم والأحجام</h2><p class="src">المصدر: إدارة عمليات الصناديق والحفظ (FACO)</p><div class="fg">
+  <div class="f"><label>تاريخ التقويم</label><input type="date" data-p="valuation_date" value="${esc(D.valuation_date||'')}"><div class="pv">آخر يوم تقويم في الربع</div></div>
+  ${field('صافي قيمة الوحدة (ر.س.)','nav_unit',PREV.nav_unit,4)}
+  ${field('حجم الصندوق: إجمالي الأصول (ر.س.)','fund_size',PREV.fund_size,0)}
+  ${field('عدد الوحدات القائمة','units',PREV.units,0,'يُؤكَّد مصدره')}
+  ${field('متوسط صافي الأصول خلال الربع (ر.س.)','avg_nav',PREV.avg_nav,0,'يُؤكَّد مصدره')}
+  ${META.wad?field('عدد أيام المتوسط المرجح','wad_days',PREV.wad_days,0,'يُؤكَّد مصدره'):''}
+  </div></div>
+  <div class="box"><h2>المصاريف</h2><p class="src">المصدر: FACO · تُحسب النسب آليًا</p><div class="fg">
+  ${field('الأتعاب والمصروفات الإجمالية (ر.س.)','ter_amount',PREV.ter_amount,0)}
+  ${field('الاقتراض (ر.س.) — اتركه فارغًا إن لم يوجد','borrowing',PREV.borrowing,0)}
+  ${field('مصاريف التعامل (ر.س.)','dealing',PREV.dealing,0)}
+  ${field('استثمار مدير الصندوق (ر.س.)','mgr_invest',PREV.mgr_invest,0)}
+  </div></div>
+  <div class="box"><h2>الأرباح الموزعة</h2><p class="src">المصدر: FACO · اتركها فارغة إن لم يوزَّع في الربع</p><div class="fg">
+  ${field('إجمالي الأرباح الموزعة (ر.س.)','dist_total',PREV.dist_total,0)}
+  ${field('عدد الوحدات المستحقة','dist_units',PREV.dist_units,0)}
+  ${field('الربح الموزع لكل وحدة (ر.س.)','dist_per_unit',PREV.dist_per_unit,2)}
+  </div><div class="lang2" style="margin-top:12px"><div class="f"><label>أحقية التوزيعات (عربي)</label>${inp('dist_entitle.ar','')}</div><div class="f"><label>Entitlement (English)</label><input dir="ltr" data-p="dist_entitle.en" value="${esc(get('dist_entitle.en')||'')}"></div></div></div>`;
+  $('[data-p=faco]').innerHTML=h;
+}
+function listTable(path,rows,withTitle){
+  let h=`<div class="tw"><table class="mini"><thead><tr><th>الاسم بالعربية</th><th>English name</th><th>النسبة %</th><th>الربع السابق</th><th></th></tr></thead><tbody>`;
+  rows.forEach((x,i)=>{const pv=(PREV[path.split('.')[0]]||[]);h+=`<tr><td><input data-p="${path}.${i}.ar" value="${esc(x.ar)}"></td><td><input dir="ltr" data-p="${path}.${i}.en" value="${esc(x.en)}"></td><td class="p">${inp(path+'.'+i+'.pct')}</td><td class="muted">${x._pv??''}</td><td><button class="x" data-del="${path}.${i}" aria-label="حذف">×</button></td></tr>`});
+  return h+`</tbody></table></div><button class="btn" data-add="${path}" style="margin-top:8px">+ بند</button>`;
+}
+function prevPct(list,ar){const m=(list||[]).find(x=>x.ar===ar);return m?nf(m.pct,2)+'%':''}
+function rCm(){
+  const per=META.periods||[];
+  D.top10.forEach(x=>x._pv=prevPct(PREV.top10,x.ar));
+  (D.alloc||[]).forEach((a,k)=>a.items.forEach(x=>x._pv=prevPct((PREV.alloc[k]||{}).items,x.ar)));
+  let h=`<div class="box"><h2>تعليق مدير الصندوق</h2><p class="src">المصدر: إدارة أسواق المال · باللغتين، ولا يُترجم أحدهما من الآخر. سطر يبدأ بـ# عنوان فرعي، وسطر يبدأ بـ- بند في قائمة، وسطر فارغ بين الفقرات.</p>
+  <div class="lang2"><div class="f"><label>العربية</label><textarea data-p="commentary.ar">${esc(D.commentary?.ar||'')}</textarea></div>
+  <div class="f"><label>English</label><textarea dir="ltr" data-p="commentary.en">${esc(D.commentary?.en||'')}</textarea></div></div></div>
+  <div class="box"><h2>أكبر عشرة استثمارات</h2><p class="src">المصدر: إدارة أسواق المال</p>${listTable('top10',D.top10)}</div>`;
+  (D.alloc||[]).forEach((a,k)=>{h+=`<div class="box"><h2>${esc(a.title_ar.replace(/\*+/g,''))}</h2><p class="src">المصدر: إدارة أسواق المال · المجموع يجب أن يساوي 100%</p>${listTable('alloc.'+k+'.items',a.items)}<div class="sum" data-sum="${k}"></div></div>`});
+  h+=`<div class="box"><h2>العائد</h2><p class="src">المصدر: إدارة أسواق المال · بالنسبة المئوية · فارق الأداء يُحسب آليًا · اترك الخانة فارغة إن لم تنطبق</p><div class="tw"><table class="mini"><thead><tr><th></th>${per.map(p=>`<th>${esc(p.replace(/\*+/g,''))}</th>`).join('')}</tr></thead><tbody>
+  <tr><td>الصندوق</td>${per.map((p,i)=>`<td>${inp('ret_fund.'+i,'num',PREV.ret_fund[i]??'')}</td>`).join('')}</tr>
+  <tr><td>المؤشر الاسترشادي</td>${per.map((p,i)=>`<td>${inp('ret_bench.'+i,'num',PREV.ret_bench[i]??'')}</td>`).join('')}</tr></tbody></table></div><p class="muted">القيم الباهتة في الخانات هي قيم الربع السابق للمقارنة.</p></div>
+  <div class="box"><h2>الأداء والمخاطر</h2><p class="src">المصدر: إدارة أسواق المال</p><div class="tw"><table class="mini"><thead><tr><th></th>${per.map(p=>`<th>${esc(p.replace(/\*+/g,''))}</th>`).join('')}</tr></thead><tbody>
+  ${META.risk_keys.map((k,j)=>`<tr><td>${META.risk_names[j]}</td>${per.map((p,i)=>`<td>${inp('risk.'+k+'.'+i,'num',(PREV.risk[k]||[])[i]??'')}</td>`).join('')}</tr>`).join('')}</tbody></table></div></div>
+  <div class="box"><h2>الملكية والتصنيف الائتماني</h2><p class="src">المصدر: إدارة أسواق المال</p><div class="fg">
+  ${field('ملكية تامة %','own_full',PREV.own_full,0)}${field('حق منفعة %','own_use',PREV.own_use,0)}
+  ${META.pe?`<div class="f"><label>مكرر الربحية (P/E)</label>${inp('pe','num',PREV.pe||'')}<div class="pv">الربع السابق: <b>${esc(PREV.pe||'—')}</b></div></div>`:''}
+  </div><h3>التصنيف الائتماني لأكبر عشرة استثمارات</h3><div class="lang2">
+  <div>${['الأداة','المصدر','الوكالة','التاريخ'].map((n,i)=>`<div class="f" style="margin-bottom:8px"><label>${n}</label>${inp('rating.ar.'+i,'')}</div>`).join('')}</div>
+  <div dir="ltr">${['Instrument','Issuer','Agency','Date'].map((n,i)=>`<div class="f" style="margin-bottom:8px"><label>${n}</label>${inp('rating.en.'+i,'')}</div>`).join('')}</div></div></div>`;
+  $('[data-p=cm]').innerHTML=h;
+}
+function rMkt(){
+  let h='';
+  if(META.traded){
+    h+=`<div class="box"><h2>سعر الوحدة في السوق</h2><p class="src">المصدر: تداول السعودية · الرمز ${META.symbol} · سعر الإغلاق في آخر يوم تداول من الربع</p><div class="fg">${field('سعر الإغلاق في نهاية الربع (ر.س.)','price',PREV.price,2)}</div>
+    <p class="muted"><a href="https://www.saudiexchange.sa/wps/portal/saudiexchange/ourmarkets/funds-market-watch" target="_blank" rel="noopener">سوق الصناديق في موقع تداول</a></p></div>`;
+  }
+  const cols=META.perf==='price'?[['value',META.traded?'سعر الإغلاق (ر.س.)':'القيمة']]:[['fund','الصندوق %'],['bench','المؤشر %']];
+  h+=`<div class="box"><h2>${META.perf==='price'?'رسم سعر السوق منذ البداية':'رسم الأداء مقارنة بالمؤشر'}</h2><p class="src">${META.perf==='price'?'المصدر: تداول · تُضاف نقاط هذا الربع إلى السلسلة المحفوظة':'المصدر: إدارة أسواق المال · العائد التراكمي منذ البداية'}</p>
+  <div class="tw"><table class="mini"><thead><tr><th>التاريخ</th>${cols.map(c=>`<th>${c[1]}</th>`).join('')}<th></th></tr></thead><tbody>
+  ${(D.perf_points||[]).map((p,i)=>`<tr><td><input type="date" data-p="perf_points.${i}.date" value="${esc(p.date||'')}"></td>${cols.map(c=>`<td>${inp('perf_points.'+i+'.'+c[0])}</td>`).join('')}<td><button class="x" data-del="perf_points.${i}" aria-label="حذف">×</button></td></tr>`).join('')}
+  </tbody></table></div><button class="btn" data-add="perf_points" style="margin-top:8px">+ نقطة</button>
+  <p class="muted">آخر نقاط السلسلة الحالية: ${(PREV.perf_last||[]).slice(-3).map(s=>esc((s.group||s.label)+' '+s.value)).join(' · ')}</p></div>
+  <div class="box"><h2>بيانات الاتصال</h2><div class="fg"><div class="f"><label>رقم الهاتف في البيان (اتركه فارغًا لإبقاء الحالي)</label>${inp('tollfree','num','800 124 7555')}</div></div></div>`;
+  $('[data-p=mkt]').innerHTML=h;
+}
+function renderAll(){rFaco();rCm();rMkt();check()}
+document.addEventListener('click',e=>{
+  const t=e.target.closest('nav.tabs button');
+  if(t){$$('nav.tabs button').forEach(b=>b.setAttribute('aria-selected',b===t));$$('section[data-p]').forEach(s=>s.hidden=s.dataset.p!==t.dataset.t);return}
+  const a=e.target.closest('[data-add]');if(a){const p=a.dataset.add;const arr=get(p);arr.push(p==='perf_points'?{date:'',value:null,fund:null,bench:null}:{ar:'',en:'',pct:null});renderAll();dirty();return}
+  const d=e.target.closest('[data-del]');if(d){const ks=d.dataset.del.split('.');const i=+ks.pop();get(ks.join('.')).splice(i,1);renderAll();dirty();return}
+});
+let tm=null,isDirty=false;
+function dirty(){isDirty=true;$('#msg').textContent='تعديلات غير محفوظة';clearTimeout(tm);tm=setTimeout(check,700)}
+document.addEventListener('input',e=>{const p=e.target.dataset.p;if(!p)return;set(p,e.target.value);dirty()});
+window.addEventListener('beforeunload',e=>{if(isDirty){e.preventDefault();e.returnValue=''}});
+async function api(path,body){const r=await fetch(path,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(body||{})});if(r.status===401){location.href='/login';throw 0}return r.json()}
+const base=`/api/s/${META.fund}/${META.q}`;
+function showVal(v,der){
+  $('#val').innerHTML=v.length?v.map(x=>`<li class="${x.level}">${esc(x.msg)}</li>`).join(''):'<li>لا ملاحظات. البيانات جاهزة للإصدار.</li>';
+  const pc=x=>x==null?'—':(x>=0?'':'')+x.toFixed(2)+'%';
+  $('#der').innerHTML=[['صافي الأصول',nf(der.net_assets,0)+' ر.س.'],[META.traded?'تغير السعر':'تغير صافي القيمة',pc(der.price_change)],['نسبة المصاريف (TER)',pc(der.ter_pct)],
+    ...(META.traded?[['الخصم عن صافي القيمة',pc(der.discount)]]:[]),['فارق الأداء (3 أشهر)',pc((der.spread||[])[0])]].map(r=>`<span>${r[0]}</span><b>${r[1]}</b>`).join('');
+  (D.alloc||[]).forEach((a,k)=>{const s=a.items.reduce((t,x)=>t+(parseFloat(String(x.pct??'').replace(/[^\d.\-]/g,''))||0),0);const el=$(`[data-sum="${k}"]`);if(el)el.textContent='المجموع: '+s.toFixed(1)+'%'});
+  const blocks=v.filter(x=>x.level==='block').length;$('#gen').disabled=blocks>0;$('#gen').title=blocks?'أكمل النقص أولًا':'';
+}
+async function check(){try{const r=await api(base+'/check',{data:D});showVal(r.validation,r.derived)}catch(e){}}
+$('#save').onclick=async()=>{$('#msg').textContent='يُحفظ…';const r=await api(base,{data:D});isDirty=false;$('#msg').textContent='حُفظ '+r.updated;$('#stPill').textContent=r.status;showVal(r.validation,r.derived)};
+async function run(final){
+  if(final&&!confirm('اعتماد النسخة النهائية يجعلها أساس الربع التالي. هل تتابع؟'))return;
+  $('#msg').textContent='يُحفظ…';await api(base,{data:D});isDirty=false;
+  $('#gen').disabled=$('#fin').disabled=true;await api(base+'/generate',{final});poll(final)}
+$('#gen').onclick=()=>run(false);$('#fin').onclick=()=>run(true);
+function showFiles(f){
+  if(!f)return;let h='';
+  for(const kind of ['final','draft']){const x=f[kind];if(!x)continue;
+    h+=`<div style="margin-bottom:8px"><b>${kind==='final'?'النهائي':'المسودة'}</b><br>`;
+    for(const [lang,n] of Object.entries(x)){const L=lang==='ar'?'العربي':'الإنجليزي';const u=`/f/${META.fund}/${META.q}/${kind}/`;
+      h+=`${L}: <a href="${u+n.html}" target="_blank">معاينة</a><a href="${u+n.pdf}?dl=1">PDF</a>${n.docx?`<a href="${u+n.docx}?dl=1">Word</a>`:''}<br>`}
+    h+=`<a href="/zip/${META.fund}/${META.q}/${kind}">تنزيل الكل</a></div>`}
+  $('#files').innerHTML=h||'<span class="muted">لم تصدر مسودة بعد.</span>';
+}
+async function poll(final){
+  const r=await (await fetch(base+'/job')).json();const j=r.job;
+  if(j.state==='running'){$('#msg').textContent=(final?'يُعتمد: ':'يُصدر: ')+j.step+'…';setTimeout(()=>poll(final),1500);return}
+  $('#gen').disabled=$('#fin').disabled=false;$('#stPill').textContent=r.status;showFiles(r.files);
+  if(j.state==='error')$('#msg').textContent=j.msg;
+  else{$('#msg').textContent=final?'اعتُمدت النسخة النهائية.':'صدرت المسودات.';$('#jobMsg').textContent=(r.log||[]).join(' · ')}
+  check();
+}
+$('#saveNotes').onclick=async()=>{await api(base+'/notes',{notes:$('#notes').value});$('#notesMsg').textContent='حُفظت.'};
+renderAll();fetch(base+'/job').then(r=>r.json()).then(r=>{showFiles(r.files);if(r.job.state==='running')poll(false)});
+</script>
+{% endblock %}

@@ -1,0 +1,6 @@
+{% extends "base.html" %}
+{% block body %}
+<div class="box"><h1>{{ fund }} · {{ ql }}</h1>
+<p>لا يمكن بدء هذا البيان قبل اعتماد بيان {{ pql }}، لأن النظام يبني كل ربع على البيان المعتمد للربع الذي قبله.</p>
+<a class="btn" href="/">العودة</a></div>
+{% endblock %}

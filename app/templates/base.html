@@ -1,0 +1,52 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="robots" content="noindex,nofollow">
+<title>{% block title %}البيانات الربعية{% endblock %} · الخبير المالية</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Alexandria:wght@500;600;700&family=IBM+Plex+Sans+Arabic:wght@400;500;600&family=IBM+Plex+Sans:wght@400;500;600&display=swap">
+<style>
+:root{--bg:#F3F5F9;--surface:#fff;--ink:#0D1A33;--muted:#5B667C;--line:#DDE3ED;--navy:#12284B;--night:#071A3A;--accent:#2E6DB0;--sky:#3B7DD8;--soft:#E6EEF8;
+ --ok-bg:#E2EAF6;--ok-fg:#1F4E86;--warn-bg:#F6E3C6;--warn-fg:#7A4A12;--bad-bg:#F3D9D9;--bad-fg:#7A1F1F;--mute-bg:#ECEFF4;--mute-fg:#4A5568;
+ --display:'Alexandria','IBM Plex Sans Arabic',Tahoma,sans-serif;--body:'IBM Plex Sans Arabic','IBM Plex Sans',Tahoma,sans-serif}
+@media (prefers-color-scheme:dark){:root{--bg:#0A1426;--surface:#111E36;--ink:#E8EDF6;--muted:#9AA7BF;--line:#22324F;--navy:#D3DEF1;--accent:#7FB0EA;--sky:#7FB0EA;--soft:#16294A;
+ --ok-bg:#16294A;--ok-fg:#A9C8F0;--warn-bg:#3B2A12;--warn-fg:#F1C98A;--bad-bg:#3A1717;--bad-fg:#F0B4B4;--mute-bg:#1A2740;--mute-fg:#B5C0D3;color-scheme:dark}}
+*{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%}
+body{margin:0;background:var(--bg);color:var(--ink);font:15px/1.65 var(--body)}
+a{color:var(--accent)}
+header.top{background:#071A3A;color:#DCE3EE;padding:14px 20px;display:flex;align-items:center;gap:14px;flex-wrap:wrap}
+header.top .brand{font:600 16px var(--display);color:#fff;text-decoration:none}
+header.top .sp{flex:1}
+header.top a.l{color:#9DB8E0;text-decoration:none;font-size:13.5px}
+.wrap{max-width:1180px;margin:0 auto;padding:22px 16px 80px}
+h1{font:600 24px/1.35 var(--display);margin:0 0 6px;color:var(--navy)}
+h2{font:600 17px/1.4 var(--display);margin:0 0 12px;color:var(--navy)}
+h3{font:600 14.5px var(--body);margin:16px 0 8px;color:var(--navy)}
+.muted{color:var(--muted);font-size:13px}
+.box{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:18px 20px;margin-bottom:14px}
+.pill{display:inline-block;font-size:12px;font-weight:600;padding:2px 10px;border-radius:999px;background:var(--mute-bg);color:var(--mute-fg);white-space:nowrap}
+.pill.ok{background:var(--ok-bg);color:var(--ok-fg)}.pill.warn{background:var(--warn-bg);color:var(--warn-fg)}.pill.bad{background:var(--bad-bg);color:var(--bad-fg)}
+.btn{font:600 14px var(--body);padding:9px 16px;border-radius:9px;border:1px solid var(--line);background:var(--surface);color:var(--accent);cursor:pointer;text-decoration:none;display:inline-flex;align-items:center;gap:6px}
+.btn.primary{background:#12284B;color:#fff;border-color:#12284B}
+@media (prefers-color-scheme:dark){.btn.primary{background:#7FB0EA;color:#071A3A;border-color:#7FB0EA}}
+.btn:disabled{opacity:.5;cursor:default}
+input,textarea,select{font:inherit;font-size:14px;color:var(--ink);background:var(--bg);border:1px solid var(--line);border-radius:8px;padding:7px 10px;width:100%;min-width:0}
+input:focus,textarea:focus,select:focus,.btn:focus-visible{outline:2px solid var(--sky);outline-offset:1px}
+input.num{direction:ltr;text-align:left;font-family:'IBM Plex Sans',sans-serif}
+input.bad{border-color:#C0504D}
+textarea{min-height:180px;line-height:1.7}
+table{border-collapse:collapse;width:100%}
+th,td{padding:6px 6px;border-bottom:1px solid var(--line);text-align:start;vertical-align:middle;font-size:13.5px}
+th{font-size:12px;color:var(--muted);font-weight:600}
+.tw{overflow-x:auto;-webkit-overflow-scrolling:touch}
+</style>
+{% block head %}{% endblock %}
+</head>
+<body>
+<header class="top"><a class="brand" href="/">الخبير المالية · البيانات الربعية</a><span class="sp"></span>{% block nav %}{% endblock %}<a class="l" href="/logout">خروج</a></header>
+<div class="wrap">{% block body %}{% endblock %}</div>
+</body>
+</html>

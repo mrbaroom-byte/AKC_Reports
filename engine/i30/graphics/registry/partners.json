@@ -1,0 +1,1238 @@
+[
+ {
+  "slug": "alkhabeer-capital",
+  "status": "current",
+  "name_ar": "شركة \"الخبير المالية\"",
+  "name_en": "Alkhabeer Capital",
+  "roles": [
+   {
+    "role_ar": "مدير الصندوق",
+    "role_en": "Fund Manager"
+   },
+   {
+    "role_ar": "مشغل الصندوق",
+    "role_en": "Fund Operator"
+   },
+   {
+    "role_ar": "جهة مستلمة",
+    "role_en": "Receiving Entity"
+   }
+  ],
+  "address_ar": "طريق المدينة المنورة، ص.ب: 128289، جدة 21362، المملكة العربية السعودية",
+  "address_en": "Madinah Road, P.O. Box 128289, Jeddah 21362, Kingdom of Saudi Arabia",
+  "po_box": "128289, Jeddah 21362",
+  "website": "www.alkhabeer.com",
+  "tollfree": "800 124 7555",
+  "phone": "+966 12 658 8888",
+  "email": "info@alkhabeer.com",
+  "cr_no": "4030177445",
+  "cma_license": "07074-37",
+  "sources": {
+   "name_ar": "tc.ar.json p.12 (Fund Directory)",
+   "name_en": "tc.en.json p.12; https://www.alkhabeer.com/contact/",
+   "roles": "tc.en.json p.12-14; tc.ar.json p.12; exec.en.json p.23",
+   "address_ar": "tc.ar.json p.60 (complaints) + p.12",
+   "address_en": "tc.en.json p.99 (complaints) + p.12; https://www.alkhabeer.com/contact/",
+   "po_box": "tc.en.json p.12; https://www.alkhabeer.com/contact/",
+   "website": "tc.en.json p.12, p.84",
+   "tollfree": "tc.en.json p.2; exec.en.json p.2; faq.en.json p.8; https://www.alkhabeer.com/contact/",
+   "phone": "tc.en.json p.84, p.99; tc.ar.json p.52",
+   "email": "faq.en.json p.8; q3-2025.en.json p.1; https://www.alkhabeer.com/contact/",
+   "cr_no": "tc.en.json p.2; exec.en.json p.2; https://www.alkhabeer.com/contact/",
+   "cma_license": "tc.en.json p.84 (issued 4 July 2007); https://www.alkhabeer.com/contact/"
+  },
+  "verified": {
+   "name_ar": true,
+   "name_en": true,
+   "roles": true,
+   "address_ar": true,
+   "address_en": true,
+   "po_box": true,
+   "website": true,
+   "tollfree": true,
+   "phone": true,
+   "email": true,
+   "cr_no": true,
+   "cma_license": true
+  },
+  "notes": [
+   "Fax +966 12 658 6663 (tc.en p.2/p.84, tc.ar p.52, exec p.2); tc.ar p.2 prints 658 3666 (digit-reversal typo).",
+   "Complaints: compliance@alkhabeer.com (tc p.99 / tc.ar p.60); website also lists CC@alkhabeer.com for client support/complaints.",
+   "Riyadh branch: Al-Jumaia Commercial Center, 3rd Floor, Unit 4, P.O. Box 5000, Riyadh 12361; Tel +966 11 210 1814 (tc.en p.2).",
+   "Website shows +966 800 124 7555 as main phone; fund docs give +966 12 658 8888 as head-office tel."
+  ],
+  "logo": "alkhabeer-capital.png",
+  "logo_asset": "ae9e4464a1204c64f74ce2d03042082e",
+  "funds": [
+   "income",
+   "gif"
+  ]
+ },
+ {
+  "slug": "alrajhi-capital",
+  "status": "current",
+  "name_ar": "شركة الراجحي المالية",
+  "name_en": "Al Rajhi Capital",
+  "roles": [
+   {
+    "role_ar": "أمين الحفظ",
+    "role_en": "Custodian"
+   }
+  ],
+  "address_ar": "8467 طريق الملك فهد – حي المروج، وحدة رقم 654، الرياض 12263-2743، المملكة العربية السعودية",
+  "address_en": "8467 King Fahad Road – Al Murooj District, Unit No. 654, Riyadh 12263-2743, Kingdom of Saudi Arabia",
+  "po_box": "",
+  "website": "www.alrajhi-capital.com",
+  "tollfree": "800 124 5858",
+  "phone": "+966 92000 5856",
+  "email": "agencyservices@alrajhi-capital.com",
+  "cr_no": "1010241681",
+  "cma_license": "07068-37",
+  "sources": {
+   "name_ar": "tc.ar.json p.12, p.54",
+   "name_en": "tc.en.json p.87",
+   "roles": "tc.en.json p.12, p.87",
+   "address_ar": "tc.ar.json p.54",
+   "address_en": "tc.en.json p.88",
+   "website": "tc.en.json p.12, p.88",
+   "tollfree": "https://alrajhi-capital.sa/en/contact-us",
+   "phone": "https://alrajhi-capital.sa/en/contact-us",
+   "email": "tc.en.json p.88; tc.ar.json p.54; annual-2025.en.json p.17",
+   "cr_no": "https://alrajhi-capital.sa/about-us",
+   "cma_license": "tc.en.json p.87 (18 March 2008); https://alrajhi-capital.sa/about-us"
+  },
+  "verified": {
+   "name_ar": true,
+   "name_en": true,
+   "roles": true,
+   "address_ar": true,
+   "address_en": true,
+   "po_box": false,
+   "website": true,
+   "tollfree": true,
+   "phone": true,
+   "email": true,
+   "cr_no": true,
+   "cma_license": true
+  },
+  "notes": [
+   "po_box left blank: directory (tc p.12) says 'P.O. Box 2743, Riyadh 12263' but 2743 is the national-address additional number; website gives P.O. Box 5561, postal code 12263.",
+   "Website now on alrajhi-capital.sa; fund docs use www.alrajhi-capital.com. Website general email customerservice@alrajhi-capital.sa (doc email is the agency/custody desk).",
+   "English directory spells 'Alrajhi Capital'; custodian section and exec summary use 'Al Rajhi Capital'."
+  ],
+  "logo": "alrajhi-capital.png",
+  "logo_asset": "866859778b648126efeaf6749e5ded41"
+ },
+ {
+  "slug": "crowe-ksa",
+  "status": "current",
+  "name_ar": "شركة حلول كرو للاستشارات المهنية – عضو كرو الدولية",
+  "name_en": "Crowe Solutions for Professional Consulting – Member of Crowe Global",
+  "roles": [
+   {
+    "role_ar": "مراجع الحسابات والمستشار الزكوي",
+    "role_en": "Auditor and Zakat Advisor"
+   }
+  ],
+  "address_ar": "ص.ب: 21499، جدة 40097، المملكة العربية السعودية",
+  "address_en": "P.O. Box 21499, Jeddah 40097, Kingdom of Saudi Arabia",
+  "po_box": "21499, Jeddah 40097",
+  "website": "https://www.crowe.com/sa",
+  "tollfree": "",
+  "phone": "+966 12 692 8552",
+  "email": "",
+  "cr_no": "",
+  "cma_license": "",
+  "sources": {
+   "name_ar": "tc.ar.json p.12, p.60",
+   "name_en": "tc.en.json p.12, p.97; https://www.crowe.com/sa/contact-us",
+   "roles": "tc.en.json p.4, p.12",
+   "address_ar": "tc.ar.json p.12",
+   "address_en": "tc.en.json p.12, p.97",
+   "po_box": "tc.en.json p.12",
+   "website": "tc.en.json p.12; https://www.crowe.com/sa/contact-us",
+   "phone": "https://www.crowe.com/sa/contact-us (Jeddah office)"
+  },
+  "verified": {
+   "name_ar": true,
+   "name_en": true,
+   "roles": true,
+   "address_ar": true,
+   "address_en": true,
+   "po_box": true,
+   "website": true,
+   "tollfree": false,
+   "phone": true,
+   "email": false,
+   "cr_no": false,
+   "cma_license": false
+  },
+  "notes": [
+   "Appointed via T&C update dated 11/09/2025 (board approved T&C amendments 7 Sep 2025, annual-2025.en p.14), replacing Dr. Mohamed Al-Amri & Co.; audit fee SAR 65,000 (was 58,000).",
+   "Website Jeddah office street address: 7452 Al Amir Sultan St., Unit No. 213, Al Khalidiyah Dist., Jeddah 23423-3771; fax +966 12 692 8551. Riyadh: +966 11 217 5000.",
+   "FY2025 financial statements footer shows www.crowe.sa (annual-2025-fs.en p.26) vs crowe.com/sa in T&C.",
+   "Email not captured (obfuscated on website); CR not published on site."
+  ],
+  "logo": "crowe-ksa.png",
+  "logo_asset": "d31c0880f3ce21828989dbc6add9c608",
+  "funds": [
+   "income",
+   "gif"
+  ]
+ },
+ {
+  "slug": "al-amri-bdo",
+  "status": "former",
+  "name_ar": "الدكتور محمد العمري وشركاه",
+  "name_en": "Dr. Mohamed Al-Amri & Co.",
+  "roles": [
+   {
+    "role_ar": "مراجع الحسابات (سابق)",
+    "role_en": "Auditor (former, until Sept 2025)"
+   }
+  ],
+  "address_ar": "ص.ب: 784، جدة 21421، المملكة العربية السعودية",
+  "address_en": "P.O. Box 784, Jeddah 21421, Kingdom of Saudi Arabia",
+  "po_box": "784, Jeddah 21421",
+  "website": "www.bdoalamri.com",
+  "tollfree": "",
+  "phone": "+966 12 283 0112",
+  "email": "info@alamri.com",
+  "cr_no": "",
+  "cma_license": "",
+  "sources": {
+   "name_ar": "tc.ar.json p.4",
+   "name_en": "tc.en.json p.4; exec.en.json p.23",
+   "roles": "tc.en.json p.4, p.8 (current vs proposed)",
+   "address_ar": "tc.ar.json p.4",
+   "address_en": "tc.en.json p.4; https://www.bdoalamri.com/en-gb/locations/jeddah",
+   "po_box": "tc.en.json p.4; https://www.bdoalamri.com/en-gb/locations/jeddah",
+   "website": "https://www.bdoalamri.com/en-gb/locations/jeddah",
+   "phone": "https://www.bdoalamri.com/en-gb/locations/jeddah",
+   "email": "tc.en.json p.4; annual-2024.en.json p.22"
+  },
+  "verified": {
+   "name_ar": true,
+   "name_en": true,
+   "roles": true,
+   "address_ar": true,
+   "address_en": true,
+   "po_box": true,
+   "website": true,
+   "tollfree": false,
+   "phone": true,
+   "email": true,
+   "cr_no": false,
+   "cma_license": false
+  },
+  "notes": [
+   "BDO branding is from the firm's website ('BDO Saudi Arabia – Dr. Mohamed Al Amri & Co.'); fund docs never say BDO.",
+   "Appointed 14.06.2023 per annual-2024.en p.17 ('Dr. Mohamed Al Amri & Co. – Public Accountants').",
+   "Website email is info@bdoalamri.com (doc: info@alamri.com). Website Jeddah office: 5th Floor, Jeddah 7575 Center, Madinah Road, Al Aziziya, Jeddah 21421; fax (012) 661-2788. A people page shows (012) 639-4477 instead."
+  ],
+  "logo": "al-amri-bdo.png",
+  "logo_asset": "dac001e736f71fdb604abe60a6ebf08d"
+ },
+ {
+  "slug": "king-spalding",
+  "status": "current",
+  "name_ar": "مكتب محمد إبراهيم العمار للاستشارات القانونية (بالتعاون مع كينج آند سبالدنج إل إل بي)",
+  "name_en": "The Law Office of Mohammed AlAmmar (In Cooperation with King & Spalding LLP)",
+  "roles": [
+   {
+    "role_ar": "المستشار القانوني",
+    "role_en": "Legal Advisor"
+   }
+  ],
+  "address_ar": "مركز المملكة، الطابق 20، طريق الملك فهد، ص.ب: 14702، الرياض 11434، المملكة العربية السعودية",
+  "address_en": "Kingdom Centre, 20th Floor, King Fahad Road, P.O. Box 14702, Riyadh 11434, Kingdom of Saudi Arabia",
+  "po_box": "14702, Riyadh 11434",
+  "website": "www.kslaw.com",
+  "tollfree": "",
+  "phone": "+966 11 466 9400",
+  "email": "",
+  "cr_no": "",
+  "cma_license": "",
+  "sources": {
+   "name_ar": "tc.ar.json p.12",
+   "name_en": "tc.en.json p.12",
+   "roles": "tc.en.json p.12; exec.en.json p.23",
+   "address_ar": "tc.ar.json p.12",
+   "address_en": "tc.en.json p.12",
+   "po_box": "tc.en.json p.12; https://www.kslaw.com/offices/riyadh",
+   "website": "tc.en.json p.12",
+   "phone": "https://www.kslaw.com/offices/riyadh"
+  },
+  "verified": {
+   "name_ar": true,
+   "name_en": true,
+   "roles": true,
+   "address_ar": true,
+   "address_en": true,
+   "po_box": true,
+   "website": true,
+   "tollfree": false,
+   "phone": true,
+   "email": false,
+   "cr_no": false,
+   "cma_license": false
+  },
+  "notes": [
+   "Website Riyadh office: Kingdom Centre, 21st Floor (doc: 20th), P.O. Box 14702, Riyadh 12214 (doc: 11434).",
+   "Website states the Saudi affiliate is now 'King & Spalding Abdulaziz Al Fahad Law Firm LLC' (2025 merger) — the fund doc still names the AlAmmar office.",
+   "Exec summary short form: 'King & Spalding' / 'كينج آند سبالدينج' (spelling differs from T&C 'سبالدنج')."
+  ],
+  "logo": "king-spalding.png",
+  "logo_asset": "0117a64d884f285577097b56994b7258",
+  "funds": [
+   "income",
+   "gif"
+  ]
+ },
+ {
+  "slug": "shariyah-review-bureau",
+  "status": "current",
+  "name_ar": "دار المراجعة الشرعية ذ.م.م.",
+  "name_en": "Shariyah Review Bureau W.L.L.",
+  "roles": [
+   {
+    "role_ar": "لجنة الرقابة الشرعية",
+    "role_en": "Shari’a Supervisory Committee"
+   }
+  ],
+  "address_ar": "بناية رقم 872، مكتب رقم 41 و42، طريق 3618، السيف 436، مملكة البحرين",
+  "address_en": "Building No. 872, Offices Nos. 41 & 42, Road 3618, Seef 436, Kingdom of Bahrain",
+  "po_box": "",
+  "website": "www.shariyah.com",
+  "tollfree": "",
+  "phone": "+973 6667 0099",
+  "email": "",
+  "cr_no": "",
+  "cma_license": "",
+  "sources": {
+   "name_ar": "tc.ar.json p.12, p.59",
+   "name_en": "tc.en.json p.13, p.95",
+   "roles": "tc.en.json p.13",
+   "address_ar": "tc.ar.json p.12",
+   "address_en": "tc.en.json p.13",
+   "website": "tc.en.json p.13",
+   "phone": "https://shariyah.net/contact-us/ (Bahrain office)"
+  },
+  "verified": {
+   "name_ar": true,
+   "name_en": true,
+   "roles": true,
+   "address_ar": true,
+   "address_en": true,
+   "po_box": false,
+   "website": true,
+   "tollfree": false,
+   "phone": true,
+   "email": false,
+   "cr_no": false,
+   "cma_license": false
+  },
+  "notes": [
+   "Website now shariyah.net (doc: www.shariyah.com). Website Bahrain office: Building No. 872, Office No. 13 & 14 (doc: 41 & 42), Road 3618, Seef 436.",
+   "Licensed by the Central Bank of Bahrain (tc.en p.95), not CMA. Committee: Sheikh Muhammad Ahmad Al Sultan, Sheikh Dr. Salah Al Shalhoob; fee SAR 15,000/yr.",
+   "Website lists parent 'Al Marji Advisory Company' and a Riyadh office (+966 12 229 3424)."
+  ],
+  "logo": "shariyah-review-bureau.png",
+  "logo_asset": "c9f72d27f22ee447803a06d3aebcfcfa",
+  "funds": [
+   "income",
+   "gif"
+  ]
+ },
+ {
+  "slug": "aljazira-capital",
+  "status": "current",
+  "name_ar": "الجزيرة للأسواق المالية (الجزيرة كابيتال)",
+  "name_en": "Aljazira Capital",
+  "roles": [
+   {
+    "role_ar": "مدير الطرح",
+    "role_en": "Lead Manager"
+   },
+   {
+    "role_ar": "جهة مستلمة",
+    "role_en": "Receiving Entity"
+   }
+  ],
+  "address_ar": "طريق الملك فهد، ص.ب: 20438 – الرياض 11455، المملكة العربية السعودية",
+  "address_en": "King Fahad Road, P.O. Box 20438 - Riyadh 11455, Kingdom of Saudi Arabia",
+  "po_box": "20438, Riyadh 11455",
+  "website": "www.aljaziracapital.com",
+  "tollfree": "800 116 9999",
+  "phone": "+966 11 215 7000",
+  "email": "contactus@aljaziracapital.com.sa",
+  "cr_no": "1010351313",
+  "cma_license": "07076-37",
+  "sources": {
+   "name_ar": "tc.ar.json p.12",
+   "name_en": "tc.en.json p.13; https://www.aljaziracapital.com.sa/en/contact-us",
+   "roles": "tc.en.json p.13; exec.en.json p.23",
+   "address_ar": "tc.ar.json p.12",
+   "address_en": "tc.en.json p.13",
+   "po_box": "tc.en.json p.13; https://www.aljaziracapital.com.sa/en/contact-us",
+   "website": "tc.en.json p.13",
+   "tollfree": "https://www.aljaziracapital.com.sa/en/contact-us",
+   "phone": "https://www.aljaziracapital.com.sa/en/contact-us",
+   "email": "https://www.aljaziracapital.com.sa/en/contact-us",
+   "cr_no": "https://www.aljaziracapital.com.sa/en/contact-us",
+   "cma_license": "https://www.aljaziracapital.com.sa/en/contact-us (issued 22/07/2007)"
+  },
+  "verified": {
+   "name_ar": true,
+   "name_en": true,
+   "roles": true,
+   "address_ar": true,
+   "address_en": true,
+   "po_box": true,
+   "website": true,
+   "tollfree": true,
+   "phone": true,
+   "email": true,
+   "cr_no": true,
+   "cma_license": true
+  },
+  "notes": [
+   "Website domain aljaziracapital.com.sa (doc: www.aljaziracapital.com). Website postal code Riyadh 12343 (doc: 11455)."
+  ],
+  "logo": "aljazira-capital.png",
+  "logo_asset": "6c8cf71596ad640167065c208569753d",
+  "funds": [
+   "income",
+   "gif"
+  ]
+ },
+ {
+  "slug": "snb-capital",
+  "status": "current",
+  "name_ar": "شركة الأهلي المالية",
+  "name_en": "SNB Capital",
+  "roles": [
+   {
+    "role_ar": "جهة مستلمة",
+    "role_en": "Receiving Entity"
+   }
+  ],
+  "address_ar": "طريق الملك سعود، المبنى الإقليمي للبنك الأهلي السعودي، ص.ب: 22216، الرياض 11495، المملكة العربية السعودية",
+  "address_en": "King Saud Road – SNB Bank Head Office, P.O. Box 22216, Riyadh 11495, Kingdom of Saudi Arabia",
+  "po_box": "22216, Riyadh 11495",
+  "website": "www.alahlicapital.com",
+  "tollfree": "800 244 0123",
+  "phone": "+966 920000232",
+  "email": "alahlitadawul@alahlicapital.com",
+  "cr_no": "1010231474",
+  "cma_license": "06046-37",
+  "sources": {
+   "name_ar": "tc.ar.json p.12",
+   "name_en": "tc.en.json p.13; https://snbcapital.com/contact-us",
+   "roles": "tc.en.json p.13",
+   "address_ar": "tc.ar.json p.12",
+   "address_en": "tc.en.json p.13 (city corrected per tc.ar + website)",
+   "po_box": "tc.ar.json p.12; https://snbcapital.com/contact-us",
+   "website": "tc.en.json p.13",
+   "tollfree": "https://snbcapital.com/contact-us",
+   "phone": "https://snbcapital.com/contact-us",
+   "email": "https://snbcapital.com/contact-us",
+   "cr_no": "https://snbcapital.com/contact-us",
+   "cma_license": "https://snbcapital.com/contact-us"
+  },
+  "verified": {
+   "name_ar": true,
+   "name_en": true,
+   "roles": true,
+   "address_ar": true,
+   "address_en": true,
+   "po_box": true,
+   "website": true,
+   "tollfree": true,
+   "phone": true,
+   "email": true,
+   "cr_no": true,
+   "cma_license": true
+  },
+  "notes": [
+   "tc.en p.13 says 'Jeddah 11495' — wrong; tc.ar p.12 and website both say Riyadh 11495.",
+   "Current website is snbcapital.com (doc: www.alahlicapital.com). Website legal name 'SNB Capital Company'; address 'King Saud Road, Regional Building'.",
+   "Website renders licence as '37-06046' (RTL artefact) — normalised to 06046-37."
+  ],
+  "logo": "snb-capital.png",
+  "logo_asset": "162b6481bb1fd5e0871064c9906816c9"
+ },
+ {
+  "slug": "riyad-bank",
+  "status": "current",
+  "name_ar": "بنك الرياض",
+  "name_en": "Riyad Bank",
+  "roles": [
+   {
+    "role_ar": "جهة مستلمة",
+    "role_en": "Receiving Entity"
+   }
+  ],
+  "address_ar": "ص.ب: 22622، الرياض، العنوان الوطني: 2414 الرياض 13241-7279، المملكة العربية السعودية",
+  "address_en": "King Abdulaziz Road, P.O. Box 22622, Riyadh; National Address: 2414 Riyadh 13241-7279, Kingdom of Saudi Arabia",
+  "po_box": "22622",
+  "website": "www.riyadbank.com",
+  "tollfree": "800 124 2225",
+  "phone": "+966 11 401 3030",
+  "email": "",
+  "cr_no": "1010001054",
+  "cma_license": "",
+  "sources": {
+   "name_ar": "tc.ar.json p.12",
+   "name_en": "tc.en.json p.13; https://www.riyadbank.com/contact-us",
+   "roles": "tc.en.json p.13",
+   "address_ar": "tc.ar.json p.12",
+   "address_en": "tc.en.json p.13",
+   "po_box": "tc.en.json p.13; tc.ar.json p.12",
+   "website": "tc.en.json p.13; https://www.riyadbank.com/contact-us",
+   "tollfree": "https://www.riyadbank.com/contact-us ('Riyad Line')",
+   "phone": "https://www.riyadbank.com/contact-us",
+   "cr_no": "https://www.riyadbank.com/contact-us"
+  },
+  "verified": {
+   "name_ar": true,
+   "name_en": true,
+   "roles": true,
+   "address_ar": true,
+   "address_en": true,
+   "po_box": true,
+   "website": true,
+   "tollfree": true,
+   "phone": true,
+   "email": false,
+   "cr_no": true,
+   "cma_license": false
+  },
+  "notes": [
+   "P.O. Box postal code conflict: tc.en '11614' vs tc.ar '11416' — left out of po_box.",
+   "Website head office has moved: KAFD, Financial Boulevard, Al Aqeeq District, Building No. 3128, Riyadh (P.O. Box shown as '13519 Riyadh 6671').",
+   "Other website lines: personal 800 124 2020."
+  ],
+  "logo": "riyad-bank.png",
+  "logo_asset": "2f41addab603bf8fb5515ca13cde0050",
+  "funds": [
+   "income",
+   "gif"
+  ]
+ },
+ {
+  "slug": "arab-national-bank",
+  "status": "current",
+  "name_ar": "البنك العربي الوطني",
+  "name_en": "Arab National Bank",
+  "roles": [
+   {
+    "role_ar": "جهة مستلمة",
+    "role_en": "Receiving Entity"
+   }
+  ],
+  "address_ar": "العنوان الوطني: 7317 طريق الملك فيصل، المربع، وحدة رقم 1، الرياض 12613-3536، ص.ب 56921 الرياض 11564، المملكة العربية السعودية",
+  "address_en": "National Address: 7317 King Faisal Road, Al Muraba, Unit No. 1, Riyadh 12613-3536; P.O. Box 56921 Riyadh 11564, Kingdom of Saudi Arabia",
+  "po_box": "56921, Riyadh 11564",
+  "website": "www.anb.com.sa",
+  "tollfree": "800 124 4040",
+  "phone": "+966 11 402 9000",
+  "email": "customercare@anb.com.sa",
+  "cr_no": "7000018007",
+  "cma_license": "",
+  "sources": {
+   "name_ar": "tc.ar.json p.12",
+   "name_en": "tc.en.json p.13; https://anb.com.sa/web/anb/contact-us",
+   "roles": "tc.en.json p.13",
+   "address_ar": "tc.ar.json p.12",
+   "address_en": "tc.en.json p.13; https://anb.com.sa/web/anb/contact-us",
+   "po_box": "tc.en.json p.13; https://anb.com.sa/web/anb/contact-us",
+   "website": "tc.en.json p.13",
+   "tollfree": "https://anb.com.sa/web/anb/contact-us",
+   "phone": "https://anb.com.sa/web/anb/contact-us",
+   "email": "https://anb.com.sa/web/anb/contact-us",
+   "cr_no": "https://anb.com.sa/web/anb/contact-us (700-series unified number)"
+  },
+  "verified": {
+   "name_ar": true,
+   "name_en": true,
+   "roles": true,
+   "address_ar": true,
+   "address_en": true,
+   "po_box": true,
+   "website": true,
+   "tollfree": true,
+   "phone": true,
+   "email": true,
+   "cr_no": true,
+   "cma_license": false
+  },
+  "notes": [
+   "Doc and website addresses match. Brand styled 'anb' on website."
+  ],
+  "logo": "arab-national-bank.png",
+  "logo_asset": "2f0d1ff0cc6e2c5c44ff4d867f9715e1"
+ },
+ {
+  "slug": "alrajhi-bank",
+  "status": "current",
+  "name_ar": "مصرف الراجحي",
+  "name_en": "Al Rajhi Bank",
+  "roles": [
+   {
+    "role_ar": "جهة مستلمة",
+    "role_en": "Receiving Entity"
+   }
+  ],
+  "address_ar": "طريق الملك فهد، ص.ب: 28 الرياض 11411؛ العنوان الوطني: شركة الراجحي المصرفية للاستثمار، 8467 طريق الملك فهد – حي المروج، وحدة رقم (1)، الرياض 12263-2743، المملكة العربية السعودية",
+  "address_en": "King Fahad Road, P.O. Box 28, Riyadh 11411; National Address: Al Rajhi Banking & Investment Corp., 8467 King Fahad Road – Al Morooj District, Unit No. (1), Riyadh 12263-2743, Kingdom of Saudi Arabia",
+  "po_box": "28, Riyadh 11411",
+  "website": "www.alrajhibank.com.sa",
+  "tollfree": "",
+  "phone": "+966 920003344",
+  "email": "care@alrajhibank.com.sa",
+  "cr_no": "1010000096",
+  "cma_license": "",
+  "sources": {
+   "name_ar": "tc.ar.json p.12",
+   "name_en": "exec.en.json p.23; corporate_information.pdf",
+   "roles": "tc.en.json p.14",
+   "address_ar": "tc.ar.json p.12 (postcode corrected)",
+   "address_en": "tc.en.json p.14 (postcode corrected per https://www.alrajhibank.com.sa/ir25/services/pdf/corporate_information.pdf)",
+   "po_box": "tc.en.json p.14; tc.ar.json p.12",
+   "website": "tc.en.json p.14; https://www.alrajhibank.com.sa/ir25/services/pdf/corporate_information.pdf",
+   "phone": "https://www.alrajhibank.com.sa/ir25/services/pdf/corporate_information.pdf",
+   "email": "https://www.alrajhibank.com.sa/ir25/services/pdf/corporate_information.pdf",
+   "cr_no": "https://www.alrajhibank.com.sa/ir25/services/pdf/corporate_information.pdf"
+  },
+  "verified": {
+   "name_ar": true,
+   "name_en": true,
+   "roles": true,
+   "address_ar": true,
+   "address_en": true,
+   "po_box": true,
+   "website": true,
+   "tollfree": false,
+   "phone": true,
+   "email": true,
+   "cr_no": true,
+   "cma_license": false
+  },
+  "notes": [
+   "Docs print postcode 'Riyadh 122630-2743' (typo); bank's corporate information gives 12263-2743 — corrected.",
+   "Legal name 'Al Rajhi Banking and Investment Corporation'; trade name styled 'alrajhi bank'. T&C directory spells 'Alrajhi Bank'.",
+   "920003344 is a unified (9200) number, not toll-free; tollfree left blank."
+  ],
+  "logo": "alrajhi-bank.png",
+  "logo_asset": "778712fe8868e21e4209903e7ad98f44",
+  "funds": [
+   "dif2030",
+   "gif"
+  ]
+ },
+ {
+  "slug": "alinma-bank",
+  "status": "current",
+  "name_ar": "مصرف الإنماء",
+  "name_en": "Alinma Bank",
+  "roles": [
+   {
+    "role_ar": "جهة مستلمة",
+    "role_en": "Receiving Entity"
+   }
+  ],
+  "address_ar": "طريق الملك فهد، العليا، وحدة رقم 8، الرياض 12214-2370، المملكة العربية السعودية",
+  "address_en": "King Fahad Road, Olaya, Unit No. (8), Riyadh 12214-2370, Kingdom of Saudi Arabia",
+  "po_box": "66674, Riyadh 11586",
+  "website": "www.alinma.com",
+  "tollfree": "800 120 8000",
+  "phone": "+966 11 218 5555",
+  "email": "info@alinma.com",
+  "cr_no": "7001514442",
+  "cma_license": "",
+  "sources": {
+   "name_ar": "tc.ar.json p.12; exec.ar.json p.23",
+   "name_en": "exec.en.json p.23; https://www.alinma.com/en/contact-us",
+   "roles": "tc.en.json p.14; exec.en.json p.23",
+   "address_ar": "tc.ar.json p.12",
+   "address_en": "tc.en.json p.14",
+   "po_box": "https://www.alinma.com/en/contact-us",
+   "website": "tc.en.json p.14",
+   "tollfree": "https://www.alinma.com/en/contact-us",
+   "phone": "https://www.alinma.com/en/contact-us",
+   "email": "https://www.alinma.com/en/contact-us",
+   "cr_no": "https://www.alinma.com/en/contact-us (700-series unified number)"
+  },
+  "verified": {
+   "name_ar": true,
+   "name_en": true,
+   "roles": true,
+   "address_ar": true,
+   "address_en": true,
+   "po_box": true,
+   "website": true,
+   "tollfree": true,
+   "phone": true,
+   "email": true,
+   "cr_no": true,
+   "cma_license": false
+  },
+  "notes": [
+   "NAME CONFLICT: tc.en p.14 lists 'Alinma Investment Company', but tc.ar (prevailing) says 'مصرف الإنماء', exec summary says 'Alinma Bank', and the listed website alinma.com is the bank's. Treated as Alinma Bank.",
+   "Website head office: Al Anoud Tower, King Fahad Road, Riyadh 12214-2370; customer care 920028000."
+  ],
+  "logo": "alinma-bank.png",
+  "logo_asset": "e704b412a04aafafaf01dd9f53b3c4d6"
+ },
+ {
+  "slug": "banque-saudi-fransi",
+  "status": "current",
+  "name_ar": "البنك السعودي الفرنسي",
+  "name_en": "Banque Saudi Fransi",
+  "roles": [
+   {
+    "role_ar": "جهة مستلمة",
+    "role_en": "Receiving Entity"
+   }
+  ],
+  "address_ar": "ص.ب: 56006 الرياض 11554، الرياض 12624-2722، المملكة العربية السعودية",
+  "address_en": "P.O. Box 56006, Riyadh 11554; Riyadh 12624-2722, Kingdom of Saudi Arabia",
+  "po_box": "56006, Riyadh 11554",
+  "website": "www.alfransi.com.sa",
+  "tollfree": "800 124 2121",
+  "phone": "+966 11 289 9999",
+  "email": "",
+  "cr_no": "1010073368",
+  "cma_license": "",
+  "sources": {
+   "name_ar": "tc.ar.json p.12",
+   "name_en": "tc.en.json p.14; https://bsf.sa/english/contactus",
+   "roles": "tc.en.json p.14",
+   "address_ar": "tc.ar.json p.12",
+   "address_en": "tc.ar.json p.12 + https://bsf.sa/english/contactus (tc.en P.O. Box is wrong)",
+   "po_box": "tc.ar.json p.12; https://bsf.sa/english/contactus",
+   "website": "tc.en.json p.14",
+   "tollfree": "https://bsf.sa/english/contactus",
+   "phone": "tc.en.json p.14; https://bsf.sa/english/contactus",
+   "cr_no": "https://bsf.sa/english/contactus"
+  },
+  "verified": {
+   "name_ar": true,
+   "name_en": true,
+   "roles": true,
+   "address_ar": true,
+   "address_en": true,
+   "po_box": true,
+   "website": true,
+   "tollfree": true,
+   "phone": true,
+   "email": false,
+   "cr_no": true,
+   "cma_license": false
+  },
+  "notes": [
+   "tc.en p.14 prints 'P.O. Box 06006 - Riyadh 11004' — wrong; tc.ar and website both give 56006, Riyadh 11554.",
+   "www.alfransi.com.sa now redirects to bsf.sa. Website also lists unified national number 7000025333 and international +966 920000576."
+  ],
+  "logo": "banque-saudi-fransi.png",
+  "logo_asset": "545073ae8395f1d501b39e80c21e116b",
+  "funds": [
+   "income"
+  ]
+ },
+ {
+  "slug": "cma",
+  "status": "current",
+  "name_ar": "هيئة السوق المالية",
+  "name_en": "Capital Market Authority",
+  "roles": [
+   {
+    "role_ar": "الجهة التنظيمية",
+    "role_en": "Regulator"
+   }
+  ],
+  "address_ar": "",
+  "address_en": "Capital Market Authority Building - King Fahd Road (National Address: RGHA8090)",
+  "po_box": "",
+  "website": "https://cma.gov.sa/en/",
+  "tollfree": "800 245 1111",
+  "phone": "+966 11 205 3000",
+  "email": "info@cma.gov.sa",
+  "cr_no": "",
+  "cma_license": "",
+  "sources": {
+   "name_ar": "tc.ar.json p.15 (definitions)",
+   "name_en": "tc.en.json p.26; exec.en.json p.23",
+   "roles": "exec.en.json p.23",
+   "address_en": "https://cma.gov.sa/en/ContactWithCMA/Pages/ContactUs.aspx",
+   "website": "https://cma.gov.sa/en/ContactWithCMA/Pages/ContactUs.aspx",
+   "tollfree": "https://cma.gov.sa/en/ContactWithCMA/Pages/ContactUs.aspx",
+   "phone": "https://cma.gov.sa/en/ContactWithCMA/Pages/ContactUs.aspx",
+   "email": "https://cma.gov.sa/en/ContactWithCMA/Pages/ContactUs.aspx"
+  },
+  "verified": {
+   "name_ar": true,
+   "name_en": true,
+   "roles": true,
+   "address_ar": false,
+   "address_en": true,
+   "po_box": false,
+   "website": true,
+   "tollfree": true,
+   "phone": true,
+   "email": true,
+   "cr_no": false,
+   "cma_license": false
+  },
+  "notes": [
+   "No CMA address in fund docs; complaints escalate to CMA Investor Protection Division (tc.en p.99), then the Committee for Resolution of Securities Disputes.",
+   "Arabic address not published on the English contact page — left blank."
+  ],
+  "logo": "cma.png",
+  "logo_asset": "ed24bfb3cfd12716aee28b56f1f45045",
+  "funds": [
+   "income"
+  ]
+ },
+ {
+  "slug": "saudi-exchange",
+  "status": "current",
+  "name_ar": "تداول السعودية",
+  "name_en": "Saudi Exchange",
+  "roles": [
+   {
+    "role_ar": "السوق المالية (منصة الإدراج)",
+    "role_en": "Stock Exchange (listing venue)"
+   }
+  ],
+  "address_ar": "",
+  "address_en": "6897 King Fahd Road - Al Ulaya, Unit Number: 15, Riyadh 12211-3388, Kingdom of Saudi Arabia",
+  "po_box": "",
+  "website": "www.saudiexchange.sa",
+  "tollfree": "",
+  "phone": "+966 92000 1919",
+  "email": "CRD@saudiexchange.sa",
+  "cr_no": "",
+  "cma_license": "",
+  "sources": {
+   "name_ar": "tc.ar.json p.1, p.3",
+   "name_en": "exec.en.json p.1; https://fi.saudiexchange.sa/wps/portal/international/contact-us",
+   "roles": "exec.en.json p.23",
+   "address_en": "https://fi.saudiexchange.sa/wps/portal/international/contact-us",
+   "website": "tc.en.json p.56, p.61, p.72",
+   "phone": "https://fi.saudiexchange.sa/wps/portal/international/contact-us",
+   "email": "https://fi.saudiexchange.sa/wps/portal/international/contact-us"
+  },
+  "verified": {
+   "name_ar": true,
+   "name_en": true,
+   "roles": true,
+   "address_ar": false,
+   "address_en": true,
+   "po_box": false,
+   "website": true,
+   "tollfree": false,
+   "phone": true,
+   "email": true,
+   "cr_no": false,
+   "cma_license": false
+  },
+  "notes": [
+   "T&C calls it 'Saudi Tadawul'; exec calls it 'Tadawul'; current brand 'Saudi Exchange'.",
+   "Main saudiexchange.sa contact page blocked (403) to fetch; data from fi.saudiexchange.sa contact page. No toll-free number published there."
+  ],
+  "logo": "saudi-exchange.png",
+  "logo_asset": "d41f5a421716abb4d7fb03fe4306d9a6",
+  "funds": [
+   "income"
+  ]
+ },
+ {
+  "slug": "edaa",
+  "status": "current",
+  "name_ar": "شركة مركز إيداع الأوراق المالية (إيداع)",
+  "name_en": "Securities Depository Center Company (Edaa)",
+  "roles": [
+   {
+    "role_ar": "سجل مالكي الوحدات",
+    "role_en": "Unitholders’ Register keeper"
+   }
+  ],
+  "address_ar": "",
+  "address_en": "",
+  "po_box": "",
+  "website": "www.edaa.sa",
+  "tollfree": "",
+  "phone": "",
+  "email": "",
+  "cr_no": "",
+  "cma_license": "",
+  "sources": {
+   "name_ar": "tc.ar.json p.47",
+   "name_en": "tc.en.json p.72; annual-2025-fs.en.json p.44",
+   "roles": "tc.en.json p.72; annual-2025-fs.en.json p.44 (SAR 400k/yr registration fee)",
+   "website": "https://www.edaa.sa/wps/portal/edaa/about-us/contactus?locale=en (domain confirmed; page 403 to fetch)"
+  },
+  "verified": {
+   "name_ar": true,
+   "name_en": true,
+   "roles": true,
+   "address_ar": false,
+   "address_en": false,
+   "po_box": false,
+   "website": true,
+   "tollfree": false,
+   "phone": false,
+   "email": false,
+   "cr_no": false,
+   "cma_license": false
+  },
+  "notes": [
+   "Contact page refused automated fetch (403); address/phone/email left unverified. Not in the T&C Fund Directory."
+  ],
+  "logo": "",
+  "logo_asset": ""
+ },
+ {
+  "slug": "saudi-national-bank",
+  "name_ar": "البنك الأهلي السعودي",
+  "name_en": "Saudi National Bank",
+  "role": "Receiving Entity",
+  "address_ar": "طريق الملك عبدالعزيز، ص.ب: 3555، جدة 21481، المملكة العربية السعودية",
+  "address_en": "King Abdulaziz Road – P.O. Box 3555, Jeddah 21481, Kingdom of Saudi Arabia",
+  "website": "www.alahli.com",
+  "pages": "exec.ar p.12, 63; tc-2021.ar p.7; tc-2021.en p.13",
+  "notes": [
+   "EN T&C (Apr 2021) lists this receiving entity as “National Commercial Bank (NCB)”; the exec summary (AR) and logo use البنك الأهلي السعودي / Saudi National Bank."
+  ],
+  "roles": [
+   {
+    "role_ar": "جهة مستلمة",
+    "role_en": "Receiving Entity"
+   }
+  ],
+  "sources": {
+   "all": "tc-2018.en p.26; tc-2018.ar p.16"
+  },
+  "status": "current",
+  "logo": "saudi-national-bank.png",
+  "verified": {},
+  "funds": [
+   "reit",
+   "income",
+   "gif"
+  ],
+  "logo_asset": "49fddda0421f5190db54123010147617"
+ },
+ {
+  "slug": "alinma-investment",
+  "name_ar": "شركة الإنماء للاستثمار",
+  "name_en": "Alinma Investment Company",
+  "role": "Custodian",
+  "address_ar": "ص.ب: 66333، الرياض 11576، المملكة العربية السعودية",
+  "address_en": "P.O. Box 66333 – Riyadh 11576, Kingdom of Saudi Arabia",
+  "website": "www.alinmainvestment.com",
+  "pages": "exec.ar p.63; tc-2021.ar p.7; tc-2021.en p.13",
+  "roles": [
+   {
+    "role_ar": "أمين الحفظ",
+    "role_en": "Custodian"
+   }
+  ],
+  "phone": "+966 112 185 999",
+  "fax": "+966 112 185 900",
+  "cma_license": "09134-37",
+  "sources": {
+   "name_en": "tc-2018.en p.2, p.26, p.213",
+   "name_ar": "tc-2018.ar p.2, p.16, p.131",
+   "address": "tc-2018.en p.26/p.213; tc-2018.ar p.16/p.131",
+   "phone": "tc-2018.en p.213; tc-2018.ar p.131",
+   "cma_license": "tc-2018.en p.213"
+  },
+  "role_ar": "أمين الحفظ",
+  "role_en": "Custodian",
+  "logo_in_source": "tc-2021.ar p.7; tc-2021.en p.13",
+  "logo": "alinma-investment.png",
+  "status": "current",
+  "verified": {},
+  "funds": [
+   "reit",
+   "income"
+  ],
+  "logo_asset": "b1d7c8239a0ab646fa14e9f421f4838f"
+ },
+ {
+  "slug": "alazem-alsudairy-crowe",
+  "name_ar": "مكتب العظم والسديري وآل الشيخ وشركاؤهم محاسبون قانونيون (عضو من كرو العالمية)",
+  "name_en": "Al Azem, Al Sudairy, Al Shaikh & Partners CPA’s & Consultants (Member of Crowe Global)",
+  "role": "Auditor",
+  "address_ar": "ص.ب: 40097، جدة 21499، المملكة العربية السعودية",
+  "address_en": "P.O. Box 40097 – Jeddah 21499, Kingdom of Saudi Arabia",
+  "website": "www.crowe.com",
+  "pages": "exec.ar p.63; tc-2021.ar p.7; tc-2021.en p.13",
+  "notes": [
+   "Distinct from registry slug crowe-ksa (Crowe Solutions for Professional Consulting)."
+  ],
+  "roles": [
+   {
+    "role_ar": "مراجع الحسابات",
+    "role_en": "Auditor"
+   }
+  ],
+  "sources": {
+   "all": "tc-2018.en p.26, p.217; tc-2018.ar p.16, p.133"
+  },
+  "role_ar": "المحاسب القانوني",
+  "role_en": "Auditor",
+  "logo_in_source": "Crowe logo, tc-2021.ar p.7 / en p.13",
+  "logo": "crowe-ksa.png",
+  "status": "current",
+  "verified": {},
+  "funds": [
+   "reit",
+   "income",
+   "gif"
+  ],
+  "logo_asset": "d31c0880f3ce21828989dbc6add9c608"
+ },
+ {
+  "slug": "talal-abu-ghazaleh",
+  "name_ar": "شركة طلال أبو غزالة وشركاه",
+  "name_en": "Talal Abu-Ghazaleh Organization",
+  "role": "Tax Advisor",
+  "address_ar": "مبنى صباح سنتر رقم (6374)، الطابق 3، طريق الملك عبدالعزيز فرعي، حي الخالدية، ص.ب: 20135، جدة 21455، المملكة العربية السعودية",
+  "address_en": "Sabah Center Building No. (6374), 3rd Floor, King Abdulaziz Road – Al Khalidiya District, P.O. Box 20135 – Jeddah 21455, Kingdom of Saudi Arabia",
+  "pages": "exec.ar p.63; tc-2021.ar p.7; tc-2021.en p.14",
+  "roles": [
+   {
+    "role_ar": "مستشار الضريبة",
+    "role_en": "Tax Advisor"
+   }
+  ],
+  "sources": {
+   "all": "tc-2018.en p.27; tc-2018.ar p.16"
+  },
+  "notes": [
+   "Same party as 'talal-abu-ghazaleh' (partners-new.exec) and 'tag-org' (partners-new.tc21); this file uses talal-abu-ghazaleh."
+  ],
+  "role_ar": "مستشار الضريبة",
+  "role_en": "Tax Advisor",
+  "logo_in_source": "tc-2021.ar p.7; tc-2021.en p.14",
+  "logo": "talal-abu-ghazaleh.png",
+  "status": "current",
+  "verified": {},
+  "funds": [
+   "reit"
+  ],
+  "logo_asset": "efc2e483b2058a6e18b4e2e685264cce"
+ },
+ {
+  "slug": "abaad-valuation",
+  "name_ar": "شركة أبعاد للتقييم العقاري («إنتماء المتطورة» سابقاً)",
+  "name_en": "Abaad Real Estate Valuation Company (Formerly Intimaa Advanced Company)",
+  "role": "Real Estate Valuator",
+  "address_ar": "مبنى أوش، الطابق الخامس، مكتب 22، شارع محمد إبراهيم مسعود، حي السلامة، ص.ب 4688، جدة 23524، المملكة العربية السعودية",
+  "address_en": "Osh Building, 5th Floor, Office 22, Mohammed Ibrahim Masoud Street, Al Salamah District, P.O. Box 4688, Jeddah 23524, Kingdom of Saudi Arabia",
+  "pages": "exec.ar p.63; tc-2021.ar p.7; tc-2021.en p.14",
+  "roles": [
+   {
+    "role_ar": "مقيم عقاري",
+    "role_en": "Real Estate Valuer"
+   }
+  ],
+  "phone": "920004134",
+  "sources": {
+   "all": "tc-2018.en p.5, p.27, p.198 (website 'N/A' / 'None'); tc-2018.ar p.4, p.16, p.120 (website 'لا يوجد')"
+  },
+  "role_ar": "مقيم عقاري لأصول الصندوق",
+  "role_en": "Fund Assets Real Estate Valuator",
+  "logo_in_source": "tc-2021.ar p.7, p.102; en p.14, p.180",
+  "logo": "abaad-valuation.png",
+  "status": "current",
+  "verified": {},
+  "funds": [
+   "reit"
+  ],
+  "logo_asset": "5b30d711ad1dae5877e191227730ffd2"
+ },
+ {
+  "slug": "white-cubes",
+  "name_ar": "وايت كيوبز",
+  "name_en": "White Cubes",
+  "role": "Real Estate Valuator",
+  "address_ar": "رقم 408 الملقا، طريق الأمير محمد بن سعد، ص.ب 2955، الرياض 13524، المملكة العربية السعودية",
+  "address_en": "No. 408, Al Malga, Prince Muhammad bin Saad Road, P.O. Box 2955, Riyadh 13524, Kingdom of Saudi Arabia",
+  "website": "http://whitecubesre.com",
+  "pages": "exec.ar p.63; tc-2021.ar p.7; tc-2021.en p.14",
+  "notes": [
+   "Logo on exec p.63 prints www.white-cubes.com; T&C gives http://whitecubesre.com."
+  ],
+  "roles": [
+   {
+    "role_ar": "مقيم عقاري",
+    "role_en": "Real Estate Valuer"
+   }
+  ],
+  "phone": "+966 11 254 2126",
+  "sources": {
+   "all": "tc-2018.en p.5, p.9, p.27, p.198; tc-2018.ar p.4, p.6, p.16, p.120"
+  },
+  "role_ar": "مقيم عقاري لأصول الصندوق",
+  "role_en": "Fund Assets Real Estate Valuator",
+  "logo_in_source": "WHITE CUBES Valuation & Advisory Services – tc-2021.ar p.7, p.102; en p.14, p.180",
+  "logo": "white-cubes.png",
+  "status": "current",
+  "verified": {},
+  "funds": [
+   "reit"
+  ],
+  "logo_asset": "289a33872eda6c8ab79e6027af5f6c94"
+ },
+ {
+  "slug": "valuation-expert",
+  "name_ar": "شركة خبير التثمين",
+  "name_en": "Valuation Expert Company",
+  "role": "Real Estate Valuator",
+  "address_ar": "مركز جميل سكوير، مكتب 111، شارع الأمير محمد بن عبدالعزيز، حي الروضة، ص.ب 50519، جدة 21413، المملكة العربية السعودية",
+  "address_en": "Jameel Square, Office 111, Prince Mohammed bin Abdulaziz Street, Al Rawda District, P.O. Box 50519, Jeddah 21413, Kingdom of Saudi Arabia",
+  "website": "https://valustrat.com",
+  "pages": "exec.ar p.63; tc-2021.ar p.7; tc-2021.en p.14",
+  "notes": [
+   "Logo shown is ValuStrat."
+  ],
+  "roles": [
+   {
+    "role_ar": "مقيم عقاري (سابق، في الصيغة الحالية من جدول التعديلات)",
+    "role_en": "Real Estate Valuer (former; listed under 'Current Version' in the amendments table)"
+   }
+  ],
+  "phone": "+966 12 283 1530",
+  "sources": {
+   "all": "tc-2018.en p.5, p.9; tc-2018.ar p.4, p.6"
+  },
+  "role_ar": "مقيم عقاري لأصول الصندوق",
+  "role_en": "Fund Assets Real Estate Valuator",
+  "logo_in_source": "ValuStrat logo – tc-2021.ar p.7, p.102; en p.14, p.180",
+  "logo": "valuation-expert.png",
+  "status": "current",
+  "verified": {},
+  "funds": [
+   "reit"
+  ],
+  "logo_asset": "40540f95e5d8314d3cad88835a26e50e"
+ },
+ {
+  "slug": "ncb",
+  "name_ar": "البنك الأهلي السعودي",
+  "name_en": "National Commercial Bank (NCB)",
+  "role_ar": "جهة مستلمة",
+  "role_en": "Receiving Entity",
+  "address_ar": "طريق الملك عبدالعزيز ، ص.ب: ٣٥٥٥، جدة ٢١٤٨١ المملكة العربية السعودية",
+  "address_en": "King Abdulaziz Road – P.O. Box 3555, Jeddah 21481, Kingdom of Saudi Arabia",
+  "website": "www.alahli.com",
+  "sources": "tc-2021.ar p.7; tc-2021.en p.13",
+  "logo_in_source": "tc-2021.ar p.7 (الأهلي NCB); tc-2021.en p.13",
+  "notes": [
+   "Pre-merger NCB; registry already has snb-capital (SNB Capital) – different entity.",
+   "Merged into Saudi National Bank (2021). Kept separate because the February 2021 T&C names NCB."
+  ],
+  "logo": "ncb.png",
+  "status": "former",
+  "verified": {},
+  "funds": [
+   "reit",
+   "income"
+  ],
+  "logo_asset": "bfcb8e7747d2e4ce4d54312ef9b7c88a"
+ },
+ {
+  "slug": "alinma-capital",
+  "status": "current",
+  "name_ar": "شركة الإنماء المالية",
+  "name_en": "Alinma Capital Company",
+  "role": "Custodian",
+  "roles": [
+   {
+    "role_ar": "أمين الحفظ",
+    "role_en": "Custodian"
+   }
+  ],
+  "address_ar": "طريق الملك فهد | ص.ب: 55560، الرياض 11544، المملكة العربية السعودية",
+  "address_en": "King Fahad Road, P.O. Box 55560, Riyadh 11544, Kingdom of Saudi Arabia",
+  "cma_license": "09134-37",
+  "tollfree": "8004413333",
+  "fax": "0112906299",
+  "email": "info@alinmainvest.com",
+  "website": "www.alinmacapital.com",
+  "pages": "annual-2025.ar p.17",
+  "notes": [
+   "Same CMA licence 09134-37 as alinma-investment (renamed entity). English name is a translation."
+  ],
+  "logo": "alinma-capital.png",
+  "logo_in_source": "annual-2025.ar p.17",
+  "funds": [
+   "income"
+  ],
+  "role_ar": "أمين الحفظ",
+  "role_en": "Custodian",
+  "verified": {},
+  "logo_asset": "9887008a2ef855e2e7466e4d40b36346"
+ },
+ {
+  "slug": "albilad-capital",
+  "status": "current",
+  "name_ar": "شركة البلاد المالية",
+  "name_en": "Albilad Capital",
+  "name_en_alt": [
+   "Albilad Investment Company"
+  ],
+  "role": "Custodian",
+  "roles": [
+   {
+    "role_ar": "أمين الحفظ",
+    "role_en": "Custodian"
+   }
+  ],
+  "address_ar": "طريق الملك فهد، ص.ب: 140، الرياض 11411، المملكة العربية السعودية",
+  "address_en": "King Fahd Road, P.O. Box: 140, Riyadh 11411, Kingdom of Saudi Arabia",
+  "cma_license": "08100-37",
+  "unified_number": "920003636",
+  "fax": "0112906299",
+  "email": "clientservices@albilad-capital.com",
+  "website": "www.albilad-capital.com",
+  "logo": "logos/albilad-capital.png",
+  "funds": [
+   "gif"
+  ],
+  "pages": "gif tc.ar p.12",
+  "notes": [
+   "Name printed as «Albilad Capital» (T&C 2026, exec/factsheet 2022) and «Albilad Investment Company» (annual reports 2022–2025, EN).",
+   "Unified number 920003636 (T&C 2026) vs 8001160002 (annual reports)."
+  ]
+ },
+ {
+  "slug": "idealratings",
+  "status": "current",
+  "name_ar": "آيديال رايتنغز",
+  "name_en": "IdealRatings",
+  "role": "Index Service Provider",
+  "roles": [
+   {
+    "role_ar": "مقدم خدمة المؤشر",
+    "role_en": "Index Service Provider"
+   },
+   {
+    "role_ar": "مستشار التطهير والتدقيق",
+    "role_en": "Purification and Screening Advisor"
+   }
+  ],
+  "funds": [
+   "gif"
+  ],
+  "logo": null,
+  "notes": [
+   "Third-party; no logo used. Sources spell IdealRatings / Ideal Ratings / Ideal Rating."
+  ]
+ }
+]

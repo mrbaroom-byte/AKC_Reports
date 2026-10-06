@@ -1,0 +1,20 @@
+<!doctype html>
+<html lang="ar" dir="rtl"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="robots" content="noindex,nofollow">
+<title>الدخول · البيانات الربعية</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Alexandria:wght@600&family=IBM+Plex+Sans+Arabic:wght@400;600&display=swap">
+<style>
+body{margin:0;min-height:100vh;display:grid;place-items:center;background:#071A3A;color:#DCE3EE;font:15px/1.6 'IBM Plex Sans Arabic',Tahoma,sans-serif;padding:16px}
+form{width:100%;max-width:360px;background:#0E2347;border:1px solid #1F3A66;border-radius:14px;padding:28px 24px}
+h1{font:600 20px 'Alexandria',sans-serif;margin:0 0 4px;color:#fff}p{margin:0 0 18px;color:#9DB8E0;font-size:13.5px}
+label{display:block;font-size:13px;margin-bottom:6px}
+input{width:100%;box-sizing:border-box;font:inherit;padding:10px 12px;border-radius:9px;border:1px solid #2B4A7C;background:#071A3A;color:#fff}
+button{margin-top:14px;width:100%;font:600 15px inherit;font-family:inherit;padding:10px;border:0;border-radius:9px;background:#3B7DD8;color:#fff;cursor:pointer}
+.e{color:#F1B4B4;font-size:13px;margin-top:10px}
+</style></head>
+<body><form method="post" action="/login">
+<h1>البيانات الربعية</h1><p>صناديق أسواق المال · شركة الخبير المالية</p>
+{% if not configured %}<p class="e">لم تُضبط كلمة المرور بعد. أضف المتغير ADMIN_PASSWORD في إعدادات الخدمة على Railway.</p>{% endif %}
+<label for="pw">كلمة المرور</label><input id="pw" type="password" name="password" autocomplete="current-password" required autofocus>
+<button type="submit">دخول</button>
+{% if err %}<div class="e">كلمة المرور غير صحيحة.</div>{% endif %}
+</form></body></html>

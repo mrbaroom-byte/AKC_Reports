@@ -1,0 +1,448 @@
+{
+ "fund": {
+  "ar": "صندوق الخبير للنمو والدخل",
+  "en": "Alkhabeer Growth & Income Fund"
+ },
+ "eyebrow": {
+  "ar": "صندوق استثمار أسهم متوافق مع المعايير الشرعية",
+  "en": "Shari’a-Compliant Equity Investment Fund"
+ },
+ "logo_white": "logo/gif-logo-white.svg",
+ "logo_color": "logo/gif-logo-color.svg",
+ "tag_exclude": [
+  "الخبير للنمو",
+  "Alkhabeer Growth",
+  "ALKHABEER GROWTH",
+  "صندوق استثمار",
+  "Closed-Ended",
+  "Open-Ended",
+  "Shari",
+  "Sharia"
+ ],
+ "meta": {
+  "tc": [
+   "الشروط والأحكام",
+   "Terms and Conditions",
+   "المحدّثة · 20 مايو 2026م",
+   "Updated · 20 May 2026",
+   "full"
+  ],
+  "exec": [
+   "الملخص التنفيذي",
+   "Executive Summary",
+   "مارس 2022م",
+   "March 2022",
+   "full"
+  ],
+  "factsheet": [
+   "ملخص معلومات الصندوق",
+   "Fund Fact Sheet",
+   "2022م",
+   "2022",
+   "full"
+  ],
+  "faq": [
+   "الأسئلة الشائعة",
+   "Frequently Asked Questions",
+   "2022م",
+   "2022",
+   "full"
+  ],
+  "voting": [
+   "سياسة حقوق التصويت",
+   "Voting Rights Policy",
+   "2022م",
+   "2022",
+   "full"
+  ],
+  "zakat": [
+   "إشعار بشأن الزكاة",
+   "Zakat Notice",
+   "4 أبريل 2024م",
+   "4 April 2024",
+   "band"
+  ]
+ },
+ "docs": [
+  {
+   "id": "tc",
+   "side": "EN",
+   "file": "pdf/df7c1bae.pdf"
+  },
+  {
+   "id": "faq",
+   "side": "EN",
+   "file": "pdf/ab39084e.pdf"
+  },
+  {
+   "id": "voting",
+   "side": "EN",
+   "file": "pdf/f779ec9d.pdf"
+  },
+  {
+   "id": "zakat",
+   "side": "EN",
+   "file": "pdf/22cac80a.pdf"
+  },
+  {
+   "id": "annual-2025",
+   "side": "EN",
+   "file": "pdf/f04152f0.pdf"
+  },
+  {
+   "id": "annual-2024",
+   "side": "EN",
+   "file": "pdf/beb85bec.pdf"
+  },
+  {
+   "id": "annual-2023",
+   "side": "EN",
+   "file": "pdf/f982d7da.pdf"
+  },
+  {
+   "id": "annual-2022",
+   "side": "EN",
+   "file": "pdf/936fceb3.pdf"
+  },
+  {
+   "id": "q1-2026",
+   "side": "EN",
+   "file": "pdf/f0814bf8.pdf"
+  },
+  {
+   "id": "q2-2026",
+   "side": "EN",
+   "file": "pdf/71315c10.pdf"
+  },
+  {
+   "id": "q1-2025",
+   "side": "EN",
+   "file": "pdf/c5a2f08d.pdf"
+  },
+  {
+   "id": "q2-2025",
+   "side": "EN",
+   "file": "pdf/f480ba66.pdf"
+  },
+  {
+   "id": "q3-2025",
+   "side": "EN",
+   "file": "pdf/5baa5cb1.pdf"
+  },
+  {
+   "id": "q4-2025",
+   "side": "EN",
+   "file": "pdf/e6edcb68.pdf"
+  },
+  {
+   "id": "q1-2024",
+   "side": "EN",
+   "file": "pdf/07d98cb7.pdf"
+  },
+  {
+   "id": "q2-2024",
+   "side": "EN",
+   "file": "pdf/deb075b2.pdf"
+  },
+  {
+   "id": "q3-2024",
+   "side": "EN",
+   "file": "pdf/22ec4e6f.pdf"
+  },
+  {
+   "id": "q4-2024",
+   "side": "EN",
+   "file": "pdf/482192c0.pdf"
+  },
+  {
+   "id": "q1-2023",
+   "side": "EN",
+   "file": "pdf/43286009.pdf"
+  },
+  {
+   "id": "q2-2023",
+   "side": "EN",
+   "file": "pdf/499cf034.pdf"
+  },
+  {
+   "id": "q3-2023",
+   "side": "EN",
+   "file": "pdf/53616a89.pdf"
+  },
+  {
+   "id": "q4-2023",
+   "side": "EN",
+   "file": "pdf/f4cbd307.pdf"
+  },
+  {
+   "id": "q2-2022",
+   "side": "EN",
+   "file": "pdf/c95876c0.pdf"
+  },
+  {
+   "id": "q3-2022",
+   "side": "EN",
+   "file": "pdf/fd496284.pdf"
+  },
+  {
+   "id": "q4-2022",
+   "side": "EN",
+   "file": "pdf/97f091ab.pdf"
+  },
+  {
+   "id": "tc",
+   "side": "AR",
+   "file": "pdf/105b25ec.pdf"
+  },
+  {
+   "id": "exec",
+   "side": "AR",
+   "file": "pdf/7730c3b1.pdf"
+  },
+  {
+   "id": "factsheet",
+   "side": "AR",
+   "file": "pdf/cd6c02e2.pdf"
+  },
+  {
+   "id": "faq",
+   "side": "AR",
+   "file": "pdf/c926e01b.pdf"
+  },
+  {
+   "id": "voting",
+   "side": "AR",
+   "file": "pdf/1b41a086.pdf"
+  },
+  {
+   "id": "zakat",
+   "side": "AR",
+   "file": "pdf/7797a67b.pdf"
+  },
+  {
+   "id": "annual-2025",
+   "side": "AR",
+   "file": "pdf/f61cbd37.pdf"
+  },
+  {
+   "id": "annual-2024",
+   "side": "AR",
+   "file": "pdf/048f0636.pdf"
+  },
+  {
+   "id": "annual-2023",
+   "side": "AR",
+   "file": "pdf/f21decb9.pdf"
+  },
+  {
+   "id": "annual-2022",
+   "side": "AR",
+   "file": "pdf/0d0d0eb9.pdf"
+  },
+  {
+   "id": "q1-2026",
+   "side": "AR",
+   "file": "pdf/335cd867.pdf"
+  },
+  {
+   "id": "q2-2026",
+   "side": "AR",
+   "file": "pdf/644f8359.pdf"
+  },
+  {
+   "id": "q1-2025",
+   "side": "AR",
+   "file": "pdf/0a862596.pdf"
+  },
+  {
+   "id": "q2-2025",
+   "side": "AR",
+   "file": "pdf/0b9b81b0.pdf"
+  },
+  {
+   "id": "q3-2025",
+   "side": "AR",
+   "file": "pdf/3933edb5.pdf"
+  },
+  {
+   "id": "q4-2025",
+   "side": "AR",
+   "file": "pdf/42d0ce35.pdf"
+  },
+  {
+   "id": "q1-2024",
+   "side": "AR",
+   "file": "pdf/5482241d.pdf"
+  },
+  {
+   "id": "q2-2024",
+   "side": "AR",
+   "file": "pdf/65644bbf.pdf"
+  },
+  {
+   "id": "q3-2024",
+   "side": "AR",
+   "file": "pdf/75d9b4a8.pdf"
+  },
+  {
+   "id": "q4-2024",
+   "side": "AR",
+   "file": "pdf/6dbef15c.pdf"
+  },
+  {
+   "id": "q1-2023",
+   "side": "AR",
+   "file": "pdf/f33a0c38.pdf"
+  },
+  {
+   "id": "q2-2023",
+   "side": "AR",
+   "file": "pdf/d31e9220.pdf"
+  },
+  {
+   "id": "q3-2023",
+   "side": "AR",
+   "file": "pdf/78fc0b5a.pdf"
+  },
+  {
+   "id": "q4-2023",
+   "side": "AR",
+   "file": "pdf/11270d61.pdf"
+  },
+  {
+   "id": "q2-2022",
+   "side": "AR",
+   "file": "pdf/156f140f.pdf"
+  },
+  {
+   "id": "q3-2022",
+   "side": "AR",
+   "file": "pdf/146346d6.pdf"
+  },
+  {
+   "id": "q4-2022",
+   "side": "AR",
+   "file": "pdf/a02bf46b.pdf"
+  }
+ ],
+ "orig_dpi": 125,
+ "orig_q": 68,
+ "key": "gif",
+ "file_prefix": "AKC-AGIF",
+ "stems": {
+  "tc": "TC-MAY-2026",
+  "exec": "EXEC-SUMMARY-2022",
+  "factsheet": "FACTSHEET-2022",
+  "faq": "FAQ-2022",
+  "voting": "VOTING-POLICY-2022",
+  "zakat": "ZAKAT-NOTICE-2024"
+ },
+ "doc_ids": [
+  "tc",
+  "exec",
+  "factsheet",
+  "faq",
+  "voting",
+  "zakat",
+  "q2-2022",
+  "q3-2022",
+  "q4-2022",
+  "q1-2023",
+  "q2-2023",
+  "q3-2023",
+  "q4-2023",
+  "q1-2024",
+  "q2-2024",
+  "q3-2024",
+  "q4-2024",
+  "q1-2025",
+  "q2-2025",
+  "q3-2025",
+  "q4-2025",
+  "q1-2026",
+  "q2-2026",
+  "annual-2022",
+  "annual-2023",
+  "annual-2024",
+  "annual-2025"
+ ],
+ "orig_urls": {
+  "tc.en": "https://s3.eu-central-2.wasabisys.com/akc2026/wp-media-folder-alkhabeer-capital/media/2026/06/Alkhabeer-Growth-Income-Fund-TC-Delisting-Changes-EN.pdf",
+  "faq.en": "https://s3.eu-central-2.wasabisys.com/akc2026/wp-media-folder-alkhabeer-capital/media/2022/03/Alkhabeer-Growth-and-Income-Traded-Fund-FAQ-2022-EN.pdf",
+  "ifs-2026.en": "https://s3.eu-central-2.wasabisys.com/akc2026/wp-media-folder-alkhabeer-capital/media/2026/08/ALKHABEER-GROWTH-AND-INCOME-FUND-FS-June-30-2026-EN.pdf",
+  "ifs-2025.en": "https://s3.eu-central-2.wasabisys.com/akc2026/wp-media-folder-alkhabeer-capital/media/2025/12/Alkhabeer-Growth-Income-Traded-Fund-June-30-2025-EN.pdf",
+  "ifs-2024.en": "https://s3.eu-central-2.wasabisys.com/akc2026/wp-media-folder-alkhabeer-capital/media/2025/12/Alkhabeer-Growth-Income-June-30-2024-EN-Signed.pdf",
+  "ifs-2023.en": "https://s3.eu-central-2.wasabisys.com/akc2026/wp-media-folder-alkhabeer-capital/media/2023/08/Alkhabeer-Growth-and-Income-Traded-Fund-June-30-2023-EN.pdf",
+  "ifs-2022.en": "https://s3.eu-central-2.wasabisys.com/akc2026/wp-media-folder-alkhabeer-capital/media/2022/08/Alkhabeer-Growth-and-Income-Traded-Fund-as-at-June-30-2022-EN.pdf",
+  "voting.en": "https://s3.eu-central-2.wasabisys.com/akc2026/wp-media-folder-alkhabeer-capital/media/2022/09/Alkhabeer-Growth-and-Income-Traded-Fund-Voting-Rights-Policy-2022_English.pdf",
+  "zakat.en": "https://s3.eu-central-2.wasabisys.com/akc2026/wp-media-folder-alkhabeer-capital/media/2025/12/Alkhabeer-Growth-Income-Traded-Fund-Zakat-Letter-1.pdf",
+  "annual-2025.en": "https://s3.eu-central-2.wasabisys.com/akc2026/wp-media-folder-alkhabeer-capital/media/2026/03/Alkhabeer-Growth-Income-Traded-Fund-2025-Annual-Report-English.pdf",
+  "annual-2024.en": "https://s3.eu-central-2.wasabisys.com/akc2026/wp-media-folder-alkhabeer-capital/media/2025/12/ALKHABEER-GROWTH-INCOME-TRADED-FUND-2024-Annual-Report-English.pdf",
+  "annual-2023.en": "https://s3.eu-central-2.wasabisys.com/akc2026/wp-media-folder-alkhabeer-capital/media/2025/12/Alkhabeer-GITF-2023-Annual-Report-English.pdf",
+  "annual-2022.en": "https://s3.eu-central-2.wasabisys.com/akc2026/wp-media-folder-alkhabeer-capital/media/2023/03/Alkhabeer-GITF-2022-Annual-Report-English.pdf",
+  "q1-2026.en": "https://s3.eu-central-2.wasabisys.com/akc2026/wp-media-folder-alkhabeer-capital/media/2026/04/ALKHABEER-GROWTH-INCOME-TRADED-FUND-Q1-2026-English.pdf",
+  "q2-2026.en": "https://s3.eu-central-2.wasabisys.com/akc2026/wp-media-folder-alkhabeer-capital/media/2026/07/ALKHABEER-GROWTH-INCOME-FUND-Q2-2026-EN.pdf",
+  "q1-2025.en": "https://s3.eu-central-2.wasabisys.com/akc2026/wp-media-folder-alkhabeer-capital/media/2026/01/ALKHABEER-GROWTH-INCOME-TRADED-FUND-Q1-2025-English-FINAL.pdf",
+  "q2-2025.en": "https://s3.eu-central-2.wasabisys.com/akc2026/wp-media-folder-alkhabeer-capital/media/2025/12/ALKHABEER-GROWTH-INCOME-TRADED-FUND-Q2-2025-EN.pdf",
+  "q3-2025.en": "https://s3.eu-central-2.wasabisys.com/akc2026/wp-media-folder-alkhabeer-capital/media/2025/12/ALKHABEER-GROWTH-INCOME-TRADED-FUND-Q3-2025-English.pdf",
+  "q4-2025.en": "https://s3.eu-central-2.wasabisys.com/akc2026/wp-media-folder-alkhabeer-capital/media/2026/01/Alkhabeer-Growth-Income-Traded-Fund-English-Factsheet-Q4-2025.pdf",
+  "q1-2024.en": "https://s3.eu-central-2.wasabisys.com/akc2026/wp-media-folder-alkhabeer-capital/media/2025/12/AKC-Growth-Income-Traded-Fund-Q1-2024-English.pdf",
+  "q2-2024.en": "https://s3.eu-central-2.wasabisys.com/akc2026/wp-media-folder-alkhabeer-capital/media/2025/12/AKC-Growth-Income-Traded-Fund-Q2-2024-English.pdf",
+  "q3-2024.en": "https://s3.eu-central-2.wasabisys.com/akc2026/wp-media-folder-alkhabeer-capital/media/2025/12/ALKHABEER-GROWTH-INCOME-TRADED-FUND-Q3-2024-English.pdf",
+  "q4-2024.en": "https://s3.eu-central-2.wasabisys.com/akc2026/wp-media-folder-alkhabeer-capital/media/2025/12/ALKHABEER-GROWTH-INCOME-TRADED-FUND-Q4-2024-En.pdf",
+  "q1-2023.en": "https://s3.eu-central-2.wasabisys.com/akc2026/wp-media-folder-alkhabeer-capital/media/2023/04/AKC-Growth-Income-Traded-Fund-Q1-2023-English.pdf",
+  "q2-2023.en": "https://s3.eu-central-2.wasabisys.com/akc2026/wp-media-folder-alkhabeer-capital/media/2023/07/AKC-Growth-Income-Traded-Fund-Q2-2023-English.pdf",
+  "q3-2023.en": "https://s3.eu-central-2.wasabisys.com/akc2026/wp-media-folder-alkhabeer-capital/media/2023/10/AKC-Growth-Income-Traded-Fund-Q3-2023-English.pdf",
+  "q4-2023.en": "https://s3.eu-central-2.wasabisys.com/akc2026/wp-media-folder-alkhabeer-capital/media/2024/01/AKC-Growth-Income-Traded-Fund-Q4-2023-English.pdf",
+  "q2-2022.en": "https://s3.eu-central-2.wasabisys.com/akc2026/wp-media-folder-alkhabeer-capital/media/2022/07/AKC-Growth-Income-Traded-Fund-Q2-2022-English.pdf",
+  "q3-2022.en": "https://s3.eu-central-2.wasabisys.com/akc2026/wp-media-folder-alkhabeer-capital/media/2022/10/AKC-Growth-Income-Traded-Fund-Q3-2022-English.pdf",
+  "q4-2022.en": "https://s3.eu-central-2.wasabisys.com/akc2026/wp-media-folder-alkhabeer-capital/media/2023/01/AKC-Growth-Income-Traded-Fund-Q4-2022-English.pdf",
+  "idx-q1-2023.en": "https://s3.eu-central-2.wasabisys.com/akc2026/wp-media-folder-alkhabeer-capital/media/2023/12/Alkhabeer-Global-Equity-Index-Fact-sheet-Q1-2023.pdf",
+  "idx-q2-2023.en": "https://s3.eu-central-2.wasabisys.com/akc2026/wp-media-folder-alkhabeer-capital/media/2023/12/Alkhabeer-Global-Equity-Index-Fact-sheet-Q2-2023.pdf",
+  "idx-q3-2023.en": "https://s3.eu-central-2.wasabisys.com/akc2026/wp-media-folder-alkhabeer-capital/media/2023/11/Alkhabeer-Global-Equity-Index-Fact-sheet-Q3-2023.pdf",
+  "idx-q2-2022.en": "https://s3.eu-central-2.wasabisys.com/akc2026/wp-media-folder-alkhabeer-capital/media/2022/07/Alkhabeer-Global-Equity-Index-Q2-2022.pdf",
+  "idx-q3-2022.en": "https://s3.eu-central-2.wasabisys.com/akc2026/wp-media-folder-alkhabeer-capital/media/2022/10/Alkhabeer-Global-Equity-Index-Factsheet-Q3-2022.pdf",
+  "idx-q4-2022.en": "https://s3.eu-central-2.wasabisys.com/akc2026/wp-media-folder-alkhabeer-capital/media/2023/12/Alkhabeer-Global-Equity-Index-Fact-sheet-Q4-2022.pdf",
+  "tc.ar": "https://s3.eu-central-2.wasabisys.com/akc2026/wp-media-folder-alkhabeer-capital/media/2026/06/Alkhabeer-Growth-Income-Fund-TC-Delisting-Changes-AR.pdf",
+  "exec.ar": "https://s3.eu-central-2.wasabisys.com/akc2026/wp-media-folder-alkhabeer-capital/media/2022/03/Alkhabeer-Growth-Income-Traded-Fund-ES-AR-2022.pdf",
+  "factsheet.ar": "https://s3.eu-central-2.wasabisys.com/akc2026/wp-media-folder-alkhabeer-capital/media/2022/03/Alkhabeer-Growth-Income-Traded-Fund-FS-AR-2022.pdf",
+  "faq.ar": "https://s3.eu-central-2.wasabisys.com/akc2026/wp-media-folder-alkhabeer-capital/media/2022/03/Alkhabeer-Growth-and-Income-Traded-Fund-FAQ-2022-AR.pdf",
+  "ifs-2026.ar": "https://s3.eu-central-2.wasabisys.com/akc2026/wp-media-folder-alkhabeer-capital/media/2026/08/ALKHABEER-GROWTH-AND-INCOME-FUND-FS-June-30-2026-AR.pdf",
+  "ifs-2025.ar": "https://s3.eu-central-2.wasabisys.com/akc2026/wp-media-folder-alkhabeer-capital/media/2025/12/Alkhabeer-Growth-Income-Traded-Fund-June-30-2025-AR.pdf",
+  "ifs-2024.ar": "https://s3.eu-central-2.wasabisys.com/akc2026/wp-media-folder-alkhabeer-capital/media/2025/12/2024.pdf",
+  "ifs-2023.ar": "https://s3.eu-central-2.wasabisys.com/akc2026/wp-media-folder-alkhabeer-capital/media/2023/08/Alkhabeer-Growth-and-Income-Traded-Fund-June-30-2023-AR.pdf",
+  "ifs-2022.ar": "https://s3.eu-central-2.wasabisys.com/akc2026/wp-media-folder-alkhabeer-capital/media/2022/08/Alkhabeer-Growth-and-Income-Traded-Fund-as-at-June-30-2022-AR.pdf",
+  "voting.ar": "https://s3.eu-central-2.wasabisys.com/akc2026/wp-media-folder-alkhabeer-capital/media/2022/09/Alkhabeer-Growth-and-Income-Traded-Fund-Voting-Rights-Policy-2022_Arabic.pdf",
+  "zakat.ar": "https://s3.eu-central-2.wasabisys.com/akc2026/wp-media-folder-alkhabeer-capital/media/2025/12/Alkhabeer-Growth-Income-Traded-Fund-Zakat-Letter.pdf",
+  "annual-2025.ar": "https://s3.eu-central-2.wasabisys.com/akc2026/wp-media-folder-alkhabeer-capital/media/2026/03/Alkhabeer-Growth-Income-Traded-Fund-2025-Annual-Report-Arabic.pdf",
+  "annual-2024.ar": "https://s3.eu-central-2.wasabisys.com/akc2026/wp-media-folder-alkhabeer-capital/media/2025/12/ALKHABEER-GROWTH-INCOME-TRADED-FUND-2024-Annual-Report-Arabic.pdf",
+  "annual-2023.ar": "https://s3.eu-central-2.wasabisys.com/akc2026/wp-media-folder-alkhabeer-capital/media/2025/12/Alkhabeer-GITF-2023-Annual-Report-Arabic.pdf",
+  "annual-2022.ar": "https://s3.eu-central-2.wasabisys.com/akc2026/wp-media-folder-alkhabeer-capital/media/2023/03/Alkhabeer-GITF-2022-Annual-Report-Arabic.pdf",
+  "q1-2026.ar": "https://s3.eu-central-2.wasabisys.com/akc2026/wp-media-folder-alkhabeer-capital/media/2026/04/ALKHABEER-GROWTH-INCOME-TRADED-FUND-Q1-2026-Arabic.pdf",
+  "q2-2026.ar": "https://s3.eu-central-2.wasabisys.com/akc2026/wp-media-folder-alkhabeer-capital/media/2026/07/ALKHABEER-GROWTH-INCOME-FUND-Q2-2026-AR.pdf",
+  "q1-2025.ar": "https://s3.eu-central-2.wasabisys.com/akc2026/wp-media-folder-alkhabeer-capital/media/2025/12/ALKHABEER-GROWTH-INCOME-TRADED-FUND-Q1-2025-Arabic-1.pdf",
+  "q2-2025.ar": "https://s3.eu-central-2.wasabisys.com/akc2026/wp-media-folder-alkhabeer-capital/media/2025/12/ALKHABEER-GROWTH-INCOME-TRADED-FUND-Q2-2025-AR.pdf",
+  "q3-2025.ar": "https://s3.eu-central-2.wasabisys.com/akc2026/wp-media-folder-alkhabeer-capital/media/2025/12/ALKHABEER-GROWTH-INCOME-TRADED-FUND-Q3-2025-Arabic.pdf",
+  "q4-2025.ar": "https://s3.eu-central-2.wasabisys.com/akc2026/wp-media-folder-alkhabeer-capital/media/2026/01/ALKHABEER-GROWTH-INCOME-TRADED-FUND-Q4-2025-Arabic.pdf",
+  "q1-2024.ar": "https://s3.eu-central-2.wasabisys.com/akc2026/wp-media-folder-alkhabeer-capital/media/2025/12/AKC-Growth-Income-Traded-Fund-Q1-2024-Arabic.pdf",
+  "q2-2024.ar": "https://s3.eu-central-2.wasabisys.com/akc2026/wp-media-folder-alkhabeer-capital/media/2025/12/AKC-Growth-Income-Traded-Fund-Q2-2024-Arabic.pdf",
+  "q3-2024.ar": "https://s3.eu-central-2.wasabisys.com/akc2026/wp-media-folder-alkhabeer-capital/media/2025/12/ALKHABEER-GROWTH-INCOME-TRADED-FUND-Q3-2024-Arabic.pdf",
+  "q4-2024.ar": "https://s3.eu-central-2.wasabisys.com/akc2026/wp-media-folder-alkhabeer-capital/media/2025/12/ALKHABEER-GROWTH-INCOME-TRADED-FUND-Q4-2024-Ar.pdf",
+  "q1-2023.ar": "https://s3.eu-central-2.wasabisys.com/akc2026/wp-media-folder-alkhabeer-capital/media/2023/04/AKC-Growth-Income-Traded-Fund-Q1-2023-Arabic.pdf",
+  "q2-2023.ar": "https://s3.eu-central-2.wasabisys.com/akc2026/wp-media-folder-alkhabeer-capital/media/2023/07/AKC-Growth-Income-Traded-Fund-Q2-2023-Arabic.pdf",
+  "q3-2023.ar": "https://s3.eu-central-2.wasabisys.com/akc2026/wp-media-folder-alkhabeer-capital/media/2023/10/AKC-Growth-Income-Traded-Fund-Q3-2023-Arabic.pdf",
+  "q4-2023.ar": "https://s3.eu-central-2.wasabisys.com/akc2026/wp-media-folder-alkhabeer-capital/media/2024/01/AKC-Growth-Income-Traded-Fund-Q4-2023-Arabic.pdf",
+  "q2-2022.ar": "https://s3.eu-central-2.wasabisys.com/akc2026/wp-media-folder-alkhabeer-capital/media/2022/07/AKC-Growth-Income-Traded-Fund-Q2-2022-Arabic.pdf",
+  "q3-2022.ar": "https://s3.eu-central-2.wasabisys.com/akc2026/wp-media-folder-alkhabeer-capital/media/2022/10/AKC-Growth-Income-Traded-Fund-Q3-2022-Arabic.pdf",
+  "q4-2022.ar": "https://s3.eu-central-2.wasabisys.com/akc2026/wp-media-folder-alkhabeer-capital/media/2023/01/AKC-Growth-Income-Traded-Fund-Q4-2022-Arabic.pdf",
+  "idx-q1-2023.ar": "https://s3.eu-central-2.wasabisys.com/akc2026/wp-media-folder-alkhabeer-capital/media/2023/12/Alkhabeer-Global-Equity-Index-Fact-sheet-Q1-2023.pdf",
+  "idx-q2-2023.ar": "https://s3.eu-central-2.wasabisys.com/akc2026/wp-media-folder-alkhabeer-capital/media/2023/12/Alkhabeer-Global-Equity-Index-Fact-sheet-Q2-2023.pdf",
+  "idx-q3-2023.ar": "https://s3.eu-central-2.wasabisys.com/akc2026/wp-media-folder-alkhabeer-capital/media/2023/11/Alkhabeer-Global-Equity-Index-Fact-sheet-Q3-2023.pdf",
+  "idx-q2-2022.ar": "https://s3.eu-central-2.wasabisys.com/akc2026/wp-media-folder-alkhabeer-capital/media/2022/07/Alkhabeer-Global-Equity-Index-Q2-2022.pdf",
+  "idx-q3-2022.ar": "https://s3.eu-central-2.wasabisys.com/akc2026/wp-media-folder-alkhabeer-capital/media/2022/10/Alkhabeer-Global-Equity-Index-Factsheet-Q3-2022.pdf",
+  "idx-q4-2022.ar": "https://s3.eu-central-2.wasabisys.com/akc2026/wp-media-folder-alkhabeer-capital/media/2023/12/Alkhabeer-Global-Equity-Index-Fact-sheet-Q4-2022.pdf"
+ },
+ "asset_class": "capital-markets",
+ "accent": "#3B7DD8",
+ "accent_light": "#9DB8E0"
+}
