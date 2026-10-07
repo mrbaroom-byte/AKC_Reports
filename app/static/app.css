@@ -319,3 +319,4 @@ body.has-bar .asst-fab{bottom:84px}
 .cmts .ch{display:flex;gap:10px;align-items:baseline;flex-wrap:wrap}
 .cmts p{margin:0;font-size:14px;line-height:1.7;white-space:pre-wrap}
 .cmts .btn{align-self:flex-start}
+.rolesel{min-width:200px;max-width:240px;font-size:14px}

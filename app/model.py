@@ -206,18 +206,33 @@ def _match_chart(a, ce):
     return None
 
 
+# Arabic keyword → English keyword, used only to break ties between items with the same value
+_TERMS = [('نقد', 'cash'), ('صكوك', 'sukuk'), ('إجار', 'leas'), ('اجار', 'leas'), ('تمويل التجاري', 'trade'), ('مرابح', 'murabaha'),
+          ('صناديق', 'fund'), ('صندوق', 'fund'), ('أسهم', 'equit'), ('عقار', 'real estate'), ('ريت', 'reit'),
+          ('باستثناء', 'except'), ('السعودية', 'ksa'), ('أوروبا', 'europe'), ('أمريكا الشمالية', 'north america'), ('آسيا', 'asia')]
+
+
+def _affinity(ar, en):
+    en = (en or '').lower(); ar = ar or ''
+    return sum(1 for a, e in _TERMS if a in ar and e in en)
+
+
 def pair_series(sa, se):
-    """Pair Arabic and English labels of the same chart: by position when the values line up, otherwise by value."""
+    """Pair Arabic and English labels of the same chart. The two languages often list the items in a different order,
+    so pair by value, and break ties (two items with the same share) by known terms in both labels."""
     out = []
-    if [round(x['value'], 1) for x in sa] == [round(x['value'], 1) for x in se]:
-        for a, e in zip(sa, se): out.append({'ar': a['label'], 'en': e['label'], 'pct': a['value']})
-        return out
     pool = list(se)
-    for a in sa:
-        m = min(pool, key=lambda e: abs(e['value'] - a['value'])) if pool else None
-        if m: pool.remove(m)
-        out.append({'ar': a['label'], 'en': m['label'] if m else '', 'pct': a['value']})
-    return out
+    for a in sorted(sa, key=lambda x: -max((_affinity(x['label'], e['label']) for e in se), default=0)):
+        m = None
+        if pool:
+            best = min(abs(e['value'] - a['value']) for e in pool)
+            cands = [e for e in pool if abs(e['value'] - a['value']) - best < 1e-9]
+            m = max(cands, key=lambda e: _affinity(a['label'], e['label']))
+            pool.remove(m)
+        out.append((a, m))
+    order = {id(a): i for i, a in enumerate(sa)}
+    out.sort(key=lambda t: order[id(t[0])])
+    return [{'ar': a['label'], 'en': m['label'] if m else '', 'pct': a['value']} for a, m in out]
 
 
 def comment_text(st):
@@ -328,8 +343,15 @@ def build(fund, lang, prev_st, prev_q, q, d, prev_vals):
     if rv:
         for i, r in enumerate(rt[:4]): r[1] = rv[i] if i < len(rv) and rv[i] else r[1]
     # allocation charts
-    cs = sec_blocks(st, 'alloc', 'chart')
-    for c, a in zip(cs, d.get('alloc', [])):
+    cs = sec_blocks(st, 'alloc', 'chart'); al = list(d.get('alloc', []))
+    def _t(x): return re.sub(r'[\s*:]+', ' ', x or '').strip().lower()
+    for k, c in enumerate(cs):
+        # the English statement may order the charts differently from the Arabic: match by heading, else by position
+        a = next((x for x in al if _t(x.get('title_' + lang)) and _t(x.get('title_' + lang)) == _t(c.get('title'))), None)
+        if a is None and al: a = al[0]
+        if a is None: break
+        al.remove(a)
+        if a.get('title_' + lang): c['title'] = a['title_' + lang]
         c['series'] = [{'label': x[lang] or x['ar'], 'value': float(x['pct'])} for x in a['items'] if x.get('pct') not in (None, '')]
     # returns
     rtb = sec_blocks(st, 'returns', 'table')[0]
