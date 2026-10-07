@@ -30,7 +30,8 @@ def render_html(fund, q, lang, struct, outdir):
         r = subprocess.run([sys.executable, '-c', code], env=env, capture_output=True, text=True, cwd=os.path.join(ENG, 'i30'))
         if r.returncode: raise RuntimeError('web: ' + r.stderr[-1500:])
     finally:
-        if keep is not None: open(sp, 'wb').write(keep)
+        if keep is not None: open(sp, 'wb').write(keep)   # the published original goes back
+        elif os.path.exists(sp): os.remove(sp)              # a new quarter leaves nothing behind in the engine
     man = json.loads(r.stdout.strip().splitlines()[-1])
     hub = os.path.join(ENG, 'i30', 'hub')
     src = open(os.path.join(hub, man['html']), encoding='utf-8').read()
