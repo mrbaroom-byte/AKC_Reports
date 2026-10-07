@@ -1,0 +1,52 @@
+{% extends "base.html" %}
+{% block title %}سجل التدقيق{% endblock %}
+{% block body %}
+<div class="ph"><div class="t"><h1>سجل التدقيق</h1>
+<p class="lede">كل ما يحدث في المنصة: الدخول والخروج، وكل تعديل بقيمته قبل وبعد، والإصدار والاعتماد، والتنزيل، والنسخ الاحتياطي. السجل مسلسل بسلسلة تجزئة، فأي تعديل أو حذف لسطر يكشفه التحقق.</p></div>
+<div class="acts"><a class="btn" href="/audit.csv?actor={{ f.actor|urlencode }}&action={{ f.action|urlencode }}&obj={{ f.obj|urlencode }}&since={{ f.since|urlencode }}&until={{ f.until|urlencode }}&outcome={{ f.outcome|urlencode }}">تصدير CSV</a></div></div>
+
+<div class="kv">
+  <div class="k"><span>سلامة السجل</span><b>{% if chain_ok %}<span class="pill blue plain" style="font-size:14px">سليم</span>{% else %}<span class="pill bronze plain" style="font-size:14px">مكسور عند السطر <span class="ltr">#{{ chain_n }}</span></span>{% endif %}</b></div>
+  <div class="k"><span>سطرًا</span><b>{{ '{:,}'.format(stats.total) }}</b></div>
+  <div class="k"><span>آخر 24 ساعة</span><b>{{ '{:,}'.format(stats.day) }}</b></div>
+  <div class="k"><span>مرفوض أو فاشل · 24 ساعة</span><b>{{ stats.denied }}</b></div>
+  <div class="k"><span>طلبات · 24 ساعة</span><b>{{ '{:,}'.format(stats.requests) }}</b></div>
+</div>
+
+<form class="card filters" method="get" action="/audit" role="search" aria-label="تصفية">
+  <div><label class="l" for="fa">المستخدم</label><select id="fa" name="actor"><option value="">كل المستخدمين</option>{% for a in actors %}<option value="{{ a }}" {% if a == f.actor %}selected{% endif %}>{{ a }}</option>{% endfor %}</select></div>
+  <div><label class="l" for="fx">الإجراء</label><select id="fx" name="action"><option value="">كل الإجراءات</option>{% for k, v in acts.items() %}<option value="{{ k }}" {% if k == f.action %}selected{% endif %}>{{ v }}</option>{% endfor %}</select></div>
+  <div><label class="l" for="fo">الكائن</label><input id="fo" name="obj" value="{{ f.obj }}" dir="ltr" placeholder="income:q3-2026"></div>
+  <div><label class="l" for="fr">النتيجة</label><select id="fr" name="outcome"><option value="">الكل</option>{% for o, n in (('ok', 'نجح'), ('denied', 'رُفض'), ('failed', 'فشل'), ('started', 'جارٍ')) %}<option value="{{ o }}" {% if o == f.outcome %}selected{% endif %}>{{ n }}</option>{% endfor %}</select></div>
+  <div><label class="l" for="fs">من</label><input id="fs" type="date" name="since" value="{{ f.since }}"></div>
+  <div><label class="l" for="fu">إلى</label><input id="fu" type="date" name="until" value="{{ f.until }}"></div>
+  <div class="acts"><button class="btn primary" type="submit">تصفية</button>{% if f.values()|select|list %}<a class="btn ghost" href="/audit">الكل</a>{% endif %}</div>
+</form>
+
+<div class="card flush"><div class="tw"><table>
+<thead><tr><th>التاريخ <span class="muted">(UTC)</span></th><th>المستخدم</th><th>الإجراء</th><th class="hide-sm">الكائن</th><th>النتيجة</th><th class="hide-sm">العنوان</th><th>التفاصيل</th></tr></thead>
+<tbody>
+{% for r in rows %}
+<tr>
+  <td class="small"><time class="ltr" datetime="{{ r.at }}">{{ r.at[:19].replace('T', ' ') }}</time><div class="muted small mono">#{{ r.id }}</div></td>
+  <td><span class="ltr">{{ r.actor }}</span>{% if r.role %}<div class="muted small">{{ roles.get(r.role, r.role) }}</div>{% endif %}</td>
+  <td>{{ acts.get(r.action, r.action) }}<div class="muted small mono">{{ r.action }}</div></td>
+  <td class="hide-sm mono">{{ r.object }}</td>
+  <td>{% if r.outcome == 'ok' %}<span class="pill blue">نجح</span>{% elif r.outcome == 'started' %}<span class="pill">جارٍ</span>{% elif r.outcome == 'denied' %}<span class="pill bronze">رُفض</span>{% else %}<span class="pill amber">فشل</span>{% endif %}</td>
+  <td class="hide-sm mono small">{{ r.ip }}</td>
+  <td>{% if r.details %}<details><summary>{% if r.details.n is defined %}{{ r.details.n }} · {% endif %}التفاصيل</summary><pre class="det">{{ r.details|tojson(indent=2) }}</pre><div class="muted small mono" style="margin-top:4px">rid {{ r.rid }} · {{ r.hash[:16] }}</div></details>{% else %}<span class="muted small mono">{{ r.hash[:12] }}</span>{% endif %}</td>
+</tr>
+{% else %}
+<tr><td colspan="7" class="empty">لا سجلات تطابق التصفية.</td></tr>
+{% endfor %}
+</tbody></table></div></div>
+{% if pages > 1 %}
+<nav class="ph" aria-label="الصفحات" style="justify-content:space-between;align-items:center">
+  <span class="muted small"><span class="ltr">{{ p + 1 }} / {{ pages }}</span> · {{ '{:,}'.format(total) }} سطرًا</span>
+  <span style="display:flex;gap:8px">
+  {% if p > 0 %}<a class="btn sm" href="?{{ request_q }}&p={{ p - 1 }}">السابقة</a>{% endif %}
+  {% if p + 1 < pages %}<a class="btn sm" href="?{{ request_q }}&p={{ p + 1 }}">التالية</a>{% endif %}
+  </span>
+</nav>
+{% endif %}
+{% endblock %}

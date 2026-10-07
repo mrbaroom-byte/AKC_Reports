@@ -7,7 +7,7 @@
 .prog{display:flex;align-items:center;gap:12px;min-width:220px}
 .prog .bar{flex:1;height:6px;border-radius:99px;background:var(--mist);overflow:hidden}
 .prog .bar i{display:block;height:100%;background:var(--sky);border-radius:99px}
-.prog b{font:600 13px var(--latin);color:var(--navy);white-space:nowrap}
+.prog b{font:600 13px var(--latin);color:var(--heading);white-space:nowrap}
 .funds{display:grid;grid-template-columns:repeat(auto-fill,minmax(330px,1fr));gap:16px;margin-bottom:34px}
 .fc{position:relative;background:var(--surface);border:1px solid var(--line);border-radius:16px;box-shadow:var(--sh);padding:22px 22px 18px;display:flex;flex-direction:column;gap:16px;text-decoration:none;color:inherit;transition:border-color .15s var(--ease),box-shadow .2s var(--ease),transform .2s var(--ease);overflow:hidden}
 .fc::after{content:'';position:absolute;inset-inline:0;top:0;height:3px;background:var(--sky);opacity:.9}
@@ -17,13 +17,13 @@
 .fc .ft{display:flex;align-items:center;gap:10px;border-top:1px solid var(--line);padding-top:14px;margin-top:auto}
 .fc .ft .u{font-size:12.5px;color:var(--muted);flex:1}
 .fc .go{font:600 13.5px var(--body);color:var(--blue);display:inline-flex;gap:6px;align-items:center}
-.fc:hover .go{color:var(--navy)}
+.fc:hover .go{color:var(--heading)}
 .cycle{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:0;counter-reset:s;margin:0;padding:0;list-style:none}
 .cycle li{position:relative;padding:0 14px 0 0;counter-increment:s}
 .cycle li::before{content:counter(s);display:grid;place-items:center;width:30px;height:30px;border-radius:50%;background:var(--surface);border:1.5px solid var(--sky);color:var(--blue);font:600 13px var(--latin);margin-bottom:12px;position:relative;z-index:1}
 .cycle li::after{content:'';position:absolute;top:15px;inset-inline-start:30px;inset-inline-end:-14px;height:1px;background:var(--mist-2)}
 .cycle li:last-child::after{display:none}
-.cycle b{display:block;font:600 14px var(--body);color:var(--navy);margin-bottom:4px}
+.cycle b{display:block;font:600 14px var(--body);color:var(--heading);margin-bottom:4px}
 .cycle span{font-size:13px;color:var(--muted);display:block;line-height:1.65;padding-inline-end:10px}
 .cycle .who{font-style:normal;display:inline-block;margin-top:8px;font-size:11.5px;font-weight:600;color:var(--blue);background:var(--mist);border-radius:6px;padding:2px 8px}
 @media (max-width:900px){.cycle{grid-template-columns:1fr;gap:18px}.cycle li{display:grid;grid-template-columns:30px 1fr;gap:0 14px;padding:0}.cycle li::before{margin:0;grid-row:span 3}.cycle li::after{top:30px;bottom:-18px;inset-inline-start:15px;inset-inline-end:auto;width:1px;height:auto}}
@@ -34,18 +34,23 @@
   <div class="t">
     <div class="crumbs">دورة البيان الربعي · صناديق أسواق المال</div>
     <div class="qnav">
-      <a class="btn icon" href="/?q={{ prevq }}" aria-label="الربع السابق" title="الربع السابق"><svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M6 3l5 5-5 5"/></svg></a>
+      <a class="btn icon" href="/?q={{ prevq }}" aria-label="الربع السابق" title="الربع السابق"><svg class="dirflip" width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M6 3l5 5-5 5"/></svg></a>
       <h1>{{ ql }}</h1>
-      <a class="btn icon" href="/?q={{ nextq }}" aria-label="الربع التالي" title="الربع التالي"><svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M10 3L5 8l5 5"/></svg></a>
+      <a class="btn icon" href="/?q={{ nextq }}" aria-label="الربع التالي" title="الربع التالي"><svg class="dirflip" width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M10 3L5 8l5 5"/></svg></a>
       {% if not cur %}<a class="btn ghost sm" href="/">العودة إلى الربع المستحق</a>{% endif %}
     </div>
     <div class="meta">
       <span>نهاية الربع: {{ end }}</span><span class="sep"></span>
       <span>آخر موعد للنشر (المادة 78 د): <b style="color:var(--ink-2)">{{ due }}</b></span>
       {% if ndone < cards|length %}
+        {% if lang == 'en' %}
+        {% if left < 0 %}<span class="pill bronze">Overdue by {{ -left }} day{{ 's' if -left != 1 }}</span>
+        {% elif left <= 40 %}<span class="pill {{ 'amber' if left <= 5 else 'blue' }}">{{ 'Due today' if left == 0 else left ~ ' day' ~ ('s' if left != 1 else '') ~ ' left' }}</span>{% endif %}
+        {% else %}
         {% if left < 0 %}<span class="pill bronze">تجاوز الموعد بـ{{ -left }} يوم</span>
         {% elif left <= 5 %}<span class="pill amber">{{ 'اليوم' if left == 0 else 'باقٍ ' ~ left ~ ' يوم' }}</span>
         {% elif left <= 40 %}<span class="pill blue">باقٍ {{ left }} يومًا</span>{% endif %}
+        {% endif %}
       {% endif %}
     </div>
   </div>
@@ -72,7 +77,7 @@
     <div class="ft">
       <span class="u">{% if c.updated and c.st not in done %}آخر تعديل {{ c.updated }}{% elif c.st in done %}منشور في مستندات الصندوق{% else %}لم يبدأ بعد{% endif %}</span>
       <span class="go">{{ 'عرض البيان' if c.st in done else ('ابدأ الإدخال' if c.st == 'new' else ('مراجعة واعتماد' if c.st == 'submitted' and me.role == 'admin' else 'متابعة')) }}
-        <svg width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M10 3L5 8l5 5"/></svg></span>
+        <svg class="dirflip" width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M10 3L5 8l5 5"/></svg></span>
     </div>
   </a>
 {% endfor %}

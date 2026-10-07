@@ -1,7 +1,7 @@
 """منصة البيانات الربعية — Alkhabeer Capital quarterly statements for the capital-market funds."""
 import os, json, re, hmac, hashlib, threading, traceback, datetime, mimetypes, zipfile, io
 from fastapi import FastAPI, Request, Form, HTTPException
-from fastapi.responses import HTMLResponse, JSONResponse, RedirectResponse, FileResponse, StreamingResponse
+from fastapi.responses import HTMLResponse, JSONResponse, RedirectResponse, FileResponse, StreamingResponse, Response, PlainTextResponse
 from fastapi.staticfiles import StaticFiles
 from fastapi.concurrency import run_in_threadpool
 from urllib.parse import urlparse
@@ -9,7 +9,8 @@ import time
 from itsdangerous import URLSafeTimedSerializer, BadSignature
 from jinja2 import Environment, FileSystemLoader, select_autoescape
 from markupsafe import Markup
-import model as M, store, pipeline as P, records as R, backup as BK, xl, shutil
+import model as M, store, pipeline as P, records as R, backup as BK, xl, shutil, i18n, audit as A
+from jinja2 import BaseLoader, TemplateNotFound
 
 APP = os.path.dirname(os.path.abspath(__file__))
 ENG = P.ENG
@@ -23,7 +24,35 @@ SECRET = _secret()
 SER = URLSafeTimedSerializer(SECRET, salt='akc-q-session')
 DOC_CENTRE = os.environ.get('DOC_CENTRE_URL', 'https://claude.ai/artifact/7bddTJzzSApLduLWWzKwXv')
 SEED_Q = 'q2-2026'
+class _EnLoader(FileSystemLoader):
+    """Same templates, interface text translated to English when loaded (statement content is passed in at render time)."""
+    def get_source(self, environment, template):
+        src, path, up = super().get_source(environment, template)
+        return i18n.source(src), path, up
+
+
 env = Environment(loader=FileSystemLoader(os.path.join(APP, 'templates')), autoescape=select_autoescape(['html']))
+env_en = Environment(loader=_EnLoader(os.path.join(APP, 'templates')), autoescape=select_autoescape(['html']))
+LANGS, THEMES = ('ar', 'en'), ('system', 'light', 'dark')
+
+
+def lang_of(req):
+    v = req.cookies.get('lang') if req is not None else None
+    return v if v in LANGS else 'ar'
+
+
+def theme_of(req):
+    v = req.cookies.get('theme') if req is not None else None
+    return v if v in THEMES else 'system'
+
+
+def page(req, _tpl, **ctx):
+    """Render a page in the viewer's language and theme."""
+    lang = lang_of(req)
+    ctx = i18n.deep(ctx, lang)
+    ctx.update(lang=lang, dir='rtl' if lang == 'ar' else 'ltr', theme=theme_of(req), here=str(req.url.path) + (('?' + req.url.query) if req.url.query else ''),
+               t=lambda x: i18n.T(x, lang), alt_lang='en' if lang == 'ar' else 'ar')
+    return (env_en if lang == 'en' else env).get_template(_tpl).render(**ctx)
 
 
 def _js(v):
@@ -31,25 +60,51 @@ def _js(v):
     return json.dumps(v, ensure_ascii=False).replace('<', '\\u003c').replace('>', '\\u003e').replace('&', '\\u0026').replace('\u2028', '\\u2028').replace('\u2029', '\\u2029')
 
 
-env.filters['js'] = lambda v: Markup(_js(v))
+for _e in (env, env_en): _e.filters['js'] = lambda v: Markup(_js(v))
+APP_EN_JS = i18n.source(open(os.path.join(APP, 'static', 'app.js'), encoding='utf-8').read())
 app = FastAPI(docs_url=None, redoc_url=None, openapi_url=None)
 app.mount('/static', StaticFiles(directory=os.path.join(APP, 'static')), name='static')
 JOBS = {}
+ACTORS = {}   # job key -> who started it, for the audit row written when the job ends
 RENDER = threading.Lock()   # the engine renders through shared folders, so one document set is built at a time
+
+
+_TR_KEYS = {'msg', 'status', 'step', 'notes', 'log', 'what', 'label'}
+
+
+def _tr_json(v, lang, key=''):
+    if isinstance(v, dict): return {k: _tr_json(x, lang, k) for k, x in v.items()}
+    if isinstance(v, list): return [_tr_json(x, lang, key) for x in v]
+    if isinstance(v, str) and key in _TR_KEYS: return i18n.T(v, lang)
+    return v
 
 
 @app.middleware('http')
 async def guard(req: Request, call_next):
-    # writes only from this site (blocks cross-site form posts), and standard hardening headers on every reply
+    t0 = time.time(); req.state.rid = req.headers.get('x-request-id', '')[:32] or A.new_rid()
+    req.state.user = who(req) if not req.url.path.startswith('/static/') else None
+    # writes only from this site (blocks cross-site form posts)
     if req.method == 'POST':
         src = req.headers.get('origin') or req.headers.get('referer')
         if src and urlparse(src).netloc != req.headers.get('host'):
-            return JSONResponse({'error': 'origin', 'msg': 'طلب من خارج الموقع.'}, status_code=403)
+            A.log(req, 'auth.origin', req.url.path, 'denied', origin=src)
+            return JSONResponse({'error': 'origin', 'msg': i18n.T('طلب من خارج الموقع.', lang_of(req))}, status_code=403)
     r = await call_next(req)
+    lang = lang_of(req)
+    if lang == 'en' and req.url.path.startswith('/api/') and r.headers.get('content-type', '').startswith('application/json'):
+        body = b''.join([c async for c in r.body_iterator])
+        try: r = JSONResponse(_tr_json(json.loads(body), lang), status_code=r.status_code, headers={k: v for k, v in r.headers.items() if k.lower() not in ('content-length', 'content-type')})
+        except ValueError: r = Response(body, status_code=r.status_code, headers=dict(r.headers))
     r.headers.setdefault('X-Frame-Options', 'SAMEORIGIN')
     r.headers.setdefault('X-Content-Type-Options', 'nosniff')
     r.headers.setdefault('Referrer-Policy', 'same-origin')
+    r.headers.setdefault('Permissions-Policy', 'camera=(), microphone=(), geolocation=()')
+    r.headers['X-Request-ID'] = req.state.rid
+    if os.environ.get('RAILWAY_ENVIRONMENT'): r.headers.setdefault('Strict-Transport-Security', 'max-age=31536000; includeSubDomains')
     if req.url.path.startswith('/static/'): r.headers['Cache-Control'] = 'public, max-age=86400'
+    elif req.url.path not in ('/health',):
+        r.headers.setdefault('Cache-Control', 'no-store')
+        A.access(req, r.status_code, int((time.time() - t0) * 1000))
     return r
 
 
@@ -84,13 +139,15 @@ async def _401(req, exc):
 
 @app.exception_handler(403)
 async def _403(req, exc):
-    if req.url.path.startswith('/api/'): return JSONResponse({'error': 'forbidden', 'msg': 'هذا الإجراء للمعتمِد فقط.'}, status_code=403)
-    return HTMLResponse('<p style="font-family:sans-serif;padding:24px" dir="rtl">هذه الصفحة للمعتمِد فقط. <a href="/">العودة</a></p>', status_code=403)
+    A.log(req, 'auth.denied', req.url.path, 'denied')
+    lang = lang_of(req)
+    if req.url.path.startswith('/api/'): return JSONResponse({'error': 'forbidden', 'msg': i18n.T('هذا الإجراء للمعتمِد فقط.', lang)}, status_code=403)
+    return HTMLResponse(f'<p style="font-family:sans-serif;padding:24px" dir="{"rtl" if lang == "ar" else "ltr"}">{i18n.T("هذه الصفحة للمعتمِد فقط.", lang)} <a href="/">{i18n.T("العودة", lang)}</a></p>', status_code=403)
 
 
 @app.get('/login', response_class=HTMLResponse)
 def login_page(req: Request, e: str = ''):
-    return env.get_template('login.html').render(err=e, configured=bool(os.environ.get('ADMIN_PASSWORD')))
+    return page(req, 'login.html', err=e, configured=bool(os.environ.get('ADMIN_PASSWORD')))
 
 
 def _set(resp, u):
@@ -109,10 +166,15 @@ def _throttled(ip):
 @app.post('/login')
 def login(req: Request, password: str = Form(...), username: str = Form('')):
     ip = req.client.host if req.client else '-'
-    if _throttled(ip): return RedirectResponse('/login?e=2', status_code=303)
+    uname = (username or '').strip().lower() or 'admin'
+    if _throttled(ip):
+        A.log(req, 'auth.throttled', uname, 'denied', _actor=uname); return RedirectResponse('/login?e=2', status_code=303)
     r = _login(username, password)
-    if r is None: FAILS.setdefault(ip, []).append(time.time()); return RedirectResponse('/login?e=1', status_code=303)
-    FAILS.pop(ip, None); return r
+    if r is None:
+        FAILS.setdefault(ip, []).append(time.time()); A.log(req, 'auth.login_failed', uname, 'failed', _actor=uname)
+        return RedirectResponse('/login?e=1', status_code=303)
+    FAILS.pop(ip, None)
+    A.log(req, 'auth.login', uname, actor={'user': uname, 'role': 'admin' if uname == 'admin' else 'editor'}); return r
 
 
 def _login(username, password):
@@ -128,14 +190,34 @@ def _login(username, password):
 
 
 @app.get('/logout')
-def logout():
+def logout(req: Request):
+    if req.state.user: A.log(req, 'auth.logout', req.state.user.get('user', ''))
     r = RedirectResponse('/login', status_code=303); r.delete_cookie('akcq'); return r
+
+
+# ---------- preferences: language and theme ----------
+@app.get('/pref')
+def pref(req: Request, lang: str = '', theme: str = '', next: str = '/'):
+    nxt = next if next.startswith('/') and not next.startswith('//') else '/'
+    r = RedirectResponse(nxt, status_code=303)
+    secure = os.environ.get('RAILWAY_ENVIRONMENT') is not None
+    if lang in LANGS:
+        r.set_cookie('lang', lang, max_age=365 * 86400, samesite='lax', secure=secure)
+        if req.state.user: A.log(req, 'pref.lang', lang)
+    if theme in THEMES:
+        r.set_cookie('theme', theme, max_age=365 * 86400, samesite='lax', secure=secure)
+    return r
+
+
+@app.get('/i18n/app.en.js')
+def app_en_js():
+    return Response(APP_EN_JS, media_type='application/javascript', headers={'Cache-Control': 'public, max-age=3600'})
 
 
 @app.get('/users', response_class=HTMLResponse)
 def users_page(req: Request, new: str = '', pw: str = ''):
     u = need(req, 'admin')
-    return env.get_template('users.html').render(me=u, nav='users', users=store.users(), roles=ROLE_AR, new=new, pw=pw)
+    return page(req, 'users.html', me=u, nav='users', users=store.users(), roles=ROLE_AR, new=new, pw=pw)
 
 
 @app.post('/users')
@@ -144,15 +226,17 @@ def users_add(req: Request, username: str = Form(...), name: str = Form(...)):
     username = re.sub(r'[^a-z0-9._-]', '', username.strip().lower())[:40]
     if not username or username == 'admin': return RedirectResponse('/users', status_code=303)
     pw = store.create_user(username, name.strip()[:80], 'editor')
+    A.log(req, 'user.create', username, name=name.strip()[:80], role='editor')
     # the one-time password is shown on the next page only; it is never stored in clear
-    return HTMLResponse(env.get_template('users.html').render(me=who(req), nav='users', users=store.users(), roles=ROLE_AR, new=username, pw=pw), headers={'Cache-Control': 'no-store'})
+    return HTMLResponse(page(req, 'users.html', me=who(req), nav='users', users=store.users(), roles=ROLE_AR, new=username, pw=pw), headers={'Cache-Control': 'no-store'})
 
 
 @app.post('/users/{username}/toggle')
 def users_toggle(req: Request, username: str):
     need(req, 'admin')
     cur = next((x for x in store.users() if x['username'] == username), None)
-    if cur: store.set_active(username, not cur['active'])
+    if cur:
+        store.set_active(username, not cur['active']); A.log(req, 'user.toggle', username, active=not cur['active'])
     return RedirectResponse('/users', status_code=303)
 
 
@@ -162,7 +246,8 @@ def users_reset(req: Request, username: str):
     cur = next((x for x in store.users() if x['username'] == username), None)
     if not cur: return RedirectResponse('/users', status_code=303)
     pw = store.create_user(username, cur['name'], cur['role'])
-    return HTMLResponse(env.get_template('users.html').render(me=who(req), nav='users', users=store.users(), roles=ROLE_AR, new=username, pw=pw), headers={'Cache-Control': 'no-store'})
+    A.log(req, 'user.reset', username)
+    return HTMLResponse(page(req, 'users.html', me=who(req), nav='users', users=store.users(), roles=ROLE_AR, new=username, pw=pw), headers={'Cache-Control': 'no-store'})
 
 
 @app.get('/health')
@@ -240,8 +325,9 @@ def _clear_test_q3():
     if not prev or d.get('nav_unit') is None: return
     if all(d.get(k) == prev.get(k) for k in ('nav_unit', 'fund_size', 'units')):
         BK.take('event', 'before-clearing-test-income-q3-2026')
+        A.log(None, 'statement.clear_test', 'income:q3-2026', actor={'user': 'system', 'role': 'system'}, data=d)
         store.delete('income', 'q3-2026'); shutil.rmtree(store.out_dir('income', 'q3-2026'), ignore_errors=True)
-        print('cleared the Q3 2026 test copy of the Income fund')
+        print('cleared the Q3 2026 test copy of the Income fund', flush=True)
 
 
 try: _clear_test_q3()
@@ -265,7 +351,7 @@ def home(req: Request, q: str = ''):
                       'warns': sum(1 for x in v if x['level'] == 'warn'), 'base_ok': prev is not None, 'pq': pq})
     qn, y = M.qparse(q); end = M.qend(qn, y); due = end + datetime.timedelta(days=10)
     left = (due - datetime.date.today()).days
-    return env.get_template('home.html').render(done=DONE, q=q, ql=M.qlabel(q, 'ar'), cards=cards, due=M.ar_date(due), left=left, end=M.ar_date(end),
+    return page(req, 'home.html', done=DONE, q=q, ql=M.qlabel(q, 'ar'), cards=cards, due=M.ar_date(due), left=left, end=M.ar_date(end),
                                                 cur=q == current_q(), curq=current_q(), prevq=M.prev_q(q), nextq=M.next_q(q), doc_centre=DOC_CENTRE, me=me, roles=ROLE_AR, nav='home')
 
 
@@ -278,13 +364,15 @@ def editor(req: Request, fund: str, q: str):
         return RedirectResponse(f'/r/{fund}/{q}', status_code=303)
     prev, pq, _ = prev_values(fund, q)
     if prev is None:
-        return HTMLResponse(env.get_template('nobase.html').render(me=me, roles=ROLE_AR, nav='home', fund=M.FUNDS[fund]['ar'], fkey=fund, ql=M.qlabel(q, 'ar'), pql=M.qlabel(pq, 'ar'), pq=pq))
+        return HTMLResponse(page(req, 'nobase.html', me=me, roles=ROLE_AR, nav='home', fund=M.FUNDS[fund]['ar'], fkey=fund, ql=M.qlabel(q, 'ar'), pql=M.qlabel(pq, 'ar'), pq=pq))
     s = store.get(fund, q) or store.put(fund, q, data=blank(prev, fund, q), status='new')
     F = M.FUNDS[fund]
     meta = {'fund': fund, 'q': q, 'ql': M.qlabel(q, 'ar'), 'pql': M.qlabel(pq, 'ar'), 'name': F['ar'], 'traded': F['traded'], 'symbol': F['symbol'], 'wad': F['wad'],
             'pe': F['pe'], 'perf': F['perf'], 'symbol': F['symbol'], 'periods': prev.get('periods_ar'), 'risk_names': M.RISK_AR, 'risk_keys': M.RISK, 'role': me['role'], 'st': s['status'], 'locked': s['status'] in LOCKED}
     meta['statuses'] = STATUS; meta['en'] = F['en']
-    return env.get_template('editor.html').render(meta=meta, data_json=_js(s['data']), prev_json=_js(prev), meta_json=_js(meta), s=s,
+    if lang_of(req) == 'en':
+        meta = i18n.deep(meta, 'en'); meta['periods'] = prev.get('periods_en') or meta['periods']; meta['name'] = F['en']
+    return page(req, 'editor.html', meta=meta, data_json=_js(s['data']), prev_json=_js(prev), meta_json=_js(meta), s=s,
                                                   status=STATUS.get(s['status']), doc_centre=DOC_CENTRE, events=store.events(fund, q), me=me, roles=ROLE_AR, nav='home')
 
 
@@ -314,8 +402,10 @@ async def save(req: Request, fund: str, q: str):
     prev, pq, _ = prev_values(fund, q)
     cur = store.get(fund, q) or {}
     st = 'draft'
+    changes = A.diff(cur.get('data') or {}, d)
     s = store.put(fund, q, data=d, status=st)
     store.event(fund, q, f"{me['name']}: حفظ البيانات")
+    A.log(req, 'statement.save', f'{fund}:{q}', changes=changes, n=len(changes), status_before=cur.get('status'))
     v = M.validate(fund, d, prev, q); der = M.derive(d, prev)
     return {'ok': True, 'st': s['status'], 'status': STATUS[s['status']], 'validation': v, 'derived': der, 'updated': s['updated'], 'events': store.events(fund, q)}
 
@@ -330,7 +420,9 @@ async def check(req: Request, fund: str, q: str):
 
 @app.post('/api/s/{fund}/{q}/notes')
 async def notes(req: Request, fund: str, q: str):
-    me = need(req); _ok(fund, q); body = await req.json(); store.put(fund, q, notes=str(body.get('notes', ''))[:20000]); store.event(fund, q, f"{me['name']}: تحديث الملاحظات")
+    me = need(req); _ok(fund, q); body = await req.json(); old = (store.get(fund, q) or {}).get('notes', '')
+    store.put(fund, q, notes=str(body.get('notes', ''))[:20000]); store.event(fund, q, f"{me['name']}: تحديث الملاحظات")
+    A.log(req, 'statement.notes', f'{fund}:{q}', before=old, after=str(body.get('notes', ''))[:20000])
     return {'ok': True, 'events': store.events(fund, q)}
 
 
@@ -376,8 +468,10 @@ def _generate_locked(fund, q, final, by):
             store.put(fund, q, status='generated', generated=store.now(), files={'draft': files, 'final': (s.get('files') or {}).get('final')}, log=notes_)
             store.event(fund, q, f'{by}: إصدار المسودات')
         JOBS[key] = {'state': 'done', 'notes': notes_}
+        A.log(None, 'statement.final' if final else 'statement.generate', key, 'ok', actor=ACTORS.get(key), files=files, notes=notes_)
     except Exception as e:
         traceback.print_exc(); JOBS[key] = {'state': 'error', 'msg': 'تعذّر الإخراج: ' + str(e)[:300]}
+        A.log(None, 'statement.final' if final else 'statement.generate', key, 'failed', actor=ACTORS.get(key), error=str(e)[:300])
 
 
 @app.post('/api/s/{fund}/{q}/generate')
@@ -392,7 +486,8 @@ async def generate(req: Request, fund: str, q: str):
         return JSONResponse({'error': 'locked', 'msg': 'البيان ' + STATUS[cur['status']] + '.'}, status_code=409)
     key = f'{fund}:{q}'
     if JOBS.get(key, {}).get('state') == 'running': return {'ok': True, 'running': True}
-    JOBS[key] = {'state': 'running', 'step': 'في الطابور'}
+    JOBS[key] = {'state': 'running', 'step': 'في الطابور'}; ACTORS[key] = {'user': me['user'], 'role': me['role'], 'rid': req.state.rid, 'ip': A.client_ip(req)}
+    A.log(req, 'statement.final' if final else 'statement.generate', key, 'started')
     threading.Thread(target=_generate, args=(fund, q, final, me['name']), daemon=True).start()
     return {'ok': True}
 
@@ -404,6 +499,7 @@ async def submit(req: Request, fund: str, q: str):
         return JSONResponse({'error': 'state', 'msg': 'أصدر المسودات بعد آخر تعديل، ثم ارفعها للاعتماد.'}, status_code=409)
     store.put(fund, q, status='submitted')
     store.event(fund, q, f"{me['name']}: رفع المسودة للاعتماد")
+    A.log(req, 'statement.submit', f'{fund}:{q}')
     return {'ok': True, 'status': STATUS['submitted']}
 
 
@@ -416,6 +512,7 @@ async def return_(req: Request, fund: str, q: str):
     notes_ = (cur.get('notes') or '')
     if note: notes_ = (notes_ + '\n\n' if notes_ else '') + f"[{store.now()} · {me['name']}] {note}"
     store.put(fund, q, status='returned', notes=notes_)
+    A.log(req, 'statement.return', f'{fund}:{q}', note=note, status_before=cur.get('status'))
     store.event(fund, q, f"{me['name']}: إعادة البيان للتعديل" + (f' — {note}' if note else ''))
     return {'ok': True, 'status': STATUS['returned'], 'notes': notes_}
 
@@ -441,6 +538,7 @@ def files(req: Request, fund: str, q: str, kind: str, name: str):
     p = os.path.abspath(os.path.join(base_, name))
     if not p.startswith(os.path.abspath(base_) + os.sep) or not os.path.isfile(p): raise HTTPException(404)
     dl = p.endswith(('.pdf', '.docx')) and req.query_params.get('dl')
+    if p.endswith(('.pdf', '.docx')): A.log(req, 'file.download', f'{fund}:{q}', kind=kind, name=name)
     return FileResponse(p, filename=os.path.basename(p) if dl else None, media_type=mimetypes.guess_type(p)[0])
 
 
@@ -453,7 +551,7 @@ def zipall(req: Request, fund: str, q: str, kind: str):
         for lang, f in fs.items():
             for k in ('pdf', 'docx'):
                 if f.get(k) and os.path.isfile(os.path.join(base_, f[k])): z.write(os.path.join(base_, f[k]), os.path.basename(f[k]))
-    buf.seek(0)
+    buf.seek(0); A.log(req, 'file.zip', f'{fund}:{q}', kind=kind)
     return StreamingResponse(buf, media_type='application/zip', headers={'Content-Disposition': f'attachment; filename="{fund}-{q}-{kind}.zip"'})
 
 
@@ -472,7 +570,7 @@ def records_page(req: Request, fund: str = ''):
         rows.append({'q': r['q'], 'ql': M.qlabel(r['q'], 'ar'), 'st': r['status'], 'status': STATUS[r['status']], 'conf': len(c),
                      'corr': cc.get(f"{fund}:{r['q']}", 0), 'draft': R.has_draft(fund, r['q']), 'files': (s.get('files') or {})})
     funds = [{'key': k, 'name': F['ar']} for k, F in M.FUNDS.items()]
-    return env.get_template('records.html').render(me=me, roles=ROLE_AR, nav='records', rows=rows, fund=fund, fname=M.FUNDS[fund]['ar'], fen=M.FUNDS[fund]['en'], funds=funds,
+    return page(req, 'records.html', me=me, roles=ROLE_AR, nav='records', rows=rows, fund=fund, fname=M.FUNDS[fund]['ar'], fen=M.FUNDS[fund]['en'], funds=funds,
                                                     nconf=sum(r['conf'] for r in rows), ncorr=sum(r['corr'] for r in rows),
                                                     total=sum(1 for x in store.all_records() if x['status'] in DONE))
 
@@ -493,7 +591,7 @@ def record_page(req: Request, fund: str, q: str):
             ks = v['path'].split('.'); x = cur[v['lang']]['blocks'][int(ks[0])]
             for k in ks[1:]: x = x[int(k)] if k.isdigit() else x[k]
             v['done'] = (x == v['after'])
-    return env.get_template('record.html').render(
+    return page(req, 'record.html', 
         me=me, roles=ROLE_AR, nav='records', s=s, status=STATUS[s['status']], name=M.FUNDS[fund]['ar'], ql=M.qlabel(q, 'ar'), fund=fund, q=q,
         conflicts=store.get_conflicts(fund, q) or [], verified=ver, verified_json=_js(ver), corrections=store.corrections(fund, q), events=store.events(fund, q), pend=pend,
         cur_json=_js(cur), work_json=_js(work), meta_json=_js(meta), meta=meta)
@@ -525,6 +623,7 @@ async def record_draft(req: Request, fund: str, q: str):
             if os.path.exists(p): os.remove(p)
     else:
         store.event(fund, q, f"{me['name']}: حفظ مسودة تصحيح ({len(ch)} تعديل)")
+    A.log(req, 'record.draft', f'{fund}:{q}', changes=ch, n=len(ch))
     return {'ok': True, 'changes': ch, 'draft': bool(ch)}
 
 
@@ -537,6 +636,7 @@ async def record_discard(req: Request, fund: str, q: str):
     shutil.rmtree(os.path.join(store.out_dir(fund, q), 'corr'), ignore_errors=True)
     s = store.get(fund, q); fs = s.get('files') or {}; fs.pop('corr', None); store.put(fund, q, files=fs)
     store.event(fund, q, f"{me['name']}: إلغاء مسودة التصحيح")
+    A.log(req, 'record.discard', f'{fund}:{q}')
     return {'ok': True}
 
 
@@ -573,7 +673,7 @@ def _record_job_locked(fund, q, approve, by, reason):
             files, notes_ = _render_set(fund, q, work, od)
             s = store.get(fund, q); fs = s.get('files') or {}; fs['corr'] = files
             store.put(fund, q, files=fs); store.event(fund, q, f'{by}: إصدار معاينة التصحيح')
-            JOBS[key] = {'state': 'done', 'notes': notes_}; return
+            JOBS[key] = {'state': 'done', 'notes': notes_}; A.log(None, 'record.preview', key, actor=ACTORS.get(key)); return
         ver = datetime.datetime.now(datetime.timezone(datetime.timedelta(hours=3))).strftime('%Y%m%d-%H%M')
         od = os.path.join(_kdir(fund, q, 'corrected'), ver)
         files, notes_ = _render_set(fund, q, work, od)
@@ -597,8 +697,10 @@ def _record_job_locked(fund, q, approve, by, reason):
         store.put(fund, q, status='corrected', files=fs, data=data, log=notes_)
         store.event(fund, q, f'{by}: اعتماد التصحيح ({len(rows)} تعديل) — {reason}')
         JOBS[key] = {'state': 'done', 'notes': notes_}
+        A.log(None, 'record.approve', key, actor=ACTORS.get(key), reason=reason, changes=rows, files=files)
     except Exception as e:
         traceback.print_exc(); JOBS[key] = {'state': 'error', 'msg': 'تعذّر الإخراج: ' + str(e)[:300]}
+        A.log(None, 'record.approve' if approve else 'record.preview', key, 'failed', actor=ACTORS.get(key), error=str(e)[:300])
 
 
 @app.post('/api/r/{fund}/{q}/run')
@@ -610,7 +712,7 @@ async def record_run(req: Request, fund: str, q: str):
     if approve and len(reason) < 5: return JSONResponse({'error': 'reason', 'msg': 'اكتب سبب التصحيح (مثل: طلب هيئة السوق المالية رقم …).'}, status_code=400)
     key = f'{fund}:{q}'
     if JOBS.get(key, {}).get('state') == 'running': return {'ok': True, 'running': True}
-    JOBS[key] = {'state': 'running', 'step': 'في الطابور'}
+    JOBS[key] = {'state': 'running', 'step': 'في الطابور'}; ACTORS[key] = {'user': me['user'], 'role': me['role']}
     threading.Thread(target=_record_job, args=(fund, q, approve, me['name'], reason), daemon=True).start()
     return {'ok': True}
 
@@ -629,7 +731,7 @@ def xl_template(req: Request, fund: str, q: str):
     if prev is None: raise HTTPException(404)
     s = store.get(fund, q) or {}
     data = s.get('data') or blank(prev, fund, q)
-    blob = xl.build(fund, q, data, prev)
+    blob = xl.build(fund, q, data, prev); A.log(req, 'statement.template', f'{fund}:{q}')
     name = f"{M.FUNDS[fund].get('doc_centre', fund)}-{q}-inputs.xlsx"
     return StreamingResponse(io.BytesIO(blob), media_type='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
                              headers={'Content-Disposition': f'attachment; filename="{name}"', 'Cache-Control': 'no-store'})
@@ -659,6 +761,7 @@ async def xl_import(req: Request, fund: str, q: str):
     safe = re.sub(r'[^A-Za-z0-9._-]', '_', getattr(f, 'filename', 'inputs.xlsx'))[-80:]
     open(os.path.join(up, f"{datetime.datetime.now().strftime('%Y%m%d-%H%M%S')}-{safe}"), 'wb').write(blob)
     store.event(fund, q, f"{me['name']}: قراءة ملف Excel ({len(ch)} تغيير)")
+    A.log(req, 'statement.import', f'{fund}:{q}', file=getattr(f, 'filename', ''), changes=ch, problems=probs)
     return {'ok': True, 'data': d, 'changes': ch, 'problems': probs}
 
 
@@ -666,13 +769,13 @@ async def xl_import(req: Request, fund: str, q: str):
 @app.get('/backups', response_class=HTMLResponse)
 def backups_page(req: Request):
     me = need(req, 'admin')
-    return env.get_template('backups.html').render(me=me, roles=ROLE_AR, nav='backups', items=BK.listing(), keep=BK.KEEP_DAILY)
+    return page(req, 'backups.html', me=me, roles=ROLE_AR, nav='backups', items=BK.listing(), keep=BK.KEEP_DAILY)
 
 
 @app.post('/api/backups')
 async def backups_take(req: Request):
     me = need(req, 'admin')
-    name = await run_in_threadpool(BK.take, 'manual')
+    name = await run_in_threadpool(BK.take, 'manual'); A.log(req, 'backup.create', name)
     return {'ok': True, 'name': name, 'items': BK.listing()}
 
 
@@ -682,4 +785,30 @@ def backups_file(req: Request, name: str):
     if not re.match(r'^[A-Za-z0-9._-]+\.zip$', name): raise HTTPException(404)
     p = os.path.join(BK.DIR, name)
     if not os.path.isfile(p): raise HTTPException(404)
+    A.log(req, 'backup.download', name)
     return FileResponse(p, filename=name, media_type='application/zip')
+
+
+# ---------- audit trail (admin) ----------
+@app.get('/audit', response_class=HTMLResponse)
+def audit_page(req: Request, actor: str = '', action: str = '', obj: str = '', since: str = '', until: str = '', outcome: str = '', page_: int = 0):
+    me = need(req, 'admin'); lang = lang_of(req)
+    page_ = max(0, int(req.query_params.get('p', 0) or 0))
+    total, rows = A.query(actor, action, obj, since, (until + 'T23:59:59.999') if until else '', outcome, 50, page_ * 50)
+    ok, n = A.verify()
+    acts = {k: v[1 if lang == 'en' else 0] for k, v in i18n.ACTIONS.items()}
+    request_q = '&'.join(f'{k}={v}' for k, v in req.query_params.items() if k != 'p' and v)
+    return page(req, 'audit.html', request_q=request_q, me=me, roles=ROLE_AR, nav='audit', rows=rows, total=total, p=page_, pages=(total + 49) // 50, chain_ok=ok, chain_n=n,
+                f={'actor': actor, 'action': action, 'obj': obj, 'since': since, 'until': until, 'outcome': outcome}, actors=A.actors(), acts=acts, stats=A.stats())
+
+
+@app.get('/audit.csv')
+def audit_csv(req: Request, actor: str = '', action: str = '', obj: str = '', since: str = '', until: str = '', outcome: str = ''):
+    need(req, 'admin')
+    A.log(req, 'audit.export', '', filters={'actor': actor, 'action': action, 'obj': obj, 'since': since, 'until': until, 'outcome': outcome})
+    data = A.export_csv(actor=actor, action=action, obj=obj, since=since, until=(until + 'T23:59:59.999') if until else '', outcome=outcome)
+    name = 'audit-' + datetime.datetime.now().strftime('%Y%m%d-%H%M') + '.csv'
+    return Response(data, media_type='text/csv; charset=utf-8', headers={'Content-Disposition': f'attachment; filename="{name}"'})
+
+
+A.prune_access()

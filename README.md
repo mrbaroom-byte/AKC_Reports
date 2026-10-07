@@ -23,3 +23,8 @@
 ## Published statements as records
 At start-up every statement in `engine/published/<fund>/<q>` (with its AR/EN structs in `engine/<dir>/struct/`) is imported once as a `published` record; numbers that differ between the Arabic and English versions are stored in `conflicts`.
 `/records` lists them per fund; `/r/<fund>/<q>` shows every field. Only the admin corrects: save a draft (values only), preview PDF/Word, then approve with a reason. Approval keeps the original struct once (`structs/<fund>/original/`), logs each change in `corrections`, writes the corrected struct (the next quarter builds on it), issues a corrected PDF/Word under `out/<fund>/<q>/corrected/<time>/`, and sets the status `corrected`. Published files are never replaced; later quarters are not regenerated.
+
+## Languages, themes and audit
+- **Interface language:** Arabic (source) and English. Templates and `static/app.js` are translated at load time from the catalogue in `app/i18n.py`; run-time strings (statuses, messages, dates, quarter names) go through `i18n.T`. Statement content is never translated by the interface. The choice is a `lang` cookie (`/pref?lang=en`).
+- **Theme:** system, light or dark (`theme` cookie, header button). Colours are semantic tokens in `app.css` with a dark set; fund logos switch to white on dark.
+- **Audit:** `app/audit.py`. Every sign-in (and failed attempt), every change (field-level before/after), issue, submission, return, approval, correction, download, export, backup and denied request is written to a hash-chained `audit` table; `/audit` (admin) filters, verifies the chain and exports CSV. Every HTTP request is also logged to `access` (kept 180 days) and carries an `X-Request-ID`.
