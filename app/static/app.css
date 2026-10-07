@@ -290,3 +290,6 @@ body.has-bar .asst-fab{bottom:84px}
 .asst form .btn{height:44px}
 @media (max-width:600px){.asst{inset:0;width:auto;height:100dvh;border-radius:0}.asst-fab{bottom:16px}body.has-bar .asst-fab{bottom:118px}}
 @media print{.asst,.asst-fab{display:none}}
+
+.linkbtn{background:none;border:0;padding:6px 0;min-height:32px;color:var(--blue);font:inherit;cursor:pointer;text-align:start;text-decoration:underline;text-decoration-style:dotted;text-underline-offset:3px}
+.linkbtn:hover{text-decoration-style:solid}.linkbtn:focus-visible{outline:2px solid var(--sky);outline-offset:2px;border-radius:4px}

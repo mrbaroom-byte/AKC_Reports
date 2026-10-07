@@ -9,7 +9,7 @@ import time
 from itsdangerous import URLSafeTimedSerializer, BadSignature
 from jinja2 import Environment, FileSystemLoader, select_autoescape
 from markupsafe import Markup
-import compare as CMP
+import compare as CMP, mailer as MAIL
 import mimetypes as _mt; _mt.add_type('image/webp', '.webp')
 import model as M, store, pipeline as P, records as R, backup as BK, xl, shutil, i18n, audit as A, ai, intake as IN, commentary as CM, assistant as AS
 from jinja2 import BaseLoader, TemplateNotFound
@@ -219,18 +219,54 @@ def app_en_js():
 @app.get('/users', response_class=HTMLResponse)
 def users_page(req: Request, new: str = '', pw: str = ''):
     u = need(req, 'admin')
-    return page(req, 'users.html', me=u, nav='users', users=store.users(), roles=ROLE_AR, new=new, pw=pw)
+    return page(req, 'users.html', me=u, nav='users', users=store.users(), roles=ROLE_AR, new=new, pw=pw, mail=MAIL.status(), approvers=MAIL.approvers())
 
 
 @app.post('/users')
-def users_add(req: Request, username: str = Form(...), name: str = Form(...)):
+def users_add(req: Request, username: str = Form(...), name: str = Form(...), email: str = Form('')):
     need(req, 'admin')
     username = re.sub(r'[^a-z0-9._-]', '', username.strip().lower())[:40]
     if not username or username == 'admin': return RedirectResponse('/users', status_code=303)
     pw = store.create_user(username, name.strip()[:80], 'editor')
-    A.log(req, 'user.create', username, name=name.strip()[:80], role='editor')
+    em = (MAIL.emails(email) or [None])[0]
+    if em: store.set_email(username, em)
+    A.log(req, 'user.create', username, name=name.strip()[:80], role='editor', email=em)
     # the one-time password is shown on the next page only; it is never stored in clear
-    return HTMLResponse(page(req, 'users.html', me=who(req), nav='users', users=store.users(), roles=ROLE_AR, new=username, pw=pw), headers={'Cache-Control': 'no-store'})
+    return HTMLResponse(page(req, 'users.html', me=who(req), nav='users', users=store.users(), roles=ROLE_AR, new=username, pw=pw, mail=MAIL.status(), approvers=MAIL.approvers()), headers={'Cache-Control': 'no-store'})
+
+
+@app.post('/api/users/{username}/email')
+async def users_email(req: Request, username: str):
+    need(req, 'admin'); body = await req.json()
+    cur = next((x for x in store.users() if x['username'] == username), None)
+    if not cur: raise HTTPException(404)
+    raw = (body.get('email') or '').strip(); em = (MAIL.emails(raw) or [None])[0]
+    if raw and not em: return JSONResponse({'error': 'input', 'msg': 'عنوان البريد غير صحيح.'}, status_code=400)
+    store.set_email(username, em); A.log(req, 'user.email', username, before=cur.get('email'), after=em)
+    return {'ok': True, 'email': em}
+
+
+@app.post('/api/mail/settings')
+async def mail_settings(req: Request):
+    need(req, 'admin'); body = await req.json()
+    raw = body.get('approvers') or ''; em = MAIL.emails(raw)
+    bad = [x for x in re.split(r'[\s,;،]+', raw) if x.strip() and x.strip().lower() not in em]
+    if bad: return JSONResponse({'error': 'input', 'msg': 'عناوين غير صحيحة: ' + '، '.join(bad[:5])}, status_code=400)
+    before = MAIL.approvers(); store.set_setting('approver_emails', em)
+    A.log(req, 'mail.settings', 'approvers', before=before, after=em)
+    return {'ok': True, 'approvers': em}
+
+
+@app.post('/api/mail/test')
+async def mail_test(req: Request):
+    me = need(req, 'admin')
+    if not MAIL.provider(): return JSONResponse({'error': 'mail', 'msg': 'لم يُضبط خادم البريد بعد.'}, status_code=409)
+    to = MAIL.approvers() or MAIL.editors()
+    if not to: return JSONResponse({'error': 'mail', 'msg': 'أضف بريد المعتمِد أولًا.'}, status_code=409)
+    subj, html_, text = MAIL.compose('test', 'income', 'q1-2026', link=MAIL.app_url(req))
+    ok = await run_in_threadpool(MAIL._deliver, 'test', 'mail', to, subj, html_, text, {'user': me['user'], 'role': me['role']})
+    if not ok: return JSONResponse({'error': 'mail', 'msg': 'تعذّر الإرسال. التفاصيل في سجل التدقيق.'}, status_code=502)
+    return {'ok': True, 'to': to}
 
 
 @app.post('/users/{username}/toggle')
@@ -249,14 +285,15 @@ def users_reset(req: Request, username: str):
     if not cur: return RedirectResponse('/users', status_code=303)
     pw = store.create_user(username, cur['name'], cur['role'])
     A.log(req, 'user.reset', username)
-    return HTMLResponse(page(req, 'users.html', me=who(req), nav='users', users=store.users(), roles=ROLE_AR, new=username, pw=pw), headers={'Cache-Control': 'no-store'})
+    return HTMLResponse(page(req, 'users.html', me=who(req), nav='users', users=store.users(), roles=ROLE_AR, new=username, pw=pw, mail=MAIL.status(), approvers=MAIL.approvers()), headers={'Cache-Control': 'no-store'})
 
 
 @app.get('/health')
 def health():
     # whether the AI key works is reported, the key itself never is
     return {'ok': True, 'ai': {'configured': ai.configured(), 'ok': ai.STATUS['ok'], 'checked': ai.STATUS['checked'], 'model': ai.MODEL,
-                               'detail': ai.STATUS['detail'][:160] if ai.STATUS['ok'] is False else ai.STATUS['detail']}}
+                               'detail': ai.STATUS['detail'][:160] if ai.STATUS['ok'] is False else ai.STATUS['detail']},
+            'mail': {'configured': MAIL.status()['configured'], 'provider': MAIL.status()['provider']}}
 
 
 # ---------- quarter helpers ----------
@@ -480,6 +517,8 @@ def _generate_locked(fund, q, final, by):
                 json.dump(structs[lang], open(store.struct_path(fund, q, lang), 'w', encoding='utf-8'), ensure_ascii=False)
             store.put(fund, q, status='final', final_at=store.now(), files={'draft': (s.get('files') or {}).get('draft'), 'final': files}, log=notes_)
             store.event(fund, q, f'{by}: اعتماد النسخة النهائية')
+            act = ACTORS.get(key) or {}
+            MAIL.notify('final', fund, q, {'user': act.get('user', 'system'), 'role': act.get('role', '')}, by=by, base=act.get('base', ''))
         else:
             store.put(fund, q, status='generated', generated=store.now(), files={'draft': files, 'final': (s.get('files') or {}).get('final')}, log=notes_)
             store.event(fund, q, f'{by}: إصدار المسودات')
@@ -502,7 +541,7 @@ async def generate(req: Request, fund: str, q: str):
         return JSONResponse({'error': 'locked', 'msg': 'البيان ' + STATUS[cur['status']] + '.'}, status_code=409)
     key = f'{fund}:{q}'
     if JOBS.get(key, {}).get('state') == 'running': return {'ok': True, 'running': True}
-    JOBS[key] = {'state': 'running', 'step': 'في الطابور'}; ACTORS[key] = {'user': me['user'], 'role': me['role'], 'rid': req.state.rid, 'ip': A.client_ip(req)}
+    JOBS[key] = {'state': 'running', 'step': 'في الطابور'}; ACTORS[key] = {'user': me['user'], 'role': me['role'], 'rid': req.state.rid, 'ip': A.client_ip(req), 'base': MAIL.app_url(req)}
     A.log(req, 'statement.final' if final else 'statement.generate', key, 'started')
     threading.Thread(target=_generate, args=(fund, q, final, me['name']), daemon=True).start()
     return {'ok': True}
@@ -518,6 +557,8 @@ async def submit(req: Request, fund: str, q: str):
     store.put(fund, q, status='submitted')
     store.event(fund, q, f"{me['name']}: رفع المسودة للاعتماد")
     A.log(req, 'statement.submit', f'{fund}:{q}')
+    MAIL.notify('submitted', fund, q, {'user': me['user'], 'role': me['role']}, by=me['name'], by_en=me['user'] if me['role'] != 'admin' else '', base=MAIL.app_url(req),
+                findings=(CMP.summary(fund, q).get('draft') or {}).get('warn'))
     return {'ok': True, 'status': STATUS['submitted']}
 
 
@@ -532,6 +573,7 @@ async def return_(req: Request, fund: str, q: str):
     store.put(fund, q, status='returned', notes=notes_)
     A.log(req, 'statement.return', f'{fund}:{q}', note=note, status_before=cur.get('status'))
     store.event(fund, q, f"{me['name']}: إعادة البيان للتعديل" + (f' — {note}' if note else ''))
+    MAIL.notify('returned', fund, q, {'user': me['user'], 'role': me['role']}, by=me['name'], note=note, base=MAIL.app_url(req))
     return {'ok': True, 'status': STATUS['returned'], 'notes': notes_}
 
 

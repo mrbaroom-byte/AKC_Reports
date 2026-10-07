@@ -66,6 +66,7 @@ def _users_c():
     c = _c()
     c.execute('''create table if not exists users(username text primary key, name text, role text, salt text, hash text,
                  active integer, created text, last_login text)''')
+    if 'email' not in [r[1] for r in c.execute('pragma table_info(users)')]: c.execute('alter table users add column email text')
     return c
 
 
@@ -75,7 +76,7 @@ def _hash(pw, salt):
 
 def users():
     with _lock, _users_c() as c:
-        return [dict(r) for r in c.execute('select username,name,role,active,created,last_login from users order by created')]
+        return [dict(r) for r in c.execute('select username,name,role,active,created,last_login,email from users order by created')]
 
 
 def create_user(username, name, role='editor'):
@@ -83,8 +84,28 @@ def create_user(username, name, role='editor'):
     pw = '-'.join(_s.token_hex(2) for _ in range(3)).upper()
     salt = _s.token_hex(16)
     with _lock, _users_c() as c:
-        c.execute('insert or replace into users values(?,?,?,?,?,1,?,NULL)', (username, name, role, salt, _hash(pw, salt), now()))
+        c.execute('''insert into users(username,name,role,salt,hash,active,created,last_login) values(?,?,?,?,?,1,?,NULL)
+                     on conflict(username) do update set name=excluded.name, role=excluded.role, salt=excluded.salt, hash=excluded.hash, active=1''',
+                  (username, name, role, salt, _hash(pw, salt), now()))
     return pw
+
+
+def set_email(username, email):
+    with _lock, _users_c() as c:
+        c.execute('update users set email=? where username=?', (email or None, username))
+
+
+def setting(k, default=None):
+    with _lock, _c() as c:
+        c.execute('create table if not exists settings(k text primary key, v text)')
+        r = c.execute('select v from settings where k=?', (k,)).fetchone()
+        return json.loads(r['v']) if r else default
+
+
+def set_setting(k, v):
+    with _lock, _c() as c:
+        c.execute('create table if not exists settings(k text primary key, v text)')
+        c.execute('insert or replace into settings(k,v) values(?,?)', (k, json.dumps(v, ensure_ascii=False)))
 
 
 def set_active(username, active):
