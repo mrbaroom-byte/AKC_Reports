@@ -1,22 +1,54 @@
 <!doctype html>
-<html lang="ar" dir="rtl"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="robots" content="noindex,nofollow">
-<title>الدخول · البيانات الربعية</title>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Alexandria:wght@600&family=IBM+Plex+Sans+Arabic:wght@400;600&display=swap">
+<html lang="ar" dir="rtl"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="robots" content="noindex,nofollow"><meta name="theme-color" content="#071A3A">
+<title>الدخول · البيانات الربعية · الخبير المالية</title>
+<link rel="icon" href="/static/akc-color.svg" type="image/svg+xml">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Alyamama:wght@500;700&family=IBM+Plex+Sans+Arabic:wght@400;500;600&family=IBM+Plex+Sans:wght@400;500&display=swap">
+<link rel="stylesheet" href="/static/app.css?v=4">
 <style>
-body{margin:0;min-height:100vh;display:grid;place-items:center;background:#071A3A;color:#DCE3EE;font:15px/1.6 'IBM Plex Sans Arabic',Tahoma,sans-serif;padding:16px}
-form{width:100%;max-width:360px;background:#0E2347;border:1px solid #1F3A66;border-radius:14px;padding:28px 24px}
-h1{font:600 20px 'Alexandria',sans-serif;margin:0 0 4px;color:#fff}p{margin:0 0 18px;color:#9DB8E0;font-size:13.5px}
-label{display:block;font-size:13px;margin-bottom:6px}
-input{width:100%;box-sizing:border-box;font:inherit;padding:10px 12px;border-radius:9px;border:1px solid #2B4A7C;background:#071A3A;color:#fff}
-button{margin-top:14px;width:100%;font:600 15px inherit;font-family:inherit;padding:10px;border:0;border-radius:9px;background:#3B7DD8;color:#fff;cursor:pointer}
-.e{color:#F1B4B4;font-size:13px;margin-top:10px}
+body{background:var(--night);color:#C9D6EA;display:grid;grid-template-columns:minmax(0,1.15fr) minmax(360px,.85fr);min-height:100vh}
+.art{position:relative;overflow:hidden;padding:44px 52px;display:flex;flex-direction:column;justify-content:space-between;isolation:isolate}
+.art img.lines{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;z-index:-1}
+.art .logo{height:46px;width:auto;align-self:flex-start}
+.art h1{font:700 44px/1.25 var(--head);color:#fff;margin:0 0 14px;max-width:520px}
+.art p{color:#9FB4D6;font-size:15.5px;max-width:460px;margin:0}
+.art .k{display:flex;gap:28px;margin-top:34px;flex-wrap:wrap}
+.art .k div{border-inline-start:1px solid rgba(59,125,216,.5);padding-inline-start:12px;font-size:13px;color:#9FB4D6}
+.art .k b{display:block;font:500 19px var(--latin);color:#fff}
+.pane{background:var(--paper);color:var(--ink);display:grid;place-items:center;padding:32px 24px}
+form{width:100%;max-width:360px}
+form h2{font:700 24px var(--head);color:var(--navy);margin:0 0 6px}
+form .lede{margin:0 0 26px}
+.fld{margin-bottom:16px}
+.e{display:flex;gap:8px;align-items:flex-start;background:var(--bronze-bg);color:var(--bronze);border-radius:8px;padding:10px 12px;font-size:13.5px;margin-bottom:16px}
+.tip{font-size:12.5px;color:var(--muted);margin-top:18px;line-height:1.7}
+.pw{position:relative}.pw input{padding-left:70px}.pw button{position:absolute;inset-inline-end:6px;top:50%;transform:translateY(-50%);background:none;border:0;color:var(--muted);font:500 12.5px var(--body);cursor:pointer;padding:6px 8px}
+.btn.primary{width:100%;height:46px;font-size:15px;margin-top:6px}
+@media (max-width:860px){body{grid-template-columns:1fr;grid-template-rows:auto 1fr}.art{padding:26px 20px 30px}.art h1{font-size:28px;margin-top:26px}.art .k{display:none}.art p{font-size:14px}}
 </style></head>
-<body><form method="post" action="/login">
-<h1>البيانات الربعية</h1><p>صناديق أسواق المال · شركة الخبير المالية</p>
-{% if not configured %}<p class="e">لم تُضبط كلمة المرور بعد. أضف المتغير ADMIN_PASSWORD في إعدادات الخدمة على Railway.</p>{% endif %}
-<p style="margin:0 0 14px;font-size:12.5px">المعتمِد يكتب admin أو يترك الاسم فارغًا.</p>
-<label for="un">اسم المستخدم</label><input id="un" name="username" autocomplete="username" autocapitalize="off" autocorrect="off" spellcheck="false" dir="ltr" placeholder="admin" style="margin-bottom:12px">
-<label for="pw">كلمة المرور</label><input id="pw" type="password" name="password" autocomplete="current-password" autocapitalize="off" autocorrect="off" spellcheck="false" required>
-<button type="submit">دخول</button>
-{% if err %}<div class="e">اسم المستخدم أو كلمة المرور غير صحيحة.</div>{% endif %}
-</form></body></html>
+<body>
+<section class="art">
+  <img class="lines" src="/static/lines-tall.svg" alt="" aria-hidden="true">
+  <img class="logo" src="/static/akc-white.svg" alt="الخبير المالية">
+  <div>
+    <h1>البيانات الربعية لصناديق أسواق المال</h1>
+    <p>منصة داخلية تبني البيان الربعي لكل صندوق على البيان المعتمد للربع السابق، وتتحقق من الأرقام، وتُصدره بالعربية والإنجليزية بهوية مستندات الصناديق المعتمدة.</p>
+    <div class="k"><div><b>3</b>صناديق</div><div><b>2</b>لغتان مستقلتان</div><div><b>PDF · Word</b>صيغ الإصدار</div></div>
+  </div>
+</section>
+<section class="pane">
+<form method="post" action="/login" autocomplete="on">
+  <h2>تسجيل الدخول</h2>
+  <p class="lede">شركة الخبير المالية · للاستخدام الداخلي</p>
+  {% if not configured %}<div class="e">لم تُضبط كلمة مرور المعتمِد بعد. أضف المتغير ADMIN_PASSWORD في إعدادات الخدمة على Railway.</div>{% endif %}
+  {% if err == '1' %}<div class="e" role="alert">اسم المستخدم أو كلمة المرور غير صحيحة.</div>{% elif err == '2' %}<div class="e" role="alert">محاولات كثيرة غير ناجحة. حاول مرة أخرى بعد ربع ساعة.</div>{% endif %}
+  <div class="fld"><label class="l" for="un">اسم المستخدم</label>
+    <input id="un" name="username" autocomplete="username" autocapitalize="off" autocorrect="off" spellcheck="false" dir="ltr" placeholder="admin"></div>
+  <div class="fld"><label class="l" for="pw">كلمة المرور</label>
+    <div class="pw"><input id="pw" type="password" name="password" autocomplete="current-password" autocapitalize="off" autocorrect="off" spellcheck="false" dir="ltr" required>
+    <button type="button" onclick="const i=document.getElementById('pw');i.type=i.type==='password'?'text':'password';this.textContent=i.type==='password'?'إظهار':'إخفاء'">إظهار</button></div></div>
+  <button class="btn primary" type="submit">دخول</button>
+  <p class="tip">المعتمِد يكتب <b class="ltr">admin</b> أو يترك اسم المستخدم فارغًا. مُدخلو البيانات يستخدمون الحساب الذي أنشأه المعتمِد.</p>
+</form>
+</section>
+</body></html>
