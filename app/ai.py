@@ -62,7 +62,7 @@ def _record(actor, feature, tin, tout, ms, ok, obj=''):
     return usd
 
 
-def call(messages, system='', tools=None, tool_choice=None, max_tokens=4096, actor='', feature='', obj='', temperature=0.2):
+def call(messages, system='', tools=None, tool_choice=None, max_tokens=4096, actor='', feature='', obj='', temperature=None):
     """One Messages API call. Returns the response dict. Raises AIError with a message fit for the user."""
     if not configured(): raise AIError('الذكاء الاصطناعي غير مُفعَّل: لم يُضبط مفتاح الواجهة.')
     if cap() and month_usd() >= cap(): raise AIError('بلغ استهلاك هذا الشهر السقف المحدد للذكاء الاصطناعي.')
@@ -71,7 +71,8 @@ def call(messages, system='', tools=None, tool_choice=None, max_tokens=4096, act
         r = ai_mock.reply(messages, system, tools, tool_choice)
         _record(actor, feature, r['usage']['input_tokens'], r['usage']['output_tokens'], 5, True, obj)
         return r
-    body = {'model': MODEL, 'max_tokens': max_tokens, 'messages': messages, 'temperature': temperature}
+    body = {'model': MODEL, 'max_tokens': max_tokens, 'messages': messages}
+    if temperature is not None: body['temperature'] = temperature   # newer models reject it; leave unset by default
     if system: body['system'] = system
     if tools: body['tools'] = tools
     if tool_choice: body['tool_choice'] = tool_choice
