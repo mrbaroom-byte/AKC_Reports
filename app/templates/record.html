@@ -16,7 +16,7 @@
 .tools .sp{flex:1}
 details.sec{background:var(--surface);border:1px solid var(--line);border-radius:12px;margin-bottom:8px;transition:box-shadow .2s var(--ease)}
 details.sec[open]{box-shadow:var(--sh)}
-details.sec>summary{cursor:pointer;padding:13px 18px;font:600 15px var(--body);color:var(--navy);list-style:none;display:flex;gap:10px;align-items:center}
+details.sec>summary{cursor:pointer;padding:13px 18px;font:600 15px var(--body);color:var(--heading);list-style:none;display:flex;gap:10px;align-items:center}
 details.sec>summary::-webkit-details-marker{display:none}
 details.sec>summary::before{content:'‹';font:400 20px/1 var(--latin);color:var(--faint);width:12px;text-align:center;transition:transform .15s var(--ease);flex-shrink:0}
 [dir=ltr] details.sec>summary::before{content:'›'}
@@ -35,7 +35,7 @@ details.sec>summary .c{margin-inline-start:auto}
 .ro input,.ro textarea{background:transparent;border-color:transparent;padding-inline:2px;resize:none;box-shadow:none}
 .chlist td{font-size:13px;vertical-align:top}
 .chlist .b{color:var(--muted);text-decoration:line-through;text-decoration-color:var(--bronze)}
-.chlist .a{color:var(--navy);font-weight:600}
+.chlist .a{color:var(--heading);font-weight:600}
 .sumbox{border-color:var(--amber-line)}
 </style>{% endblock %}
 {% block body %}
@@ -87,7 +87,7 @@ details.sec>summary .c{margin-inline-start:auto}
       <td>{{ 'ع' if v.lang == 'ar' else 'EN' }}</td>
       <td class="b {{ 'ltr' if v.lang == 'en' else '' }}">{{ v.before or '—' }}</td>
       <td class="a {{ 'ltr' if v.lang == 'en' else '' }}">{{ v.after or '—' }}</td>
-      <td class="small">{{ v.why }}</td>
+      <td class="small">{{ v.why_en if lang == 'en' and v.why_en else v.why }}</td>
       <td style="text-align:end">{% if meta.admin and v.after and not v.done %}<button class="btn sm" type="button" data-apply="{{ loop.index0 }}">ضعه في المسودة</button>{% endif %}</td>
     </tr>{% endfor %}
     </tbody></table></div>

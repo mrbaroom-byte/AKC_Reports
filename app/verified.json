@@ -7,7 +7,8 @@
   "before": "SAR 9,246,470.59",
   "after": "SAR 470,599,246",
   "status": "proposed",
-  "why": "العربي ٤٧٠,٥٩٩,٢٤٦ ر.س.، والإنجليزي يعرض الرقم نفسه مقلوب الخانات. ويتسق 470,599,246 مع إجمالي الأصول في النسخة الإنجليزية نفسها (471,930,238)."
+  "why": "العربي ٤٧٠,٥٩٩,٢٤٦ ر.س.، والإنجليزي يعرض الرقم نفسه مقلوب الخانات. ويتسق 470,599,246 مع إجمالي الأصول في النسخة الإنجليزية نفسها (471,930,238).",
+  "why_en": "Arabic reads 470,599,246 SAR; the English shows the same number with its digit groups reversed. 470,599,246 also agrees with total assets in the English version itself (471,930,238)."
  },
  {
   "fund": "income",
@@ -17,7 +18,8 @@
   "before": "1.751%",
   "after": "1.71%",
   "status": "proposed",
-  "why": "العربي 1.71%، والنسخة العربية تنص على أن عائد المؤشر للربع 1.71%، وفارق الأداء 0.17% = 1.88% − 1.71%."
+  "why": "العربي 1.71%، والنسخة العربية تنص على أن عائد المؤشر للربع 1.71%، وفارق الأداء 0.17% = 1.88% − 1.71%.",
+  "why_en": "Arabic reads 1.71%; the Arabic text states the benchmark return for the quarter was 1.71%, and the published spread 0.17% = 1.88% − 1.71%."
  },
  {
   "fund": "income",
@@ -27,7 +29,8 @@
   "before": "-0.01%",
   "after": "0.01%",
   "status": "proposed",
-  "why": "العربي 0.01% لثلاثة أشهر، وفارق الأداء المنشور (−1.35%) = 0.01% − 1.36%."
+  "why": "العربي 0.01% لثلاثة أشهر، وفارق الأداء المنشور (−1.35%) = 0.01% − 1.36%.",
+  "why_en": "Arabic reads 0.01% for three months, and the published spread (−1.35%) = 0.01% − 1.36%."
  },
  {
   "fund": "income",
@@ -37,7 +40,8 @@
   "before": "1.20%",
   "after": "-1.20%",
   "status": "proposed",
-  "why": "فارق أداء سنة واحدة = 2.90% − 4.10% = −1.20%، كما في العربي."
+  "why": "فارق أداء سنة واحدة = 2.90% − 4.10% = −1.20%، كما في العربي.",
+  "why_en": "One-year spread = 2.90% − 4.10% = −1.20%, as in the Arabic."
  },
  {
   "fund": "income",
@@ -47,7 +51,8 @@
   "before": "SAR 95,804,675",
   "after": "SAR 495,804,675",
   "status": "proposed",
-  "why": "العربي 495,804,675 ر.س.، والقيمة الإجمالية لأصول الصندوق في النسخة الإنجليزية نفسها SAR 495,804,675؛ سقط الرقم 4 من أوله."
+  "why": "العربي 495,804,675 ر.س.، والقيمة الإجمالية لأصول الصندوق في النسخة الإنجليزية نفسها SAR 495,804,675؛ سقط الرقم 4 من أوله.",
+  "why_en": "Arabic reads 495,804,675 SAR, and the fund’s total asset value in the English version itself is SAR 495,804,675; the leading 4 was dropped."
  },
  {
   "fund": "gif",
@@ -57,7 +62,8 @@
   "before": "7.16%",
   "after": "7.20%",
   "status": "proposed",
-  "why": "العربي 7.20%، ويتسق مع تغيّر صافي قيمة الوحدة من 10.3422 إلى 11.0865 ر.س. (7.20%) المنشور في جدول معايير الأداء."
+  "why": "العربي 7.20%، ويتسق مع تغيّر صافي قيمة الوحدة من 10.3422 إلى 11.0865 ر.س. (7.20%) المنشور في جدول معايير الأداء.",
+  "why_en": "Arabic reads 7.20%, consistent with NAV per unit moving from 10.3422 to 11.0865 SAR (7.20%) in the performance table."
  },
  {
   "fund": "gif",
@@ -67,7 +73,8 @@
   "before": "-0.03%",
   "after": "0.01%",
   "status": "proposed",
-  "why": "فارق الأداء = 7.20% − 7.19% = 0.01%، كما في العربي."
+  "why": "فارق الأداء = 7.20% − 7.19% = 0.01%، كما في العربي.",
+  "why_en": "Spread = 7.20% − 7.19% = 0.01%, as in the Arabic."
  },
  {
   "fund": "income",
@@ -77,7 +84,8 @@
   "before": "SAR 107,583,874",
   "after": null,
   "status": "source",
-  "why": "العربي 107,583,784 والإنجليزي 107,583,874 (تبديل خانتين). لا يحسم المستند أيهما الصحيح؛ يُطلب الرقم من FACO."
+  "why": "العربي 107,583,784 والإنجليزي 107,583,874 (تبديل خانتين). لا يحسم المستند أيهما الصحيح؛ يُطلب الرقم من FACO.",
+  "why_en": "Arabic 107,583,784 and English 107,583,874 (two digits swapped). The document does not settle which is right; request the figure from FACO."
  },
  {
   "fund": "income",
@@ -87,7 +95,8 @@
   "before": "-0.17",
   "after": null,
   "status": "source",
-  "why": "مؤشر شارب لثلاثة أشهر: العربي −0.71 والإنجليزي −0.17. لا يحسمه المستند؛ يُطلب من إدارة أسواق المال."
+  "why": "مؤشر شارب لثلاثة أشهر: العربي −0.71 والإنجليزي −0.17. لا يحسمه المستند؛ يُطلب من إدارة أسواق المال.",
+  "why_en": "Three-month Sharpe ratio: Arabic −0.71, English −0.17. The document does not settle it; request it from Capital Markets."
  },
  {
   "fund": "gif",
@@ -97,7 +106,8 @@
   "before": "4.58",
   "after": null,
   "status": "source",
-  "why": "الانحراف المعياري للربع: العربي 4.59 والإنجليزي 4.58. فرق تقريب على الأرجح؛ يُحسم من إدارة أسواق المال."
+  "why": "الانحراف المعياري للربع: العربي 4.59 والإنجليزي 4.58. فرق تقريب على الأرجح؛ يُحسم من إدارة أسواق المال.",
+  "why_en": "Standard deviation for the quarter: Arabic 4.59, English 4.58. Probably rounding; to be settled by Capital Markets."
  },
  {
   "fund": "income",
@@ -107,7 +117,8 @@
   "before": null,
   "after": null,
   "status": "source",
-  "why": "رسم أكبر عشرة استثمارات: كل أعمدة النسخة الإنجليزية أقل من العربية بنسبة ثابتة (×1.074) وبمحور مختلف (0–9% مقابل 0–10%)، وتطابق تقريبًا رسم الربع الرابع 2024؛ أي أن الإنجليزي يحمل على الأرجح رسم الربع السابق. يُطلب أوزان الربع الأول 2025 من إدارة أسواق المال. (الرسم بلا أرقام مطبوعة، والقيم مقيسة من أطوال الأعمدة.)"
+  "why": "رسم أكبر عشرة استثمارات: كل أعمدة النسخة الإنجليزية أقل من العربية بنسبة ثابتة (×1.074) وبمحور مختلف (0–9% مقابل 0–10%)، وتطابق تقريبًا رسم الربع الرابع 2024؛ أي أن الإنجليزي يحمل على الأرجح رسم الربع السابق. يُطلب أوزان الربع الأول 2025 من إدارة أسواق المال. (الرسم بلا أرقام مطبوعة، والقيم مقيسة من أطوال الأعمدة.)",
+  "why_en": "Top-ten chart: every English bar is lower than the Arabic by a constant factor (×1.074) on a different axis (0–9% vs 0–10%), and it nearly matches the Q4 2024 chart, so the English probably carries the previous quarter’s chart. Request the Q1 2025 weights from Capital Markets. (The chart has no printed values; values were measured from bar lengths.)"
  },
  {
   "fund": "income",
@@ -117,6 +128,7 @@
   "before": null,
   "after": null,
   "status": "source",
-  "why": "التوزيع الجغرافي، دول الخليج باستثناء السعودية: العربي 6% والإنجليزي 7%، وبقية الشرائح متطابقة؛ مجموع العربي 99% والإنجليزي 100%، فالأرجح 7%. يُؤكَّد من إدارة أسواق المال. (وفي الإنجليزي خطأ إملائي «Norht America».)"
+  "why": "التوزيع الجغرافي، دول الخليج باستثناء السعودية: العربي 6% والإنجليزي 7%، وبقية الشرائح متطابقة؛ مجموع العربي 99% والإنجليزي 100%، فالأرجح 7%. يُؤكَّد من إدارة أسواق المال. (وفي الإنجليزي خطأ إملائي «Norht America».)",
+  "why_en": "Geographic allocation, GCC excluding Saudi Arabia: Arabic 6%, English 7%, other slices identical; Arabic sums to 99% and English to 100%, so 7% is likely. To be confirmed by Capital Markets. (The English also misspells “Norht America”.)"
  }
 ]

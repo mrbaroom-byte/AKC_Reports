@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="ar" dir="rtl">
+<html lang="{{ lang or 'ar' }}" dir="{{ dir or 'rtl' }}"{% if theme in ('light', 'dark') %} data-theme="{{ theme }}"{% endif %}>
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
@@ -9,11 +9,12 @@
 <link rel="icon" href="/static/akc-color.svg" type="image/svg+xml">
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Alyamama:wght@500;700&family=IBM+Plex+Sans+Arabic:wght@400;500;600&family=IBM+Plex+Sans:wght@400;500;600&display=swap">
-<link rel="stylesheet" href="/static/app.css?v=4">
-<script src="/static/app.js?v=4"></script>
+<link rel="stylesheet" href="/static/app.css?v=5">
+<script src="{{ '/i18n/app.en.js?v=5' if lang == 'en' else '/static/app.js?v=5' }}"></script>
 {% block head %}{% endblock %}
 </head>
 <body class="{% block bodyclass %}{% endblock %}">
+<a class="skip" href="#main">تخطَّ إلى المحتوى</a>
 <header class="top">
   <img class="lines" src="/static/lines.svg" alt="" aria-hidden="true" style="width:100%;height:100%;object-fit:cover">
   <div class="in">
@@ -22,15 +23,28 @@
     <nav aria-label="التنقل">
       <a href="/" {% if nav == 'home' %}aria-current="page"{% endif %}>الربع الحالي</a>
       <a href="/records" {% if nav == 'records' %}aria-current="page"{% endif %}>البيانات المنشورة</a>
-      {% if me.role == 'admin' %}<a href="/users" {% if nav == 'users' %}aria-current="page"{% endif %}>المستخدمون</a><a href="/backups" {% if nav == 'backups' %}aria-current="page"{% endif %}>النسخ الاحتياطية</a>{% endif %}
+      {% if me.role == 'admin' %}<details class="{{ 'cur' if nav in ('users', 'backups', 'audit') else '' }}"><summary>الإدارة <svg width="10" height="10" viewBox="0 0 10 10" aria-hidden="true"><path d="M2 3.5l3 3 3-3" fill="none" stroke="currentColor" stroke-width="1.5"/></svg></summary>
+        <div class="dd"><a href="/users" {% if nav == 'users' %}aria-current="page"{% endif %}>المستخدمون</a><a href="/audit" {% if nav == 'audit' %}aria-current="page"{% endif %}>سجل التدقيق</a><a href="/backups" {% if nav == 'backups' %}aria-current="page"{% endif %}>النسخ الاحتياطية</a></div></details>{% endif %}
       {% if doc_centre %}<a href="{{ doc_centre }}" target="_blank" rel="noopener">مركز المستندات ↗</a>{% endif %}
     </nav>
     <span class="sp"></span>
+    <div class="ctl">
+      <a href="/pref?lang={{ alt_lang or 'en' }}&next={{ (here or '/')|urlencode }}" class="{{ 'ar' if alt_lang == 'ar' else '' }}" lang="{{ alt_lang or 'en' }}" aria-label="اللغة">{{ 'العربية' if alt_lang == 'ar' else 'English' }}</a>
+      <button type="button" id="themeBtn" data-v="{{ theme or 'system' }}" aria-label="المظهر" title="المظهر">
+        <svg data-i="system" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><rect x="1.5" y="2.5" width="13" height="9" rx="1.5"/><path d="M5.5 14h5M8 11.5V14"/></svg>
+        <svg data-i="light" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><circle cx="8" cy="8" r="3"/><path d="M8 1v1.6M8 13.4V15M1 8h1.6M13.4 8H15M3 3l1.1 1.1M11.9 11.9L13 13M3 13l1.1-1.1M11.9 4.1L13 3"/></svg>
+        <svg data-i="dark" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path d="M13.5 9.6A5.8 5.8 0 0 1 6.4 2.5a5.8 5.8 0 1 0 7.1 7.1z"/></svg>
+        <span class="sr" id="themeLbl"></span>
+      </button>
+    </div>
     <div class="me">
       <span class="av" aria-hidden="true"><svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="8" cy="5.5" r="2.8"/><path d="M2.8 14c.6-2.7 2.7-4.2 5.2-4.2s4.6 1.5 5.2 4.2"/></svg></span>
       <span class="who">{{ me.name }}{% if roles and roles[me.role] != me.name %}<small>{{ roles[me.role] }}</small>{% endif %}</span>
       <a href="/logout">خروج</a>
     </div>
+    {% else %}
+    <span class="sp"></span>
+    <div class="ctl"><a href="/pref?lang={{ alt_lang or 'en' }}&next={{ (here or '/')|urlencode }}" class="{{ 'ar' if alt_lang == 'ar' else '' }}">{{ 'العربية' if alt_lang == 'ar' else 'English' }}</a></div>
     {% endif %}
   </div>
 </header>

@@ -52,3 +52,23 @@ function busy(btn, on, label) {
   if (on) { btn.dataset.html = btn.innerHTML; btn.disabled = true; btn.innerHTML = '<span class="spin"></span>' + esc(label || btn.textContent); }
   else { btn.disabled = false; if (btn.dataset.html) btn.innerHTML = btn.dataset.html; }
 }
+
+/* theme: system / light / dark, remembered in a cookie so the server renders the same theme (no flash) */
+(function () {
+  const NAMES = {system: 'تلقائي', light: 'فاتح', dark: 'داكن'}, ORDER = ['system', 'light', 'dark'];
+  function apply(t) {
+    const r = document.documentElement;
+    if (t === 'system') r.removeAttribute('data-theme'); else r.dataset.theme = t;
+    const b = document.getElementById('themeBtn'); if (!b) return;
+    b.dataset.v = t; b.querySelectorAll('svg').forEach(s => s.style.display = s.dataset.i === t ? '' : 'none');
+    const label = 'المظهر' + ': ' + NAMES[t]; b.setAttribute('aria-label', label); b.title = label;
+  }
+  document.addEventListener('DOMContentLoaded', () => {
+    const b = document.getElementById('themeBtn'); if (!b) return;
+    apply(b.dataset.v || 'system');
+    b.addEventListener('click', () => {
+      const t = ORDER[(ORDER.indexOf(b.dataset.v || 'system') + 1) % 3]; apply(t);
+      document.cookie = 'theme=' + t + ';path=/;max-age=31536000;samesite=lax' + (location.protocol === 'https:' ? ';secure' : '');
+    });
+  });
+})();
