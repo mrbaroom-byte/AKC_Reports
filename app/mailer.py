@@ -65,58 +65,78 @@ def app_url(req=None):
 
 # ---------- message ----------
 
-def _page(ar_title, ar_lines, en_title, en_lines, link, ar_btn, en_btn):
-    e = H.escape
-    p_ar = ''.join(f'<p style="margin:0 0 12px">{x}</p>' for x in ar_lines)
-    p_en = ''.join(f'<p style="margin:0 0 8px">{x}</p>' for x in en_lines)
-    btn = lambda t: (f'<a href="{e(link)}" style="display:inline-block;background:#12284B;color:#ffffff;text-decoration:none;font-weight:600;'
-                     f'padding:11px 22px;border-radius:8px">{e(t)}</a>') if link else ''
-    return f'''<!doctype html><html lang="ar" dir="rtl"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"></head>
-<body style="margin:0;background:#F5F7FB;font-family:Tahoma,Arial,sans-serif;color:#1C2B45">
-<table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background:#F5F7FB;padding:24px 12px"><tr><td align="center">
-<table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="max-width:600px;background:#ffffff;border:1px solid #E1E6EF;border-radius:12px;overflow:hidden">
-<tr><td style="background:#12284B;color:#ffffff;padding:16px 24px;font-size:14px;font-weight:600" dir="rtl">الخبير المالية · البيانات الربعية</td></tr>
-<tr><td style="padding:24px 24px 8px;font-size:15px;line-height:1.8" dir="rtl" align="right">
-<h1 style="font-size:19px;margin:0 0 14px;color:#12284B">{e(ar_title)}</h1>{p_ar}<p style="margin:18px 0 6px">{btn(ar_btn)}</p></td></tr>
-<tr><td style="padding:8px 24px 22px;font-size:13px;line-height:1.6;color:#5A6478;border-top:1px solid #E1E6EF" dir="ltr" align="left">
-<p style="margin:14px 0 8px;font-weight:600;color:#3A4458">{e(en_title)}</p>{p_en}</td></tr>
-</table>
-<p style="font-size:11.5px;color:#9AA3B5;margin:14px 0 0" dir="rtl">رسالة آلية من منصة البيانات الربعية. لا تردّ عليها.</p>
-</td></tr></table></body></html>'''
+import email_kit as K
+
+DISCLAIMER_AR = ('صدرت هذه الرسالة آليًا من منصة البيانات الربعية، وهي نظام تجريبي في مرحلة التطوير، '
+                 'ومخصّصة للاستخدام الداخلي في شركة الخبير المالية فقط. لا تُعدّ مستندًا رسميًا، ولا يُردّ عليها.')
+DISCLAIMER_EN = ('Sent automatically by the quarterly statements platform, a pilot system under development, '
+                 'for internal use at Alkhabeer Capital only. It is not an official document; please do not reply.')
 
 
-def compose(kind, fund, q, by='', note='', link='', findings=None, by_en=''):
-    """(subject, html, text) for one alert."""
-    e = H.escape
+def _facts(rows):
+    """Two-column fact table: label · value."""
+    tr = ''.join(f'<tr><td style="padding:7px 0;border-bottom:1px solid {K.LINE};font-family:{K.FONT};font-size:13px;color:{K.MUTED};width:34%;vertical-align:top">{K.e(k)}</td>'
+                 f'<td style="padding:7px 0;border-bottom:1px solid {K.LINE};font-family:{K.FONT};font-size:15px;color:{K.INK};font-weight:bold;line-height:1.6">{v}</td></tr>' for k, v in rows)
+    return K._box(f'<table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0">{tr}</table>', None, '8px 18px')
+
+
+def _quote(label, text):
+    return K.note(K.e(text), label)
+
+
+def _english(title, lines):
+    """English summary: its own white box, left to right."""
+    body = ''.join(f'<p style="margin:0 0 6px 0;font-family:{K.FONT};font-size:13px;color:{K.MUTED};line-height:1.7">{x}</p>' for x in lines)
+    return (f'<tr><td style="padding:0 0 10px 0" dir="ltr" align="left"><table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" '
+            f'bgcolor="{K.WHITE}" style="background-color:{K.WHITE};border:1px solid {K.LINE};border-radius:12px"><tr><td dir="ltr" style="padding:12px 16px;text-align:left;font-family:{K.FONT}">'
+            f'<div style="font-size:11px;font-weight:bold;color:{K.SOFT};letter-spacing:.4px;padding-bottom:4px">ENGLISH SUMMARY</div>'
+            f'<div style="font-size:14px;font-weight:bold;color:{K.INK};padding-bottom:4px">{K.e(title)}</div>{body}</td></tr></table></td></tr>')
+
+
+def _disclaimer():
+    return (f'<tr><td style="padding:4px 0 0 0"><table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" bgcolor="#EEF1F6" style="background-color:#EEF1F6;border-radius:10px"><tr>'
+            f'<td style="padding:12px 16px;font-family:{K.FONT};font-size:12px;color:#4A5670;line-height:1.8"><b>إخلاء مسؤولية:</b> {K.e(DISCLAIMER_AR)}'
+            f'<div dir="ltr" style="text-align:left;padding-top:6px;color:{K.SOFT}">{K.e(DISCLAIMER_EN)}</div></td></tr></table></td></tr>')
+
+
+def compose(kind, fund, q, by='', note='', link='', findings=None, by_en='', at=''):
+    """(subject, html, text) for one alert, in the Alkhabeer «ضوء» e-mail design."""
+    e = K.e
     by_en = by_en or ('The approver' if kind in ('returned', 'final') else 'A data-entry user')
     F = M.FUNDS[fund]; fa, fe = F['ar'], F['en']; qa, qe = M.qlabel(q, 'ar'), M.qlabel(q, 'en')
-    note_ar = [f'ملاحظة المعتمِد: «{e(note)}»'] if note else []
-    note_en = [f'Approver’s note: “{e(note)}”'] if note else []
+    at = at or store.now()
+    facts = [('الصندوق', e(fa)), ('الفترة', e(qa))]
+    extra = []
     if kind == 'submitted':
-        f = ([f'المقارنة بالربع السابق: {findings} ملاحظة تحتاج مراجعة قبل الاعتماد.'] if findings else ['المقارنة بالربع السابق: لا ملاحظات.']) if findings is not None else []
-        fe_ = ([f'Comparison with last quarter: {findings} finding(s) to review.'] if findings else ['Comparison with last quarter: no findings.']) if findings is not None else []
-        subj = f'بانتظار اعتمادك: {fa} — {qa}'
-        ar = (f'بانتظار اعتمادك: {fa}', [f'رفع {e(by)} مسودة البيان الربعي ل{e(fa)} عن {e(qa)} للاعتماد.'] + f)
-        en = (f'Awaiting your approval: {fe}, {qe}', [f'{e(by_en)} submitted the {e(qe)} quarterly statement of {e(fe)} for approval.'] + fe_)
-        btn = ('مراجعة البيان', 'Review the statement')
+        title, sub = 'بيان بانتظار اعتمادك', 'رُفعت مسودة البيان الربعي للاعتماد. راجعها واعتمدها أو أعدها للتعديل.'
+        facts += [('رفعه', e(by)), ('وقت الرفع', K.ltr(at))]
+        if findings is not None:
+            facts.append(('المقارنة بالربع السابق', f'{K.ltr(findings)} ملاحظة تحتاج مراجعة' if findings else 'لا ملاحظات'))
+        btn = 'مراجعة البيان'; subj = f'بانتظار اعتمادك: {fa} — {qa}'
+        en = (f'Awaiting your approval — {fe}, {qe}', [f'{e(by_en)} submitted the {e(qe)} quarterly statement for approval.'])
     elif kind == 'returned':
-        subj = f'أُعيد للتعديل: {fa} — {qa}'
-        ar = (f'أُعيد للتعديل: {fa}', [f'أعاد {e(by)} البيان الربعي ل{e(fa)} عن {e(qa)} للتعديل.'] + note_ar)
-        en = (f'Returned for changes: {fe}, {qe}', [f'{e(by_en)} returned the {e(qe)} quarterly statement of {e(fe)} for changes.'] + note_en)
-        btn = ('فتح البيان', 'Open the statement')
+        title, sub = 'أُعيد البيان للتعديل', 'أعاد المعتمِد البيان للتعديل. عدّل ما يلزم، ثم أصدر المسودة وارفعها مرة أخرى.'
+        facts += [('أعاده', e(by)), ('الوقت', K.ltr(at))]
+        if note: extra.append(_quote('ملاحظة المعتمِد', note))
+        btn = 'فتح البيان'; subj = f'أُعيد للتعديل: {fa} — {qa}'
+        en = (f'Returned for changes — {fe}, {qe}', [f'{e(by_en)} returned the {e(qe)} quarterly statement for changes.'] + ([f'Note: “{e(note)}”'] if note else []))
     elif kind == 'final':
-        subj = f'اعتُمد: {fa} — {qa}'
-        ar = (f'اعتُمد البيان: {fa}', [f'اعتمد {e(by)} النسخة النهائية من البيان الربعي ل{e(fa)} عن {e(qa)}، والملفات العربية والإنجليزية جاهزة.'])
-        en = (f'Approved: {fe}, {qe}', [f'{e(by_en)} approved the final {e(qe)} quarterly statement of {e(fe)}. The Arabic and English files are ready.'])
-        btn = ('تنزيل الملفات', 'Download the files')
+        title, sub = 'اعتُمد البيان', 'اعتُمدت النسخة النهائية، والملفات العربية والإنجليزية جاهزة للتنزيل.'
+        facts += [('اعتمده', e(by)), ('وقت الاعتماد', K.ltr(at))]
+        btn = 'تنزيل الملفات'; subj = f'اعتُمد: {fa} — {qa}'
+        en = (f'Approved — {fe}, {qe}', [f'{e(by_en)} approved the final {e(qe)} quarterly statement. The Arabic and English files are ready.'])
     else:   # test
-        subj = 'رسالة تجريبية من منصة البيانات الربعية'
-        ar = ('رسالة تجريبية', ['وصلتك هذه الرسالة لأن تنبيهات البريد مفعّلة في منصة البيانات الربعية.'])
+        title, sub = 'رسالة تجريبية', 'وصلتك هذه الرسالة لأن تنبيهات البريد مفعّلة في منصة البيانات الربعية.'
+        facts = [('المرسِل', K.ltr(sender())), ('الوقت', K.ltr(at))]
+        btn = 'فتح المنصة'; subj = 'رسالة تجريبية من منصة البيانات الربعية'
         en = ('Test message', ['You received this because e-mail alerts are set up on the quarterly statements platform.'])
-        btn = ('فتح المنصة', 'Open the platform')
-    html_ = _page(ar[0], ar[1], en[0], en[1], link, *btn)
-    strip = lambda s: re.sub('<[^>]+>', '', H.unescape(s))
-    text = '\n'.join([ar[0], *map(strip, ar[1]), link, '', en[0], *map(strip, en[1])])
+    rows = [K.masthead(title, kicker='الخبير المالية · منصة البيانات الربعية', subtitle=e(sub), cta=(btn, link) if link else None),
+            K.gap(12), _facts(facts), *extra, _english(*en), _disclaimer(),
+            K.footer('رسالة آلية من منصة البيانات الربعية')]
+    html_ = K.shell(f'{title} — {fa if kind != "test" else ""} {qa if kind != "test" else ""}'.strip(' —'), rows)
+    strip = lambda x: __import__('re').sub('<[^>]+>', '', H.unescape(x)).replace('\u2066', '').replace('\u2069', '')
+    text = '\n'.join([title, sub, ''] + [f'{k}: {strip(v)}' for k, v in facts] + ([f'ملاحظة المعتمِد: {note}'] if kind == 'returned' and note else [])
+                     + ['', link, '', en[0], *map(strip, en[1]), '', 'إخلاء مسؤولية: ' + DISCLAIMER_AR, DISCLAIMER_EN])
     return subj, html_, text
 
 
