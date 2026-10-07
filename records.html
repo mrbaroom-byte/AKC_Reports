@@ -1,0 +1,59 @@
+{% extends "base.html" %}
+{% block title %}البيانات المنشورة · {{ fname }}{% endblock %}
+{% block head %}<style>
+.fsel{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px;margin-bottom:20px}
+@media (max-width:760px){.fsel{grid-template-columns:1fr}}
+.fsel a{display:flex;align-items:center;gap:12px;background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:14px 16px;text-decoration:none;color:var(--ink-2);transition:border-color .15s var(--ease)}
+.fsel a img{height:34px;width:auto}
+.fsel a:hover{border-color:var(--mist-2)}
+.fsel a.on{border-color:var(--sky);box-shadow:0 0 0 3px rgba(59,125,216,.14)}
+.stats{display:flex;gap:28px;flex-wrap:wrap;margin:0 0 16px;padding:0 4px}
+.stats div{font-size:13px;color:var(--muted)}
+.stats b{display:block;font:700 22px var(--head);color:var(--navy)}
+td.q a{font-weight:600;text-decoration:none;color:var(--navy)}
+td.q a:hover{color:var(--blue)}
+.dl{display:flex;gap:6px;flex-wrap:wrap}
+.dl a{font:500 12.5px var(--latin);text-decoration:none;border:1px solid var(--line);border-radius:7px;padding:3px 8px;color:var(--blue)}
+.dl a:hover{border-color:var(--sky)}
+.yr td{background:var(--paper)!important;font:600 12px var(--latin);color:var(--muted);padding:6px 12px}
+#flt{max-width:220px;height:36px;padding:6px 12px}
+</style>{% endblock %}
+{% block body %}
+<div class="ph">
+  <div class="t"><h1>البيانات المنشورة</h1>
+  <p class="lede">{{ total }} بيانًا مستوردًا من مستندات الصناديق ومحفوظًا جداولَ قابلة للتصحيح. التصحيح للمعتمِد فقط، ولا يستبدل الملفات المنشورة، ويُسجَّل كل تعديل مع سببه.</p></div>
+</div>
+<nav class="fsel" aria-label="الصناديق">{% for f in funds %}<a href="/records?fund={{ f.key }}" class="{{ 'on' if f.key == fund else '' }}" {% if f.key == fund %}aria-current="page"{% endif %}><img src="/static/funds/{{ f.key }}.svg" alt="{{ f.name }}"></a>{% endfor %}</nav>
+<div class="stats">
+  <div><b class="tnum">{{ rows|length }}</b>بيانًا ربعيًا</div>
+  <div><b class="tnum">{{ nconf }}</b>اختلافًا بين العربي والإنجليزي</div>
+  <div><b class="tnum">{{ ncorr }}</b>تصحيحًا معتمدًا</div>
+  <span class="sp" style="flex:1"></span>
+  <div style="align-self:flex-end"><label class="sr" for="flt">بحث بالسنة</label><input id="flt" type="search" placeholder="تصفية بالسنة، مثل 2025" inputmode="numeric"></div>
+</div>
+<div class="card flush">
+<div class="tw">
+<table id="tbl">
+<thead><tr><th>الربع</th><th>الحالة</th><th class="hide-sm">اختلافات اللغتين</th><th class="hide-sm">التصحيحات</th><th>الملفات المنشورة</th><th></th></tr></thead>
+<tbody>
+{% set ns = namespace(y='') %}
+{% for r in rows %}
+{% set y = r.q[3:] %}
+{% if y != ns.y %}{% set ns.y = y %}<tr class="yr" data-y="{{ y }}"><td colspan="6">{{ y }}</td></tr>{% endif %}
+<tr data-y="{{ y }}">
+  <td class="q"><a href="/r/{{ fund }}/{{ r.q }}">{{ r.ql }}</a></td>
+  <td><span class="pill {{ 'navy' if r.st == 'corrected' else 'blue' }}">{{ r.status }}</span>{% if r.draft %} <span class="pill amber">مسودة تصحيح</span>{% endif %}</td>
+  <td class="hide-sm">{% if r.conf %}<a href="/r/{{ fund }}/{{ r.q }}#conf" style="text-decoration:none"><span class="count amber">{{ r.conf }}</span></a>{% else %}<span class="muted">—</span>{% endif %}</td>
+  <td class="hide-sm">{% if r.corr %}<span class="count blue">{{ r.corr }}</span>{% else %}<span class="muted">—</span>{% endif %}</td>
+  <td><div class="dl">{% set pub = r.files.get('published') or {} %}{% for l in ['ar','en'] %}{% set f = pub.get(l) or {} %}{% if f.pdf %}<a href="/f/{{ fund }}/{{ r.q }}/published/{{ f.pdf }}" target="_blank" rel="noopener">PDF {{ 'ع' if l == 'ar' else 'EN' }}</a>{% endif %}{% endfor %}</div></td>
+  <td style="text-align:end"><a class="btn sm" href="/r/{{ fund }}/{{ r.q }}">فتح</a></td>
+</tr>
+{% else %}
+<tr><td colspan="6" class="empty">لا بيانات منشورة لهذا الصندوق.</td></tr>
+{% endfor %}
+</tbody></table>
+</div></div>
+<script>
+$('#flt').addEventListener('input', e => { const v = e.target.value.replace(/[٠-٩]/g, d => AR_DIG.indexOf(d)).trim(); $$('#tbl tbody tr[data-y]').forEach(r => r.hidden = !!v && !r.dataset.y.includes(v)); });
+</script>
+{% endblock %}

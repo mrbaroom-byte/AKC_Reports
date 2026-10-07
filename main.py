@@ -1,0 +1,598 @@
+"""منصة البيانات الربعية — Alkhabeer Capital quarterly statements for the capital-market funds."""
+import os, json, re, hmac, hashlib, threading, traceback, datetime, mimetypes, zipfile, io
+from fastapi import FastAPI, Request, Form, HTTPException
+from fastapi.responses import HTMLResponse, JSONResponse, RedirectResponse, FileResponse, StreamingResponse
+from fastapi.staticfiles import StaticFiles
+from urllib.parse import urlparse
+import time
+from itsdangerous import URLSafeTimedSerializer, BadSignature
+from jinja2 import Environment, FileSystemLoader, select_autoescape
+from markupsafe import Markup
+import model as M, store, pipeline as P, records as R, shutil
+
+APP = os.path.dirname(os.path.abspath(__file__))
+ENG = P.ENG
+def _secret():
+    if os.environ.get('SESSION_SECRET'): return os.environ['SESSION_SECRET']
+    f = os.path.join(store.DATA, '.session_secret')
+    if not os.path.exists(f):
+        import secrets; open(f, 'w').write(secrets.token_hex(32)); os.chmod(f, 0o600)
+    return open(f).read().strip()
+SECRET = _secret()
+SER = URLSafeTimedSerializer(SECRET, salt='akc-q-session')
+DOC_CENTRE = os.environ.get('DOC_CENTRE_URL', 'https://claude.ai/artifact/7bddTJzzSApLduLWWzKwXv')
+SEED_Q = 'q2-2026'
+env = Environment(loader=FileSystemLoader(os.path.join(APP, 'templates')), autoescape=select_autoescape(['html']))
+
+
+def _js(v):
+    """JSON safe to place inside <script>: no «</script>» or HTML comment can close the block early."""
+    return json.dumps(v, ensure_ascii=False).replace('<', '\\u003c').replace('>', '\\u003e').replace('&', '\\u0026').replace('\u2028', '\\u2028').replace('\u2029', '\\u2029')
+
+
+env.filters['js'] = lambda v: Markup(_js(v))
+app = FastAPI(docs_url=None, redoc_url=None, openapi_url=None)
+app.mount('/static', StaticFiles(directory=os.path.join(APP, 'static')), name='static')
+JOBS = {}
+RENDER = threading.Lock()   # the engine renders through shared folders, so one document set is built at a time
+
+
+@app.middleware('http')
+async def guard(req: Request, call_next):
+    # writes only from this site (blocks cross-site form posts), and standard hardening headers on every reply
+    if req.method == 'POST':
+        src = req.headers.get('origin') or req.headers.get('referer')
+        if src and urlparse(src).netloc != req.headers.get('host'):
+            return JSONResponse({'error': 'origin', 'msg': 'طلب من خارج الموقع.'}, status_code=403)
+    r = await call_next(req)
+    r.headers.setdefault('X-Frame-Options', 'SAMEORIGIN')
+    r.headers.setdefault('X-Content-Type-Options', 'nosniff')
+    r.headers.setdefault('Referrer-Policy', 'same-origin')
+    if req.url.path.startswith('/static/'): r.headers['Cache-Control'] = 'public, max-age=86400'
+    return r
+
+
+# ---------- auth ----------
+ROLE_AR = {'admin': 'المعتمِد', 'editor': 'مُدخل البيانات'}
+
+
+def who(req: Request):
+    """{'user','name','role'} for a signed-in viewer, else None."""
+    tok = req.cookies.get('akcq')
+    if not tok: return None
+    try: u = SER.loads(tok, max_age=60 * 60 * 12)
+    except BadSignature: return None
+    if isinstance(u, str): u = {'user': 'admin', 'name': 'المعتمِد', 'role': 'admin'}
+    if u.get('role') != 'admin':
+        if not any(x['username'] == u['user'] and x['active'] for x in store.users()): return None
+    return u
+
+
+def need(req: Request, role=None):
+    u = who(req)
+    if not u: raise HTTPException(status_code=401)
+    if role and u['role'] != role: raise HTTPException(status_code=403)
+    return u
+
+
+@app.exception_handler(401)
+async def _401(req, exc):
+    if req.url.path.startswith('/api/'): return JSONResponse({'error': 'login'}, status_code=401)
+    return RedirectResponse('/login', status_code=303)
+
+
+@app.exception_handler(403)
+async def _403(req, exc):
+    if req.url.path.startswith('/api/'): return JSONResponse({'error': 'forbidden', 'msg': 'هذا الإجراء للمعتمِد فقط.'}, status_code=403)
+    return HTMLResponse('<p style="font-family:sans-serif;padding:24px" dir="rtl">هذه الصفحة للمعتمِد فقط. <a href="/">العودة</a></p>', status_code=403)
+
+
+@app.get('/login', response_class=HTMLResponse)
+def login_page(req: Request, e: str = ''):
+    return env.get_template('login.html').render(err=e, configured=bool(os.environ.get('ADMIN_PASSWORD')))
+
+
+def _set(resp, u):
+    resp.set_cookie('akcq', SER.dumps(u), httponly=True, secure=os.environ.get('RAILWAY_ENVIRONMENT') is not None, samesite='lax', max_age=60 * 60 * 12)
+    return resp
+
+
+FAILS = {}   # ip -> [time of each failed sign-in in the last 15 minutes]
+
+
+def _throttled(ip):
+    t = time.time(); FAILS[ip] = [x for x in FAILS.get(ip, []) if t - x < 900]
+    return len(FAILS[ip]) >= 8
+
+
+@app.post('/login')
+def login(req: Request, password: str = Form(...), username: str = Form('')):
+    ip = req.client.host if req.client else '-'
+    if _throttled(ip): return RedirectResponse('/login?e=2', status_code=303)
+    r = _login(username, password)
+    if r is None: FAILS.setdefault(ip, []).append(time.time()); return RedirectResponse('/login?e=1', status_code=303)
+    FAILS.pop(ip, None); return r
+
+
+def _login(username, password):
+    username = (username or '').strip().lower()
+    if username in ('', 'admin'):
+        pw = os.environ.get('ADMIN_PASSWORD', '').strip().strip('"').strip("'").strip()
+        if pw and hmac.compare_digest(password.strip().encode(), pw.encode()):
+            return _set(RedirectResponse('/', status_code=303), {'user': 'admin', 'name': 'المعتمِد', 'role': 'admin'})
+        return None
+    r = store.check_user(username, password.strip().upper())
+    if not r: return None
+    return _set(RedirectResponse('/', status_code=303), {'user': r['username'], 'name': r['name'], 'role': r['role']})
+
+
+@app.get('/logout')
+def logout():
+    r = RedirectResponse('/login', status_code=303); r.delete_cookie('akcq'); return r
+
+
+@app.get('/users', response_class=HTMLResponse)
+def users_page(req: Request, new: str = '', pw: str = ''):
+    u = need(req, 'admin')
+    return env.get_template('users.html').render(me=u, nav='users', users=store.users(), roles=ROLE_AR, new=new, pw=pw)
+
+
+@app.post('/users')
+def users_add(req: Request, username: str = Form(...), name: str = Form(...)):
+    need(req, 'admin')
+    username = re.sub(r'[^a-z0-9._-]', '', username.strip().lower())[:40]
+    if not username or username == 'admin': return RedirectResponse('/users', status_code=303)
+    pw = store.create_user(username, name.strip()[:80], 'editor')
+    # the one-time password is shown on the next page only; it is never stored in clear
+    return HTMLResponse(env.get_template('users.html').render(me=who(req), nav='users', users=store.users(), roles=ROLE_AR, new=username, pw=pw), headers={'Cache-Control': 'no-store'})
+
+
+@app.post('/users/{username}/toggle')
+def users_toggle(req: Request, username: str):
+    need(req, 'admin')
+    cur = next((x for x in store.users() if x['username'] == username), None)
+    if cur: store.set_active(username, not cur['active'])
+    return RedirectResponse('/users', status_code=303)
+
+
+@app.post('/users/{username}/reset')
+def users_reset(req: Request, username: str):
+    need(req, 'admin')
+    cur = next((x for x in store.users() if x['username'] == username), None)
+    if not cur: return RedirectResponse('/users', status_code=303)
+    pw = store.create_user(username, cur['name'], cur['role'])
+    return HTMLResponse(env.get_template('users.html').render(me=who(req), nav='users', users=store.users(), roles=ROLE_AR, new=username, pw=pw), headers={'Cache-Control': 'no-store'})
+
+
+@app.get('/health')
+def health(): return {'ok': True}
+
+
+# ---------- quarter helpers ----------
+def current_q():
+    """The quarter whose statement is due: the last quarter that has ended."""
+    t = datetime.date.today(); qn = (t.month - 1) // 3 + 1
+    return f'q{qn - 1}-{t.year}' if qn > 1 else f'q4-{t.year - 1}'
+
+
+def base(fund, q):
+    """Previous quarter's structs (AR, EN): the finalised statement of the previous quarter, else the published seed."""
+    pq = M.prev_q(q); out = {}
+    for lang in ('ar', 'en'):
+        p = store.struct_path(fund, pq, lang)
+        if not os.path.exists(p) and pq == SEED_Q:
+            p = os.path.join(ENG, M.FUNDS[fund]['dir'], 'struct', f'{pq}.{lang}.json')
+        if not os.path.exists(p): return None, pq
+        out[lang] = json.load(open(p, encoding='utf-8'))
+    return out, pq
+
+
+def prev_values(fund, q):
+    b, pq = base(fund, q)
+    if not b: return None, pq, None
+    v = M.extract(b['ar'], b['en'], fund)
+    ps = store.get(fund, pq)
+    if ps and ps.get('data'): v['valuation_date'] = ps['data'].get('valuation_date')
+    return v, pq, b
+
+
+def blank(prev, fund, q):
+    """New quarter's starting data: names and fixed items from the previous quarter, figures empty."""
+    F = M.FUNDS[fund]; qn, y = M.qparse(q); end = M.qend(qn, y)
+    d = {'valuation_date': end.isoformat(), 'nav_unit': None, 'fund_size': None, 'units': None, 'avg_nav': None,
+         'ter_amount': None, 'borrowing': None, 'dealing': None, 'mgr_invest': None, 'wad_days': None,
+         'dist_total': None, 'dist_units': None, 'dist_per_unit': None, 'dist_entitle': prev.get('dist_entitle'),
+         'price': None, 'pe': None, 'own_full': prev.get('own_full', 100), 'own_use': prev.get('own_use', 0),
+         'top10': [{'ar': x['ar'], 'en': x['en'], 'pct': None} for x in prev.get('top10', [])],
+         'alloc': [{'title_ar': a['title_ar'], 'title_en': a['title_en'], 'items': [{'ar': x['ar'], 'en': x['en'], 'pct': None} for x in a['items']]} for a in prev.get('alloc', [])],
+         'rating': prev.get('rating'), 'ret_fund': [None] * len(prev.get('ret_fund', [])), 'ret_bench': [None] * len(prev.get('ret_bench', [])),
+         'risk': {k: [None] * len(v) for k, v in prev.get('risk', {}).items()},
+         'commentary': {'ar': '', 'en': ''}, 'tollfree': '', 'perf_points': []}
+    months = [M.qstart(qn, y).replace(month=M.qstart(qn, y).month + i) for i in range(3)]
+    import calendar
+    for m in months:
+        last = m.replace(day=calendar.monthrange(m.year, m.month)[1]).isoformat()
+        d['perf_points'].append({'date': last, 'value': None, 'fund': None, 'bench': None})
+    return d
+
+
+def _ok(fund, q):
+    if fund not in M.FUNDS or not re.match(r'q[1-4]-\d{4}$', q): raise HTTPException(404)
+
+
+STATUS = {'new': 'لم يبدأ', 'draft': 'قيد الإدخال', 'generated': 'مسودة جاهزة', 'submitted': 'بانتظار الاعتماد', 'returned': 'أُعيد للتعديل', 'final': 'نهائي', 'published': 'منشور', 'corrected': 'منشور · مصحَّح'}
+LOCKED = ('submitted', 'final', 'published', 'corrected')
+DONE = ('published', 'corrected')
+VERIFIED = json.load(open(os.path.join(APP, 'verified.json'), encoding='utf-8'))   # AR/EN differences checked against the original PDFs
+
+
+# every statement already published in the fund documents becomes a record (idempotent; runs at each start)
+R.import_history()
+
+
+# ---------- pages ----------
+@app.get('/', response_class=HTMLResponse)
+def home(req: Request, q: str = ''):
+    me = need(req); q = q if re.match(r'q[1-4]-\d{4}$', q or '') else current_q()
+    cards = []
+    for fund, F in M.FUNDS.items():
+        s = store.get(fund, q) or {}
+        if s.get('status') in DONE: prev, pq, v = s['data'], M.prev_q(q), []
+        else:
+            prev, pq, _ = prev_values(fund, q)
+            v = M.validate(fund, s['data'], prev, q) if s.get('data') and prev else []
+        cards.append({'fund': fund, 'name': F['ar'], 'en': F['en'], 'status': STATUS.get(s.get('status', 'new')), 'st': s.get('status', 'new'), 'traded': F['traded'], 'symbol': F['symbol'],
+                      'updated': s.get('updated', ''), 'blocks': sum(1 for x in v if x['level'] == 'block'),
+                      'warns': sum(1 for x in v if x['level'] == 'warn'), 'base_ok': prev is not None, 'pq': pq})
+    qn, y = M.qparse(q); end = M.qend(qn, y); due = end + datetime.timedelta(days=10)
+    left = (due - datetime.date.today()).days
+    return env.get_template('home.html').render(done=DONE, q=q, ql=M.qlabel(q, 'ar'), cards=cards, due=M.ar_date(due), left=left, end=M.ar_date(end),
+                                                cur=q == current_q(), curq=current_q(), prevq=M.prev_q(q), nextq=M.next_q(q), doc_centre=DOC_CENTRE, me=me, roles=ROLE_AR, nav='home')
+
+
+@app.get('/s/{fund}/{q}', response_class=HTMLResponse)
+def editor(req: Request, fund: str, q: str):
+    me = need(req)
+    if fund not in M.FUNDS or not re.match(r'q[1-4]-\d{4}$', q): raise HTTPException(404)
+    s0 = store.get(fund, q)
+    if s0 and s0.get('status') in DONE:   # published statements live as records
+        return RedirectResponse(f'/r/{fund}/{q}', status_code=303)
+    prev, pq, _ = prev_values(fund, q)
+    if prev is None:
+        return HTMLResponse(env.get_template('nobase.html').render(me=me, roles=ROLE_AR, nav='home', fund=M.FUNDS[fund]['ar'], fkey=fund, ql=M.qlabel(q, 'ar'), pql=M.qlabel(pq, 'ar'), pq=pq))
+    s = store.get(fund, q) or store.put(fund, q, data=blank(prev, fund, q), status='new')
+    F = M.FUNDS[fund]
+    meta = {'fund': fund, 'q': q, 'ql': M.qlabel(q, 'ar'), 'pql': M.qlabel(pq, 'ar'), 'name': F['ar'], 'traded': F['traded'], 'symbol': F['symbol'], 'wad': F['wad'],
+            'pe': F['pe'], 'perf': F['perf'], 'symbol': F['symbol'], 'periods': prev.get('periods_ar'), 'risk_names': M.RISK_AR, 'risk_keys': M.RISK, 'role': me['role'], 'st': s['status'], 'locked': s['status'] in LOCKED}
+    meta['statuses'] = STATUS; meta['en'] = F['en']
+    return env.get_template('editor.html').render(meta=meta, data_json=_js(s['data']), prev_json=_js(prev), meta_json=_js(meta), s=s,
+                                                  status=STATUS.get(s['status']), doc_centre=DOC_CENTRE, events=store.events(fund, q), me=me, roles=ROLE_AR, nav='home')
+
+
+def _clean(d):
+    """Numbers typed with thousands separators, Arabic digits or % arrive as text; store them as numbers."""
+    num = ['nav_unit', 'fund_size', 'units', 'avg_nav', 'ter_amount', 'borrowing', 'dealing', 'mgr_invest', 'wad_days',
+           'dist_total', 'dist_units', 'dist_per_unit', 'price', 'own_full', 'own_use']
+    for k in num:
+        if k in d: d[k] = M.to_float(d[k]) if d[k] not in (None, '') else None
+    for x in d.get('top10', []): x['pct'] = M.to_float(x.get('pct')) if x.get('pct') not in (None, '') else None
+    for a in d.get('alloc', []):
+        for x in a['items']: x['pct'] = M.to_float(x.get('pct')) if x.get('pct') not in (None, '') else None
+    for k in ('ret_fund', 'ret_bench'): d[k] = [M.to_float(v) if v not in (None, '') else None for v in d.get(k, [])]
+    d['risk'] = {k: [M.to_float(v) if v not in (None, '') else None for v in vs] for k, vs in (d.get('risk') or {}).items()}
+    for p in d.get('perf_points', []):
+        for k in ('value', 'fund', 'bench'): p[k] = M.to_float(p.get(k)) if p.get(k) not in (None, '') else None
+    return d
+
+
+@app.post('/api/s/{fund}/{q}')
+async def save(req: Request, fund: str, q: str):
+    me = need(req); _ok(fund, q)
+    cur0 = store.get(fund, q) or {}
+    if cur0.get('status') in LOCKED: return JSONResponse({'error': 'locked', 'msg': 'البيان ' + STATUS[cur0['status']] + '، فلا يُعدَّل إلا بعد إعادته للتعديل.'}, status_code=409)
+    body = await req.json(); d = _clean(body.get('data') or {})
+    if not M.FUNDS[fund]['traded']: d['price'] = d.get('nav_unit')
+    prev, pq, _ = prev_values(fund, q)
+    cur = store.get(fund, q) or {}
+    st = 'draft'
+    s = store.put(fund, q, data=d, status=st)
+    store.event(fund, q, f"{me['name']}: حفظ البيانات")
+    v = M.validate(fund, d, prev, q); der = M.derive(d, prev)
+    return {'ok': True, 'st': s['status'], 'status': STATUS[s['status']], 'validation': v, 'derived': der, 'updated': s['updated'], 'events': store.events(fund, q)}
+
+
+@app.post('/api/s/{fund}/{q}/check')
+async def check(req: Request, fund: str, q: str):
+    need(req); _ok(fund, q); body = await req.json(); d = _clean(body.get('data') or {})
+    if not M.FUNDS[fund]['traded']: d['price'] = d.get('nav_unit')
+    prev, pq, _ = prev_values(fund, q)
+    return {'validation': M.validate(fund, d, prev, q), 'derived': M.derive(d, prev)}
+
+
+@app.post('/api/s/{fund}/{q}/notes')
+async def notes(req: Request, fund: str, q: str):
+    me = need(req); _ok(fund, q); body = await req.json(); store.put(fund, q, notes=str(body.get('notes', ''))[:20000]); store.event(fund, q, f"{me['name']}: تحديث الملاحظات")
+    return {'ok': True, 'events': store.events(fund, q)}
+
+
+def _generate(fund, q, final=False, by=''):
+    key = f'{fund}:{q}'
+    JOBS[key] = {'state': 'running', 'step': 'بانتظار انتهاء إصدار آخر'}
+    with RENDER: _generate_locked(fund, q, final, by)
+
+
+def _generate_locked(fund, q, final, by):
+    key = f'{fund}:{q}'
+    try:
+        JOBS[key] = {'state': 'running', 'step': 'تجهيز البيانات'}
+        s = store.get(fund, q); d = s['data']
+        prev, pq, b = prev_values(fund, q)
+        v = M.validate(fund, d, prev, q)
+        if any(x['level'] == 'block' for x in v):
+            JOBS[key] = {'state': 'error', 'msg': 'يوجد نقص يمنع الإصدار. راجع قائمة التحقق.'}; return
+        od = store.out_dir(fund, q) if not final else os.path.join(store.out_dir(fund, q), 'final')
+        files, structs, notes_ = {}, {}, []
+        htmls = []
+        for lang in ('ar', 'en'):
+            JOBS[key]['step'] = 'بناء النسخة ' + ('العربية' if lang == 'ar' else 'الإنجليزية')
+            st = M.build(fund, lang, b[lang], pq, q, d, prev); structs[lang] = st
+            lo = M.leftovers(st, pq, lang)
+            if lo: notes_.append(('العربية' if lang == 'ar' else 'الإنجليزية') + ': بقيت إشارات إلى الربع السابق: ' + '، '.join(lo))
+            p, rep = P.render_html(fund, q, lang, st, od); htmls.append((lang, p))
+        JOBS[key]['step'] = 'إخراج PDF'
+        pdfs = P.pdf([p for _, p in htmls])
+        for (lang, p), pdf in zip(htmls, pdfs):
+            JOBS[key]['step'] = 'إخراج Word ' + ('العربي' if lang == 'ar' else 'الإنجليزي')
+            try: docx = P.word(p, lang, fund)
+            except Exception as e: docx = None; notes_.append('تعذّر إخراج Word ' + lang + ': ' + str(e)[:120])
+            files[lang] = {'html': os.path.basename(p), 'pdf': os.path.basename(pdf), 'docx': os.path.basename(docx) if docx else None}
+        if final:
+            for lang in ('ar', 'en'):
+                json.dump(structs[lang], open(store.struct_path(fund, q, lang), 'w', encoding='utf-8'), ensure_ascii=False)
+            store.put(fund, q, status='final', final_at=store.now(), files={'draft': (s.get('files') or {}).get('draft'), 'final': files}, log=notes_)
+            store.event(fund, q, f'{by}: اعتماد النسخة النهائية')
+        else:
+            store.put(fund, q, status='generated', generated=store.now(), files={'draft': files, 'final': (s.get('files') or {}).get('final')}, log=notes_)
+            store.event(fund, q, f'{by}: إصدار المسودات')
+        JOBS[key] = {'state': 'done', 'notes': notes_}
+    except Exception as e:
+        traceback.print_exc(); JOBS[key] = {'state': 'error', 'msg': 'تعذّر الإخراج: ' + str(e)[:300]}
+
+
+@app.post('/api/s/{fund}/{q}/generate')
+async def generate(req: Request, fund: str, q: str):
+    me = need(req); _ok(fund, q); body = await req.json() if (await req.body()) else {}
+    final = bool(body.get('final'))
+    cur = store.get(fund, q) or {}
+    if final and me['role'] != 'admin': raise HTTPException(403)
+    if final and cur.get('status') != 'submitted':
+        return JSONResponse({'error': 'state', 'msg': 'يُعتمد البيان بعد أن يُرفع للاعتماد.'}, status_code=409)
+    if not final and cur.get('status') in LOCKED:
+        return JSONResponse({'error': 'locked', 'msg': 'البيان ' + STATUS[cur['status']] + '.'}, status_code=409)
+    key = f'{fund}:{q}'
+    if JOBS.get(key, {}).get('state') == 'running': return {'ok': True, 'running': True}
+    JOBS[key] = {'state': 'running', 'step': 'في الطابور'}
+    threading.Thread(target=_generate, args=(fund, q, final, me['name']), daemon=True).start()
+    return {'ok': True}
+
+
+@app.post('/api/s/{fund}/{q}/submit')
+async def submit(req: Request, fund: str, q: str):
+    me = need(req); _ok(fund, q); cur = store.get(fund, q) or {}
+    if cur.get('status') != 'generated':
+        return JSONResponse({'error': 'state', 'msg': 'أصدر المسودات بعد آخر تعديل، ثم ارفعها للاعتماد.'}, status_code=409)
+    store.put(fund, q, status='submitted')
+    store.event(fund, q, f"{me['name']}: رفع المسودة للاعتماد")
+    return {'ok': True, 'status': STATUS['submitted']}
+
+
+@app.post('/api/s/{fund}/{q}/return')
+async def return_(req: Request, fund: str, q: str):
+    me = need(req, 'admin'); _ok(fund, q); body = await req.json() if (await req.body()) else {}
+    cur = store.get(fund, q) or {}
+    if cur.get('status') not in ('submitted', 'final'): return JSONResponse({'error': 'state', 'msg': 'لا شيء بانتظار الاعتماد.'}, status_code=409)
+    note = (body.get('note') or '').strip()
+    notes_ = (cur.get('notes') or '')
+    if note: notes_ = (notes_ + '\n\n' if notes_ else '') + f"[{store.now()} · {me['name']}] {note}"
+    store.put(fund, q, status='returned', notes=notes_)
+    store.event(fund, q, f"{me['name']}: إعادة البيان للتعديل" + (f' — {note}' if note else ''))
+    return {'ok': True, 'status': STATUS['returned'], 'notes': notes_}
+
+
+@app.get('/api/s/{fund}/{q}/job')
+def job(req: Request, fund: str, q: str):
+    need(req); _ok(fund, q); s = store.get(fund, q) or {}
+    return {'st': s.get('status', 'new'), 'job': JOBS.get(f'{fund}:{q}', {'state': 'idle'}), 'files': s.get('files'), 'status': STATUS.get(s.get('status', 'new')),
+            'log': s.get('log'), 'events': store.events(fund, q)}
+
+
+def _kdir(fund, q, kind):
+    if kind == 'published': return os.path.join(R.PUB, fund, q)
+    if kind == 'draft': return store.out_dir(fund, q)
+    if kind in ('final', 'corr', 'corrected'): return os.path.join(store.out_dir(fund, q), kind)
+    raise HTTPException(404)
+
+
+@app.get('/f/{fund}/{q}/{kind}/{name:path}')
+def files(req: Request, fund: str, q: str, kind: str, name: str):
+    need(req); _ok(fund, q)
+    base_ = _kdir(fund, q, kind)
+    p = os.path.abspath(os.path.join(base_, name))
+    if not p.startswith(os.path.abspath(base_) + os.sep) or not os.path.isfile(p): raise HTTPException(404)
+    dl = p.endswith(('.pdf', '.docx')) and req.query_params.get('dl')
+    return FileResponse(p, filename=os.path.basename(p) if dl else None, media_type=mimetypes.guess_type(p)[0])
+
+
+@app.get('/zip/{fund}/{q}/{kind}')
+def zipall(req: Request, fund: str, q: str, kind: str):
+    need(req); _ok(fund, q); s = store.get(fund, q) or {}; fs = (s.get('files') or {}).get(kind) or {}
+    base_ = _kdir(fund, q, kind)
+    buf = io.BytesIO()
+    with zipfile.ZipFile(buf, 'w', zipfile.ZIP_DEFLATED) as z:
+        for lang, f in fs.items():
+            for k in ('pdf', 'docx'):
+                if f.get(k) and os.path.isfile(os.path.join(base_, f[k])): z.write(os.path.join(base_, f[k]), os.path.basename(f[k]))
+    buf.seek(0)
+    return StreamingResponse(buf, media_type='application/zip', headers={'Content-Disposition': f'attachment; filename="{fund}-{q}-{kind}.zip"'})
+
+
+# ---------- historical records: view, correct, re-issue ----------
+
+
+@app.get('/records', response_class=HTMLResponse)
+def records_page(req: Request, fund: str = ''):
+    me = need(req)
+    fund = fund if fund in M.FUNDS else next(iter(M.FUNDS))
+    cc = store.correction_counts()
+    rows = []
+    for r in sorted((x for x in store.all_records() if x['fund'] == fund and x['status'] in DONE), key=lambda x: R.qkey(x['q']), reverse=True):
+        c = store.get_conflicts(fund, r['q']) or []
+        s = store.get(fund, r['q'])
+        rows.append({'q': r['q'], 'ql': M.qlabel(r['q'], 'ar'), 'st': r['status'], 'status': STATUS[r['status']], 'conf': len(c),
+                     'corr': cc.get(f"{fund}:{r['q']}", 0), 'draft': R.has_draft(fund, r['q']), 'files': (s.get('files') or {})})
+    funds = [{'key': k, 'name': F['ar']} for k, F in M.FUNDS.items()]
+    return env.get_template('records.html').render(me=me, roles=ROLE_AR, nav='records', rows=rows, fund=fund, fname=M.FUNDS[fund]['ar'], fen=M.FUNDS[fund]['en'], funds=funds,
+                                                    nconf=sum(r['conf'] for r in rows), ncorr=sum(r['corr'] for r in rows),
+                                                    total=sum(1 for x in store.all_records() if x['status'] in DONE))
+
+
+@app.get('/r/{fund}/{q}', response_class=HTMLResponse)
+def record_page(req: Request, fund: str, q: str):
+    me = need(req); _ok(fund, q)
+    s = store.get(fund, q)
+    if not s or s['status'] not in DONE: return RedirectResponse(f'/s/{fund}/{q}', status_code=303)
+    cur = {l: R.load(fund, q, l) for l in ('ar', 'en')}
+    work = {l: (R.load(fund, q, l, True) or cur[l]) for l in ('ar', 'en')}
+    meta = {'fund': fund, 'q': q, 'admin': me['role'] == 'admin', 'draft': R.has_draft(fund, q), 'st': s['status'],
+            'deps': [M.qlabel(x, 'ar') for x in R.dependents(fund, q)]}
+    pend = sum(len(R.diff(cur[l], work[l], l)) for l in ('ar', 'en')) if meta['draft'] else 0
+    ver = [dict(v) for v in VERIFIED if v['fund'] == fund and v['q'] == q]
+    for v in ver:   # hide a proposal once it has been applied
+        if v.get('path') and v.get('after'):
+            ks = v['path'].split('.'); x = cur[v['lang']]['blocks'][int(ks[0])]
+            for k in ks[1:]: x = x[int(k)] if k.isdigit() else x[k]
+            v['done'] = (x == v['after'])
+    return env.get_template('record.html').render(
+        me=me, roles=ROLE_AR, nav='records', s=s, status=STATUS[s['status']], name=M.FUNDS[fund]['ar'], ql=M.qlabel(q, 'ar'), fund=fund, q=q,
+        conflicts=store.get_conflicts(fund, q) or [], verified=ver, verified_json=_js(ver), corrections=store.corrections(fund, q), events=store.events(fund, q), pend=pend,
+        cur_json=_js(cur), work_json=_js(work), meta_json=_js(meta), meta=meta)
+
+
+def _changes(fund, q):
+    out = []
+    for l in ('ar', 'en'):
+        a, b = R.load(fund, q, l), R.load(fund, q, l, True)
+        if a and b: out += R.diff(a, b, l)
+    return out
+
+
+@app.post('/api/r/{fund}/{q}/draft')
+async def record_draft(req: Request, fund: str, q: str):
+    me = need(req, 'admin'); _ok(fund, q)
+    s = store.get(fund, q)
+    if not s or s['status'] not in DONE: return JSONResponse({'error': 'state', 'msg': 'ليس بيانًا منشورًا.'}, status_code=409)
+    body = await req.json()
+    for l in ('ar', 'en'):
+        st = body.get(l); cur = R.load(fund, q, l)
+        if not isinstance(st, dict) or not isinstance(st.get('blocks'), list) or not R.same_shape(cur, st):
+            return JSONResponse({'error': 'shape', 'msg': 'التصحيح يعدّل القيم فقط، ولا يضيف أقسامًا أو صفوفًا أو يحذفها.'}, status_code=400)
+        json.dump(st, open(store.draft_struct_path(fund, q, l), 'w', encoding='utf-8'), ensure_ascii=False)
+    ch = _changes(fund, q)
+    if not ch:
+        for l in ('ar', 'en'):
+            p = store.draft_struct_path(fund, q, l)
+            if os.path.exists(p): os.remove(p)
+    else:
+        store.event(fund, q, f"{me['name']}: حفظ مسودة تصحيح ({len(ch)} تعديل)")
+    return {'ok': True, 'changes': ch, 'draft': bool(ch)}
+
+
+@app.post('/api/r/{fund}/{q}/discard')
+async def record_discard(req: Request, fund: str, q: str):
+    me = need(req, 'admin'); _ok(fund, q)
+    for l in ('ar', 'en'):
+        p = store.draft_struct_path(fund, q, l)
+        if os.path.exists(p): os.remove(p)
+    shutil.rmtree(os.path.join(store.out_dir(fund, q), 'corr'), ignore_errors=True)
+    s = store.get(fund, q); fs = s.get('files') or {}; fs.pop('corr', None); store.put(fund, q, files=fs)
+    store.event(fund, q, f"{me['name']}: إلغاء مسودة التصحيح")
+    return {'ok': True}
+
+
+def _render_set(fund, q, structs, od):
+    htmls = []
+    for lang in ('ar', 'en'):
+        JOBS[f'{fund}:{q}']['step'] = 'بناء النسخة ' + ('العربية' if lang == 'ar' else 'الإنجليزية')
+        p, _ = P.render_html(fund, q, lang, structs[lang], od); htmls.append((lang, p))
+    JOBS[f'{fund}:{q}']['step'] = 'إخراج PDF'
+    pdfs = P.pdf([p for _, p in htmls]); files, notes_ = {}, []
+    rel = os.path.relpath(od, _kdir(fund, q, 'corrected')) if od.startswith(_kdir(fund, q, 'corrected')) else ''
+    for (lang, p), pdf in zip(htmls, pdfs):
+        JOBS[f'{fund}:{q}']['step'] = 'إخراج Word ' + ('العربي' if lang == 'ar' else 'الإنجليزي')
+        try: docx = P.word(p, lang, fund)
+        except Exception as e: docx = None; notes_.append('تعذّر إخراج Word: ' + str(e)[:120])
+        j = (lambda n: os.path.join(rel, n) if rel else n)
+        files[lang] = {'html': j(os.path.basename(p)), 'pdf': j(os.path.basename(pdf)), 'docx': j(os.path.basename(docx)) if docx else None}
+    return files, notes_
+
+
+def _record_job(fund, q, approve, by, reason):
+    JOBS[f'{fund}:{q}'] = {'state': 'running', 'step': 'بانتظار انتهاء إصدار آخر'}
+    with RENDER: _record_job_locked(fund, q, approve, by, reason)
+
+
+def _record_job_locked(fund, q, approve, by, reason):
+    key = f'{fund}:{q}'
+    try:
+        JOBS[key] = {'state': 'running', 'step': 'تجهيز'}
+        work = {l: R.load(fund, q, l, True) for l in ('ar', 'en')}
+        if not all(work.values()): JOBS[key] = {'state': 'error', 'msg': 'لا توجد مسودة تصحيح.'}; return
+        if not approve:
+            od = _kdir(fund, q, 'corr'); shutil.rmtree(od, ignore_errors=True)
+            files, notes_ = _render_set(fund, q, work, od)
+            s = store.get(fund, q); fs = s.get('files') or {}; fs['corr'] = files
+            store.put(fund, q, files=fs); store.event(fund, q, f'{by}: إصدار معاينة التصحيح')
+            JOBS[key] = {'state': 'done', 'notes': notes_}; return
+        ver = datetime.datetime.now(datetime.timezone(datetime.timedelta(hours=3))).strftime('%Y%m%d-%H%M')
+        od = os.path.join(_kdir(fund, q, 'corrected'), ver)
+        files, notes_ = _render_set(fund, q, work, od)
+        rows = _changes(fund, q)
+        for l in ('ar', 'en'):
+            op = store.orig_struct_path(fund, q, l)
+            if not os.path.exists(op): shutil.copy(store.struct_path(fund, q, l), op)   # the published original, kept once
+            shutil.copy(store.draft_struct_path(fund, q, l), store.struct_path(fund, q, l))
+            os.remove(store.draft_struct_path(fund, q, l))
+        store.add_corrections(fund, q, by, reason, rows)
+        store.set_conflicts(fund, q, R.conflicts(work['ar'], work['en']))
+        s = store.get(fund, q); fs = s.get('files') or {}; fs.pop('corr', None); fs['corrected'] = files
+        data = s.get('data') or {}
+        if data and R.is_annex4(work['ar']):
+            try:
+                nd = M.extract(work['ar'], work['en'], fund); nd['valuation_date'] = data.get('valuation_date'); nd['perf_points'] = data.get('perf_points', []); data = nd
+            except Exception: pass
+        shutil.rmtree(_kdir(fund, q, 'corr'), ignore_errors=True)
+        store.put(fund, q, status='corrected', files=fs, data=data, log=notes_)
+        store.event(fund, q, f'{by}: اعتماد التصحيح ({len(rows)} تعديل) — {reason}')
+        JOBS[key] = {'state': 'done', 'notes': notes_}
+    except Exception as e:
+        traceback.print_exc(); JOBS[key] = {'state': 'error', 'msg': 'تعذّر الإخراج: ' + str(e)[:300]}
+
+
+@app.post('/api/r/{fund}/{q}/run')
+async def record_run(req: Request, fund: str, q: str):
+    me = need(req, 'admin'); _ok(fund, q)
+    body = await req.json() if (await req.body()) else {}
+    approve = bool(body.get('approve')); reason = (body.get('reason') or '').strip()
+    if not R.has_draft(fund, q): return JSONResponse({'error': 'state', 'msg': 'احفظ التعديلات أولًا.'}, status_code=409)
+    if approve and len(reason) < 5: return JSONResponse({'error': 'reason', 'msg': 'اكتب سبب التصحيح (مثل: طلب هيئة السوق المالية رقم …).'}, status_code=400)
+    key = f'{fund}:{q}'
+    if JOBS.get(key, {}).get('state') == 'running': return {'ok': True, 'running': True}
+    JOBS[key] = {'state': 'running', 'step': 'في الطابور'}
+    threading.Thread(target=_record_job, args=(fund, q, approve, me['name'], reason), daemon=True).start()
+    return {'ok': True}
+
+
+@app.get('/api/r/{fund}/{q}/changes')
+def record_changes(req: Request, fund: str, q: str):
+    need(req); _ok(fund, q)
+    return {'changes': _changes(fund, q) if R.has_draft(fund, q) else []}

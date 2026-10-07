@@ -1,0 +1,64 @@
+{% extends "base.html" %}
+{% block title %}المستخدمون{% endblock %}
+{% block head %}<style>
+.lay{display:grid;grid-template-columns:minmax(0,1fr) 340px;gap:16px;align-items:start}
+@media (max-width:960px){.lay{grid-template-columns:minmax(0,1fr)}}
+.secret{background:var(--night);color:#fff;border-radius:14px;padding:22px 24px;margin-bottom:16px;position:relative;overflow:hidden;isolation:isolate}
+.secret img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;z-index:-1;opacity:.6}
+.secret h2{color:#fff}
+.secret .code{display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin:12px 0}
+.secret code{font:600 26px var(--latin);letter-spacing:.06em;direction:ltr;background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.18);border-radius:10px;padding:8px 16px}
+.secret p{color:#B6C8E4;font-size:13.5px;margin:0}
+.secret .btn{background:#fff;color:var(--navy);border-color:#fff}
+.roles dt{font-weight:600;color:var(--navy);font-size:14px;margin-top:12px}
+.roles dd{margin:2px 0 0;font-size:13.5px;color:var(--muted)}
+td .acts{display:flex;gap:6px;justify-content:flex-end}
+.u{display:flex;align-items:center;gap:10px}
+.u .av{width:32px;height:32px;border-radius:50%;background:var(--mist);color:var(--blue);display:grid;place-items:center;font-weight:600;font-size:13px;flex-shrink:0}
+</style>{% endblock %}
+{% block body %}
+<div class="ph"><div class="t"><h1>المستخدمون</h1><p class="lede">حسابات مُدخلي البيانات. يُدخل كلٌّ منهم الأرقام ويُصدر المسودات ويرفعها للاعتماد، ولا يعتمد النسخة النهائية إلا المعتمِد.</p></div></div>
+{% if pw %}
+<div class="secret" role="alert">
+  <img src="/static/lines.svg" alt="" aria-hidden="true">
+  <h2>كلمة المرور المؤقتة للحساب <span class="ltr">{{ new }}</span></h2>
+  <div class="code"><code id="pwv">{{ pw }}</code><button class="btn sm" type="button" onclick="navigator.clipboard.writeText('{{ new }} / {{ pw }}').then(()=>toast('نُسخ اسم المستخدم وكلمة المرور.'))">نسخ</button></div>
+  <p>تظهر مرة واحدة فقط ولا تُحفظ نصًا. سلّمها لصاحب الحساب مع اسم المستخدم. إن فُقدت فأنشئ كلمة مرور جديدة من الجدول.</p>
+</div>
+{% endif %}
+<div class="lay">
+<div class="card flush">
+  <div class="tw"><table>
+  <thead><tr><th>المستخدم</th><th class="hide-sm">الصلاحية</th><th class="hide-sm">آخر دخول</th><th>الحالة</th><th></th></tr></thead><tbody>
+  <tr><td><div class="u"><span class="av" style="background:var(--navy);color:#fff">م</span><div>المعتمِد<div class="muted small ltr">admin</div></div></div></td><td class="hide-sm">المعتمِد</td><td class="muted hide-sm">—</td><td><span class="pill blue">نشط</span></td><td class="muted small hide-sm">كلمة المرور في إعدادات Railway</td></tr>
+  {% for u in users %}
+  <tr><td><div class="u"><span class="av">{{ u.name[:1] }}</span><div>{{ u.name }}<div class="muted small ltr">{{ u.username }}</div></div></div></td>
+  <td class="hide-sm">{{ roles[u.role] }}</td><td class="muted small hide-sm">{{ u.last_login or 'لم يدخل بعد' }}</td>
+  <td>{% if u.active %}<span class="pill blue">نشط</span>{% else %}<span class="pill">موقوف</span>{% endif %}</td>
+  <td><div class="acts">
+    <form method="post" action="/users/{{ u.username }}/reset" onsubmit="return confirm('إنشاء كلمة مرور جديدة لـ{{ u.name }}؟ تتوقف القديمة فورًا.')"><button class="btn sm" type="submit">كلمة مرور جديدة</button></form>
+    <form method="post" action="/users/{{ u.username }}/toggle"><button class="btn sm {{ '' if u.active else 'blue' }}" type="submit">{{ 'إيقاف' if u.active else 'تفعيل' }}</button></form>
+  </div></td></tr>
+  {% else %}
+  <tr><td colspan="5" class="empty">لا حسابات لمُدخلي البيانات بعد. أنشئ أول حساب من النموذج.</td></tr>
+  {% endfor %}
+  </tbody></table></div>
+</div>
+<aside>
+  <div class="card">
+    <header><h2>حساب جديد</h2></header>
+    <form method="post" action="/users">
+      <div style="margin-bottom:14px"><label class="l" for="nm">الاسم الظاهر</label><input id="nm" name="name" required maxlength="80" placeholder="مثل: إدارة تطوير المنتجات"></div>
+      <div style="margin-bottom:16px"><label class="l" for="usr">اسم المستخدم (بالإنجليزية)</label><input id="usr" name="username" required dir="ltr" pattern="[A-Za-z0-9._\-]+" maxlength="40" placeholder="productdev" autocapitalize="off"></div>
+      <button class="btn primary" type="submit" style="width:100%">إنشاء الحساب</button>
+    </form>
+  </div>
+  <div class="card"><header><h2>الصلاحيات</h2></header>
+    <dl class="roles" style="margin:0">
+      <dt>مُدخل البيانات</dt><dd>يُدخل أرقام الربع، ويُصدر المسودات، ويرفعها للاعتماد، ويكتب الملاحظات.</dd>
+      <dt>المعتمِد</dt><dd>يعتمد النسخة النهائية أو يعيدها للتعديل، ويصحّح البيانات المنشورة، ويدير الحسابات.</dd>
+    </dl>
+  </div>
+</aside>
+</div>
+{% endblock %}
