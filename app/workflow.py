@@ -1,9 +1,10 @@
-"""The quarterly statement's approval route, as Product Development set it (comments of 7 October 2026).
+"""The quarterly statement's approval route, as Product Development set it (7 October 2026).
 
-FACO enters the figures first; the fund managers (CMD) build on them and issue the drafts; BDD and Compliance review;
-Corporate Communications proofs the Arabic and translates the English; the DCEO approves; the Fund Board approves the
-Arabic; Product Development finalises the English and issues the final files; Compliance publishes; then Product Development
-uploads to Tadawul and Corporate Communications to the website, in parallel. Product Development follows every step and can return the statement.
+FACO enters the figures first; the fund managers (CMD) build on them and issue the drafts; Corporate Communications
+proofs the Arabic and translates the English; Product Development finalises the English and issues the final versions
+in both languages; Business Development and Compliance review the final versions; the Deputy CEO, then the Fund Board,
+approve them; Compliance publishes; then Product Development uploads to Tadawul and Corporate Communications to the
+website, in parallel. Product Development follows every step and can return the statement.
 
 Each statement keeps its stage, the review sign-offs and a history of every hand-over in table `wf`; comments live in
 table `comments`. The platform administrator can act at any stage (every action is in the audit log under their name).
@@ -30,11 +31,11 @@ DEPARTMENTS = [r for r in ROLES if r != 'admin']
 STAGES = [
     ('faco', 'أرقام FACO', 'FACO figures', ('faco', 'editor')),
     ('cmd', 'محتوى إدارة أسواق المال', 'Fund managers (CMD)', ('cmd', 'editor')),
-    ('review', 'مراجعة تطوير الأعمال والالتزام', 'BDD and Compliance review', ('bdd', 'compliance')),
     ('ccd', 'التدقيق اللغوي والترجمة', 'Proofing and translation', ('ccd',)),
+    ('english', 'إصدار النسخ النهائية', 'Final versions issued', ('pdd',)),
+    ('review', 'مراجعة تطوير الأعمال والالتزام', 'BDD and Compliance review', ('bdd', 'compliance')),
     ('dceo', 'اعتماد نائب الرئيس التنفيذي', 'DCEO approval', ('dceo',)),
     ('board', 'اعتماد مجلس إدارة الصندوق', 'Fund Board approval', ('board',)),
-    ('english', 'إنهاء النسخة الإنجليزية', 'English finalised', ('pdd',)),
     ('publish', 'النشر', 'Publishing', ('compliance',)),
     ('upload', 'الرفع على تداول والموقع', 'Tadawul and website upload', ('pdd', 'ccd')),
     ('done', 'مكتمل', 'Complete', ()),
@@ -58,8 +59,8 @@ def _c():
 
 
 def _initial(status):
-    if status in ('submitted',): return 'review'
-    if status in ('final',): return 'publish'
+    if status in ('submitted',): return 'ccd'
+    if status in ('final',): return 'review'
     if status in ('published', 'corrected'): return 'done'
     return 'faco'
 
@@ -100,7 +101,7 @@ def acts(role, stage):
 
 
 def can_return(role, stage):
-    return stage in ('cmd', 'review', 'ccd', 'dceo', 'board', 'english') and (role in ('admin', 'pdd') or acts(role, stage))
+    return stage in ('cmd', 'ccd', 'english', 'review', 'dceo', 'board') and (role in ('admin', 'pdd') or acts(role, stage))
 
 
 # which tab of the editor a field belongs to: the same split as the editor's TAB()

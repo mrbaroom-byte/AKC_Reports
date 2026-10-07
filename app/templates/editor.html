@@ -272,17 +272,17 @@ function mayEdit(path){
 const RLAB = {bdd: 'تطوير الأعمال', compliance: 'الالتزام'};
 const ACTS = {
   faco: [['faco_done', 'اكتملت أرقام FACO', 'تُسلَّم الأرقام إلى إدارة أسواق المال لتكمل المحتوى.']],
-  cmd: [['submit', 'رفع للمراجعة', 'يُقفل البيان لدى المراجعين: تطوير الأعمال والالتزام.']],
-  ccd: [['ccd_ok', 'اعتماد التدقيق والترجمة', 'يُسلَّم البيان إلى نائب الرئيس التنفيذي للاعتماد.']],
+  cmd: [['submit', 'تسليم للتدقيق اللغوي', 'يُسلَّم البيان إلى الاتصال المؤسسي للتدقيق اللغوي والترجمة.']],
+  ccd: [['ccd_ok', 'اعتماد التدقيق والترجمة', 'يُسلَّم البيان إلى تطوير المنتجات لإنهاء الإنجليزية وإصدار النسخ النهائية.']],
   dceo: [['approve', 'اعتماد', 'يُسلَّم البيان إلى مجلس إدارة الصندوق.']],
-  board: [['approve', 'تسجيل اعتماد المجلس للنسخة العربية', 'تُنهي إدارة تطوير المنتجات الإنجليزية بعدها.']],
+  board: [['approve', 'تسجيل اعتماد المجلس', 'يُسلَّم البيان إلى الالتزام للنشر.']],
   publish: [['published', 'تم النشر', 'يرفعه بعدها تطوير المنتجات على تداول، والاتصال المؤسسي على الموقع.']]};
 const UPL = {pdd: ['tadawul', 'تم الرفع على تداول'], ccd: ['website', 'تم الرفع على الموقع']};
 function wfButtons(){
   const st = WF.stage, out = [];
   if(st === 'review'){
     const mine = META.role === 'admin' ? ['bdd', 'compliance'] : ['bdd', 'compliance'].filter(r => r === META.role);
-    mine.filter(r => !WF.signoffs[r]).forEach(r => out.push(`<button class="btn primary" data-wf="signoff" data-as="${r}" data-msg="تُسجَّل المراجعة، وينتقل البيان إلى التدقيق اللغوي بعد المراجعتين.">تسجيل مراجعة: ${RLAB[r]}</button>`));
+    mine.filter(r => !WF.signoffs[r]).forEach(r => out.push(`<button class="btn primary" data-wf="signoff" data-as="${r}" data-msg="تُسجَّل المراجعة، ويُسلَّم البيان إلى نائب الرئيس التنفيذي بعد المراجعتين.">تسجيل مراجعة: ${RLAB[r]}</button>`));
   } else if(st === 'upload'){
     const mine = META.role === 'admin' ? ['pdd', 'ccd'] : ['pdd', 'ccd'].filter(r => r === META.role);
     mine.filter(r => !WF.signoffs[UPL[r][0]]).forEach(r => out.push(`<button class="btn primary" data-wf="uploaded" data-as="${r}" data-msg="يكتمل مسار البيان بعد الرفع على تداول والموقع.">${UPL[r][1]}</button>`));
@@ -385,7 +385,7 @@ document.addEventListener('click', async e => {
   const b = e.target.closest('[data-wf]'); if(b){ e.preventDefault(); return wfAct(b); }
   if(e.target.closest('#finBtn')){
     if(isDirty) return toast('احفظ تعديلاتك أولًا.', 'amber');
-    if(!await ask({title: 'إصدار النسخة النهائية؟', text: 'تُصدر النسخة النهائية بالعربية والإنجليزية، ويُسلَّم البيان إلى الالتزام للنشر.', ok: 'إصدار'})) return;
+    if(!await ask({title: 'إصدار النسخة النهائية؟', text: 'تُصدر النسخة النهائية بالعربية والإنجليزية، ويُسلَّم البيان إلى تطوير الأعمال والالتزام للمراجعة.', ok: 'إصدار'})) return;
     try{ await api(base + '/generate', {final: true}); msg('تُصدر النسخة النهائية…', 'dirty'); poll(true); }catch(err){ toast(err.message, 'amber'); }
   }
 });
@@ -413,7 +413,7 @@ async function poll(final){
   if(j.state === 'running'){ msg((final ? 'يُعتمد: ' : 'يُصدر: ') + j.step + '…', 'dirty'); setTimeout(() => poll(final), 1500); return; }
   ST = r.st; if(r.wf) WF = r.wf; busy($('#gen'), false); showFiles(r.files, r.cmp); showEvents(r.events);
   if(j.state === 'error'){ msg(j.msg, 'dirty'); toast(j.msg, 'amber', 7000); }
-  else if(j.state === 'done'){ msg(final ? 'صدرت النسخة النهائية وسُلّم البيان إلى الالتزام.' : 'صدرت المسودات بالعربية والإنجليزية.', 'ok'); toast(final ? 'صدرت النسخة النهائية.' : 'صدرت المسودات بالعربية والإنجليزية.'); $('#jobMsg').textContent = (r.log || []).join(' · '); }
+  else if(j.state === 'done'){ msg(final ? 'صدرت النسخة النهائية وسُلّم البيان إلى تطوير الأعمال والالتزام.' : 'صدرت المسودات بالعربية والإنجليزية.', 'ok'); toast(final ? 'صدرت النسخة النهائية.' : 'صدرت المسودات بالعربية والإنجليزية.'); $('#jobMsg').textContent = (r.log || []).join(' · '); }
   ui(); check();
 }
 $('#saveNotes').onclick = async () => { busy($('#saveNotes'), true, 'يُحفظ'); try{ const r = await api(base + '/notes', {notes: $('#notes').value}); showEvents(r.events); toast('حُفظت الملاحظات.'); }catch(e){ toast(e.message, 'amber'); } busy($('#saveNotes'), false); };
