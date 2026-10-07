@@ -79,10 +79,12 @@
 <aside class="side">
   <div class="card"><h2>التحقق <span class="count" id="vcount"></span></h2><ul class="val" id="val"><li>يُحسب…</li></ul></div>
   <div class="card"><h2>المحسوب آليًا</h2><dl class="der" id="der"></dl></div>
-  <div class="card" id="xlcard"><h2>استلام الأرقام بملف Excel</h2>
-    <p class="muted small" style="margin:0 0 10px">نزّل القالب وأرسله للجهات: صفحة لـ FACO، وصفحة لإدارة أسواق المال، وصفحة لتداول. ثم ارفع الملف المعبّأ لتراجع التغييرات قبل اعتمادها في النموذج.</p>
-    <div style="display:flex;gap:8px;flex-wrap:wrap"><a class="btn sm" id="xldl" href="/s/{{ meta.fund }}/{{ meta.q }}/template.xlsx">تنزيل القالب</a>
-    <label class="btn sm blue" id="xlup" for="xlfile">رفع ملف معبّأ</label><input type="file" id="xlfile" accept=".xlsx,.xlsm" hidden></div></div>
+  <div class="card" id="xlcard"><h2>استلام الملفات</h2>
+    <p class="muted small" style="margin:0 0 10px">ارفع أي ملف تسلّمته: قالب Excel المعبّأ، أو PDF أو Word أو Excel أو صورة أو رسالة بريد. يقرأ النظام الأرقام ويعرض كل قيمة مقترحة مع مصدرها، ولا يدخل شيء في النموذج إلا بقبولك.</p>
+    <div style="display:flex;gap:8px;flex-wrap:wrap"><label class="btn sm blue" id="xlup" for="xlfile">رفع ملفات</label><input type="file" id="xlfile" multiple hidden
+      accept=".xlsx,.xlsm,.csv,.pdf,.docx,.png,.jpg,.jpeg,.webp,.eml,.msg,.zip,.txt">
+    <a class="btn sm" id="xldl" href="/s/{{ meta.fund }}/{{ meta.q }}/template.xlsx">تنزيل قالب Excel</a></div>
+    <div class="drop muted small" id="drop" hidden>أفلت الملفات هنا</div></div>
   <div class="card"><h2>الملفات</h2><div id="files" class="files"><span class="muted small">لم تصدر مسودة بعد.</span></div><div class="muted small" id="jobMsg" style="margin-top:8px"></div></div>
   <div class="card"><h2>آخر الأحداث</h2><ul class="ev" id="evs"></ul></div>
 </aside>
@@ -100,6 +102,7 @@ const META = {{ meta_json|safe }}, PREV = {{ prev_json|safe }};
 let D = {{ data_json|safe }}, EVENTS = {{ events|js }};
 const STAT = META.statuses;
 const TAB = k => /^(commentary|top10|alloc|ret_|risk|own_|pe$|rating)/.test(k) ? 'cm' : /^(price|perf_points|tollfree)/.test(k) ? 'mkt' : 'faco';
+const AI = !!META.ai;
 const get = p => p.split('.').reduce((o, k) => o == null ? o : o[k], D);
 function set(p, v){ const ks = p.split('.'); let o = D; for(let i = 0; i < ks.length - 1; i++){ const k = ks[i]; if(o[k] == null) o[k] = /^\d+$/.test(ks[i+1]) ? [] : {}; o = o[k]; } o[ks.at(-1)] = v; }
 const clean = t => String(t || '').replace(/\*+/g, '').trim();
@@ -142,15 +145,17 @@ function rFaco(){
 const prevPct = (list, ar) => { const m = (list || []).find(x => x.ar === ar); return m && m.pct != null ? nf(m.pct, 2) + '%' : ''; };
 function listTable(path, rows, prevList){
   let h = `<div class="tw"><table class="grid"><thead><tr><th>الاسم بالعربية</th><th>English name</th><th>النسبة %</th><th style="text-align:left">السابق</th><th></th></tr></thead><tbody>`;
-  rows.forEach((x, i) => { h += `<tr><td><input data-p="${path}.${i}.ar" value="${esc(x.ar)}"></td><td><input dir="ltr" data-p="${path}.${i}.en" value="${esc(x.en)}"></td><td class="p">${inp(path + '.' + i + '.pct')}</td><td class="pv">${prevPct(prevList, x.ar)}</td><td><button class="x" type="button" data-del="${path}.${i}" aria-label="حذف البند">✕</button></td></tr>`; });
+  (rows || []).forEach((x, i) => { h += `<tr><td><input data-p="${path}.${i}.ar" value="${esc(x.ar)}"></td><td><input dir="ltr" data-p="${path}.${i}.en" value="${esc(x.en)}"></td><td class="p">${inp(path + '.' + i + '.pct')}</td><td class="pv">${prevPct(prevList, x.ar)}</td><td><button class="x" type="button" data-del="${path}.${i}" aria-label="حذف البند">✕</button></td></tr>`; });
   return h + `</tbody></table></div>`;
 }
 function rCm(){
   const per = (META.periods || []).map(clean);
-  let h = `<div class="card" data-sec="commentary"><header><h2>تعليق مدير الصندوق</h2><span class="src">المصدر: إدارة أسواق المال · يُكتب كل نص بلغته، ولا يُترجم أحدهما من الآخر</span></header>
+  let h = `<div class="card" data-sec="commentary"><header><h2>تعليق مدير الصندوق</h2><span class="src">المصدر: إدارة أسواق المال · كل نص بلغته، ويمكن اقتراح ترجمة تُراجع قبل الاعتماد</span></header>
   <p class="fmt">سطر يبدأ بـ<code>#</code> عنوان فرعي · سطر يبدأ بـ<code>-</code> بند في قائمة · سطر فارغ بين الفقرات</p>
-  <div class="lang2"><div class="f" data-f="commentary.ar"><label class="lbl">العربية</label><textarea data-p="commentary.ar">${esc(D.commentary?.ar || '')}</textarea><div class="wc" data-wc="ar"></div></div>
-  <div class="f" data-f="commentary.en" dir="ltr"><label class="lbl">English</label><textarea dir="ltr" data-p="commentary.en">${esc(D.commentary?.en || '')}</textarea><div class="wc" data-wc="en"></div></div></div></div>
+  <div class="lang2">${['ar', 'en'].map(l => `<div class="f" data-f="commentary.${l}" ${l === 'en' ? 'dir="ltr"' : ''}><div class="cmh"><label class="lbl" for="cm-${l}">${l === 'ar' ? 'العربية' : 'English'}</label>
+    ${AI && !LOCKED() ? `<span class="cma"><button type="button" class="btn sm ghost" data-cm="improve" data-l="${l}">${l === 'ar' ? 'تحسين الصياغة' : 'Improve wording'}</button><button type="button" class="btn sm ghost" data-cm="translate" data-l="${l}">${l === 'ar' ? 'ترجمة إلى الإنجليزية' : 'ترجمة إلى العربية'}</button></span>` : ''}</div>
+    ${(D.commentary_mt || {})[l] ? `<div class="mt" role="status"><span>${l === 'ar' ? 'مترجم آليًا من الإنجليزية' : 'Machine-translated from Arabic'} — يحتاج مراجعة قبل الرفع للاعتماد.</span><label><input type="checkbox" data-mtok="${l}" ${LOCKED() ? 'disabled' : ''}> راجعتُ الترجمة</label></div>` : ''}
+    <textarea id="cm-${l}" dir="${l === 'en' ? 'ltr' : 'rtl'}" data-p="commentary.${l}">${esc(D.commentary?.[l] || '')}</textarea><div class="wc" data-wc="${l}"></div></div>`).join('')}</div></div>
   <div class="card" data-sec="top10"><header><h2>أكبر عشرة استثمارات</h2><span class="src">المصدر: إدارة أسواق المال</span></header>${listTable('top10', D.top10, PREV.top10)}
     <div class="sumrow"><button class="btn sm" type="button" data-add="top10">+ بند</button><span class="sum" data-n="top10"></span></div></div>`;
   (D.alloc || []).forEach((a, k) => {
@@ -315,24 +320,67 @@ async function poll(final){
 $('#saveNotes').onclick = async () => { busy($('#saveNotes'), true, 'يُحفظ'); try{ const r = await api(base + '/notes', {notes: $('#notes').value}); showEvents(r.events); toast('حُفظت الملاحظات.'); }catch(e){ toast(e.message, 'amber'); } busy($('#saveNotes'), false); };
 
 renderAll(); showEvents(); check();
-/* ---------- Excel intake ---------- */
-$('#xlfile').addEventListener('change', async ev => {
-  const f = ev.target.files[0]; ev.target.value = ''; if(!f) return;
+/* ---------- intake: any file → proposed values with their source ---------- */
+async function intake(list){
+  if(!list.length) return;
   if(LOCKED()){ toast('البيان مقفل، فلا يُستورد إليه.', 'warn'); return; }
-  const fd = new FormData(); fd.append('file', f); fd.append('data', JSON.stringify(D));
-  const lb = $('#xlup'); lb.textContent = 'تُقرأ…';
+  const fd = new FormData(); [...list].forEach(f => fd.append('files', f)); fd.append('data', JSON.stringify(D));
+  const lb = $('#xlup'); lb.textContent = 'تُقرأ…'; lb.setAttribute('aria-busy', 'true');
   try {
-    const r = await fetch(base + '/import', {method: 'POST', body: fd}); const j = await r.json().catch(() => ({}));
+    const r = await fetch(base + '/intake', {method: 'POST', body: fd}); const j = await r.json().catch(() => ({}));
+    if(r.status === 401){ location.href = '/login'; return; }
     if(!r.ok) throw new Error(j.msg || 'تعذّرت قراءة الملف.');
-    const fv = v => typeof v === 'number' ? v.toLocaleString('en-US', {maximumFractionDigits: 6}) : (v === null || v === undefined || v === '' ? '—' : v);
-    const rows = j.changes.map(c => `<tr><td>${esc(c.label)}</td><td class="num" dir="ltr">${esc(fv(c.before))}</td><td class="num" dir="ltr"><b>${esc(fv(c.after))}</b></td></tr>`).join('');
-    const probs = (j.problems || []).map(p => `<li class="warn">${esc(p)}</li>`).join('');
-    if(!j.changes.length && !probs){ toast('لا جديد في الملف: كل قيمه مطابقة للنموذج.'); return; }
-    const ok = await ask({title: 'قراءة ' + f.name, ok: j.changes.length ? 'تطبيق ' + j.changes.length + ' تغيير' : 'إغلاق',
-      html: (probs ? `<ul class="val">${probs}</ul>` : '') + (rows ? `<p class="muted small" style="margin:0 0 8px">تُطبَّق في النموذج ولا تُحفظ حتى تضغط «حفظ».</p><div class="tw" style="max-height:52vh;overflow:auto"><table><thead><tr><th>البند</th><th>الحالي</th><th>من الملف</th></tr></thead><tbody>${rows}</tbody></table></div>` : '')});
-    if(ok && j.changes.length){ D = j.data; renderAll(); dirty(); toast('طُبّق ' + j.changes.length + ' تغيير من الملف. راجعها ثم احفظ.'); }
+    const fv = v => typeof v === 'number' ? v.toLocaleString('en-US', {maximumFractionDigits: 6}) : (v === null || v === undefined || v === '' ? '—' : String(v).length > 140 ? String(v).slice(0, 140) + '…' : v);
+    const tpl = j.changes.map(c => `<tr><td></td><td>${esc(c.label)}</td><td class="num" dir="ltr">${esc(fv(c.before))}</td><td class="num" dir="ltr"><b>${esc(fv(c.after))}</b></td><td class="muted small">قالب Excel</td></tr>`).join('');
+    const pr = j.proposals.map((p, i) => `<tr><td><input type="checkbox" data-pi="${i}" ${p.confidence >= 0.8 ? 'checked' : ''} aria-label="قبول"></td><td>${esc(p.label)}${p.note ? `<div class="muted small">${esc(p.note)}</div>` : ''}</td>
+      <td class="num" dir="ltr">${esc(fv(p.current))}</td><td class="num" dir="ltr"><b>${esc(fv(p.value))}</b></td>
+      <td class="small"><span class="pill ${p.confidence >= 0.8 ? 'blue' : 'amber'} plain">${Math.round(p.confidence * 100)}%</span> ${esc(p.file)} · ${esc(p.location)}<div class="muted small q">«${esc(p.quote)}»</div></td></tr>`).join('');
+    const probs = [...(j.problems || []), ...(j.conflicts || []).map(c => 'تعارض في ' + c.field + ': ' + (c.values || []).join(' / ') + (c.where ? ' (' + c.where + ')' : ''))].map(p => `<li class="warn">${esc(p)}</li>`).join('');
+    if(!tpl && !pr && !probs){ toast('لا جديد في الملفات: كل ما فيها مطابق للنموذج.'); return; }
+    const dlgOpts = {title: 'قراءة ' + (list.length === 1 ? list[0].name : list.length + ' ملفات'), wide: true, ok: (tpl || pr) ? 'تطبيق المحدَّد' : 'إغلاق',
+      collect: d => [...d.querySelectorAll('[data-pi]:checked')].map(x => +x.dataset.pi),
+      html: (j.summary ? `<p style="margin:0 0 10px">${esc(j.summary)}</p>` : '') + (probs ? `<ul class="val">${probs}</ul>` : '') + ((tpl || pr) ? `<p class="muted small" style="margin:0 0 8px">تُطبَّق في النموذج ولا تُحفظ حتى تضغط «حفظ». القيم دون 80% غير محدَّدة؛ راجع مصدرها قبل قبولها.</p><div class="tw" style="max-height:56vh;overflow:auto"><table class="intake"><thead><tr><th></th><th>البند</th><th>الحالي</th><th>المقترح</th><th>المصدر</th></tr></thead><tbody>${tpl}${pr}</tbody></table></div>` : '')};
+    const ok = await ask(dlgOpts);
+    if(ok && (tpl || pr)){
+      D = j.data; let n = j.changes.length;
+      (dlgOpts.collected || []).forEach(i => { const p = j.proposals[i]; set(p.field, p.value); n++; });
+      renderAll(); dirty(); toast('طُبّق ' + n + ' تغيير. راجعها ثم احفظ.');
+    }
   } catch(e){ toast(e.message, 'bad'); }
-  finally { lb.textContent = 'رفع ملف معبّأ'; }
+  finally { lb.textContent = 'رفع ملفات'; lb.removeAttribute('aria-busy'); }
+}
+$('#xlfile').addEventListener('change', ev => { const l = [...ev.target.files]; ev.target.value = ''; intake(l); });
+(function(){ const card = $('#xlcard'), dz = $('#drop'); if(!card) return;
+  ['dragenter', 'dragover'].forEach(t => card.addEventListener(t, e => { e.preventDefault(); dz.hidden = false; card.classList.add('dragging'); }));
+  ['dragleave', 'drop'].forEach(t => card.addEventListener(t, e => { e.preventDefault(); if(t === 'drop' || !card.contains(e.relatedTarget)){ dz.hidden = true; card.classList.remove('dragging'); } }));
+  card.addEventListener('drop', e => intake([...e.dataTransfer.files]));
+})();
+
+/* ---------- commentary: improve / translate, with a review mark on translations ---------- */
+document.addEventListener('click', async e => {
+  const b = e.target.closest('[data-cm]'); if(!b || LOCKED()) return;
+  const act = b.dataset.cm, l = b.dataset.l, text = (D.commentary?.[l] || '').trim();
+  if(!text){ toast('اكتب نص التعليق أولًا.', 'warn'); return; }
+  busy(b, true, act === 'improve' ? 'يُحسَّن' : 'يُترجَم');
+  try {
+    const r = await api(base + '/commentary', {action: act, lang: l, text, data: D});
+    const tgt = r.target, cur = D.commentary?.[tgt] || '';
+    const figs = (r.figures || []).filter(f => !f.in_form).map(f => `<li class="warn">رقم «${esc(f.figure)}» غير موجود في ${act === 'translate' ? 'النص الأصلي' : 'النص الآخر'} ولا في أرقام النموذج.</li>`).join('');
+    const notes = [...(r.changes || []), ...(r.doubts || []).map(d => 'للمراجعة: ' + d)].map(x => `<li>${esc(x)}</li>`).join('');
+    const v = await ask({title: act === 'improve' ? 'الصياغة المقترحة' : (tgt === 'en' ? 'الترجمة الإنجليزية المقترحة' : 'الترجمة العربية المقترحة'), wide: true,
+      ok: cur && act === 'translate' ? 'استبدال النص الحالي' : 'اعتماد النص', input: '', value: r.text, dir: tgt === 'en' ? 'ltr' : 'rtl',
+      html: (figs ? `<ul class="val">${figs}</ul>` : '') + (notes ? `<ul class="small" style="margin:0 0 8px;padding-inline-start:18px">${notes}</ul>` : '') + (cur && act === 'translate' ? '<p class="note amber" style="margin:0 0 8px">سيحل محل النص الحالي في الخانة الأخرى.</p>' : '') + '<p class="muted small" style="margin:0">يمكنك تعديل النص قبل اعتماده.</p>'});
+    if(v){
+      D.commentary = D.commentary || {}; D.commentary[tgt] = v;
+      if(act === 'translate'){ D.commentary_mt = D.commentary_mt || {}; D.commentary_mt[tgt] = true; }
+      renderAll(); dirty(); toast(act === 'translate' ? 'أُدرجت الترجمة، وهي موسومة للمراجعة.' : 'اعتُمدت الصياغة المقترحة.');
+    }
+  } catch(err){ toast(err.message, 'bad'); }
+  finally { busy(b, false); }
+});
+document.addEventListener('change', e => {
+  const c = e.target.closest('[data-mtok]'); if(!c) return;
+  if(c.checked){ D.commentary_mt = D.commentary_mt || {}; delete D.commentary_mt[c.dataset.mtok]; renderAll(); dirty(); toast('سُجّلت مراجعة الترجمة.'); }
 });
 getj(base + '/job').then(r => { showFiles(r.files); $('#jobMsg').textContent = (r.log || []).join(' · '); if(r.job.state === 'running'){ busy($('#gen'), true, 'يُصدر'); poll(false); } });
 </script>

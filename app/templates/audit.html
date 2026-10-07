@@ -11,6 +11,7 @@
   <div class="k"><span>آخر 24 ساعة</span><b>{{ '{:,}'.format(stats.day) }}</b></div>
   <div class="k"><span>مرفوض أو فاشل · 24 ساعة</span><b>{{ stats.denied }}</b></div>
   <div class="k"><span>طلبات · 24 ساعة</span><b>{{ '{:,}'.format(stats.requests) }}</b></div>
+  <div class="k"><span>استهلاك الذكاء الاصطناعي هذا الشهر</span><b>{% if aiu.configured %}<span class="ltr">${{ '%.2f'|format(aiu.usd) }}{% if aiu.cap %} / ${{ '%.0f'|format(aiu.cap) }}{% endif %}</span>{% else %}<span class="pill plain" style="font-size:13px">غير مفعَّل</span>{% endif %}</b></div>
 </div>
 
 <form class="card filters" method="get" action="/audit" role="search" aria-label="تصفية">
