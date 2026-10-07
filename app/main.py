@@ -9,6 +9,8 @@ import time
 from itsdangerous import URLSafeTimedSerializer, BadSignature
 from jinja2 import Environment, FileSystemLoader, select_autoescape
 from markupsafe import Markup
+import compare as CMP
+import mimetypes as _mt; _mt.add_type('image/webp', '.webp')
 import model as M, store, pipeline as P, records as R, backup as BK, xl, shutil, i18n, audit as A, ai, intake as IN, commentary as CM, assistant as AS
 from jinja2 import BaseLoader, TemplateNotFound
 
@@ -468,6 +470,9 @@ def _generate_locked(fund, q, final, by):
             try: docx = P.word(p, lang, fund)
             except Exception as e: docx = None; notes_.append('تعذّر إخراج Word ' + lang + ': ' + str(e)[:120])
             files[lang] = {'html': os.path.basename(p), 'pdf': os.path.basename(pdf), 'docx': os.path.basename(docx) if docx else None}
+        JOBS[key]['step'] = 'المقارنة بالربع السابق'
+        try: CMP.build(fund, q, 'final' if final else 'draft', od, files, structs, b)
+        except Exception as e: traceback.print_exc(); notes_.append('تعذّر إعداد المقارنة بالربع السابق: ' + str(e)[:120])
         if final:
             try: BK.take('event', f'before-final-{fund}-{q}')
             except Exception as e: notes_.append('تعذّرت النسخة الاحتياطية قبل الاعتماد: ' + str(e)[:120])
@@ -534,7 +539,19 @@ async def return_(req: Request, fund: str, q: str):
 def job(req: Request, fund: str, q: str):
     need(req); _ok(fund, q); s = store.get(fund, q) or {}
     return {'st': s.get('status', 'new'), 'job': JOBS.get(f'{fund}:{q}', {'state': 'idle'}), 'files': s.get('files'), 'status': STATUS.get(s.get('status', 'new')),
-            'log': s.get('log'), 'events': store.events(fund, q)}
+            'log': s.get('log'), 'events': store.events(fund, q), 'cmp': CMP.summary(fund, q)}
+
+
+@app.get('/s/{fund}/{q}/compare', response_class=HTMLResponse)
+def compare_page(req: Request, fund: str, q: str, kind: str = 'draft'):
+    me = need(req); _ok(fund, q)
+    if kind not in ('draft', 'final'): raise HTTPException(404)
+    rep = CMP.load(fund, q, kind)
+    if not rep: return RedirectResponse(f'/s/{fund}/{q}', status_code=303)
+    F = M.FUNDS[fund]; L = lang_of(req); pq = M.prev_q(q)
+    head = {'fund': fund, 'q': q, 'kind': kind, 'name': F[L], 'ql': M.qlabel(q, L), 'pql': M.qlabel(pq, L),
+            'has_final': bool(CMP.load(fund, q, 'final')), 'has_draft': bool(CMP.load(fund, q, 'draft'))}
+    return page(req, 'compare.html', me=me, roles=ROLE_AR, nav='home', h=head, rep_json=_js(rep), head_json=_js(head))
 
 
 def _kdir(fund, q, kind):
