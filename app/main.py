@@ -3,12 +3,13 @@ import os, json, re, hmac, hashlib, threading, traceback, datetime, mimetypes, z
 from fastapi import FastAPI, Request, Form, HTTPException
 from fastapi.responses import HTMLResponse, JSONResponse, RedirectResponse, FileResponse, StreamingResponse
 from fastapi.staticfiles import StaticFiles
+from fastapi.concurrency import run_in_threadpool
 from urllib.parse import urlparse
 import time
 from itsdangerous import URLSafeTimedSerializer, BadSignature
 from jinja2 import Environment, FileSystemLoader, select_autoescape
 from markupsafe import Markup
-import model as M, store, pipeline as P, records as R, shutil
+import model as M, store, pipeline as P, records as R, backup as BK, xl, shutil
 
 APP = os.path.dirname(os.path.abspath(__file__))
 ENG = P.ENG
@@ -230,6 +231,24 @@ VERIFIED = json.load(open(os.path.join(APP, 'verified.json'), encoding='utf-8'))
 R.import_history()
 
 
+def _clear_test_q3():
+    """One-off: the Q3 2026 statement of the Income fund was filled with Q2's own figures while testing the
+    platform. Remove it only while it is still exactly that copy (same NAV, size and units as Q2) and not locked."""
+    s = store.get('income', 'q3-2026')
+    if not s or s.get('status') in LOCKED: return
+    prev, _, _ = prev_values('income', 'q3-2026'); d = s.get('data') or {}
+    if not prev or d.get('nav_unit') is None: return
+    if all(d.get(k) == prev.get(k) for k in ('nav_unit', 'fund_size', 'units')):
+        BK.take('event', 'before-clearing-test-income-q3-2026')
+        store.delete('income', 'q3-2026'); shutil.rmtree(store.out_dir('income', 'q3-2026'), ignore_errors=True)
+        print('cleared the Q3 2026 test copy of the Income fund')
+
+
+try: _clear_test_q3()
+except Exception as e: print('test-data check skipped:', e)
+BK.start()   # one backup a day, kept 30 days
+
+
 # ---------- pages ----------
 @app.get('/', response_class=HTMLResponse)
 def home(req: Request, q: str = ''):
@@ -347,6 +366,8 @@ def _generate_locked(fund, q, final, by):
             except Exception as e: docx = None; notes_.append('تعذّر إخراج Word ' + lang + ': ' + str(e)[:120])
             files[lang] = {'html': os.path.basename(p), 'pdf': os.path.basename(pdf), 'docx': os.path.basename(docx) if docx else None}
         if final:
+            try: BK.take('event', f'before-final-{fund}-{q}')
+            except Exception as e: notes_.append('تعذّرت النسخة الاحتياطية قبل الاعتماد: ' + str(e)[:120])
             for lang in ('ar', 'en'):
                 json.dump(structs[lang], open(store.struct_path(fund, q, lang), 'w', encoding='utf-8'), ensure_ascii=False)
             store.put(fund, q, status='final', final_at=store.now(), files={'draft': (s.get('files') or {}).get('draft'), 'final': files}, log=notes_)
@@ -556,6 +577,8 @@ def _record_job_locked(fund, q, approve, by, reason):
         ver = datetime.datetime.now(datetime.timezone(datetime.timedelta(hours=3))).strftime('%Y%m%d-%H%M')
         od = os.path.join(_kdir(fund, q, 'corrected'), ver)
         files, notes_ = _render_set(fund, q, work, od)
+        try: BK.take('event', f'before-correction-{fund}-{q}')
+        except Exception as e: notes_.append('تعذّرت النسخة الاحتياطية قبل التصحيح: ' + str(e)[:120])
         rows = _changes(fund, q)
         for l in ('ar', 'en'):
             op = store.orig_struct_path(fund, q, l)
@@ -596,3 +619,67 @@ async def record_run(req: Request, fund: str, q: str):
 def record_changes(req: Request, fund: str, q: str):
     need(req); _ok(fund, q)
     return {'changes': _changes(fund, q) if R.has_draft(fund, q) else []}
+
+
+# ---------- Excel intake: a workbook per fund and quarter, a sheet per source ----------
+@app.get('/s/{fund}/{q}/template.xlsx')
+def xl_template(req: Request, fund: str, q: str):
+    need(req); _ok(fund, q)
+    prev, pq, _ = prev_values(fund, q)
+    if prev is None: raise HTTPException(404)
+    s = store.get(fund, q) or {}
+    data = s.get('data') or blank(prev, fund, q)
+    blob = xl.build(fund, q, data, prev)
+    name = f"{M.FUNDS[fund].get('doc_centre', fund)}-{q}-inputs.xlsx"
+    return StreamingResponse(io.BytesIO(blob), media_type='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+                             headers={'Content-Disposition': f'attachment; filename="{name}"', 'Cache-Control': 'no-store'})
+
+
+@app.post('/api/s/{fund}/{q}/import')
+async def xl_import(req: Request, fund: str, q: str):
+    me = need(req); _ok(fund, q)
+    s = store.get(fund, q) or {}
+    if s.get('status') in LOCKED: return JSONResponse({'error': 'locked', 'msg': 'البيان ' + STATUS[s['status']] + '، فلا يُستورد إليه.'}, status_code=409)
+    form = await req.form(); f = form.get('file')
+    if f is None or not hasattr(f, 'read'): return JSONResponse({'error': 'file', 'msg': 'اختر ملف Excel.'}, status_code=400)
+    blob = await f.read()
+    if len(blob) > 15 * 1024 * 1024: return JSONResponse({'error': 'size', 'msg': 'الملف أكبر من 15 ميغابايت.'}, status_code=400)
+    body = form.get('data')
+    try: cur = json.loads(body) if body else (s.get('data') or {})
+    except ValueError: cur = s.get('data') or {}
+    if not cur:
+        prev, _, _ = prev_values(fund, q); cur = blank(prev, fund, q) if prev else {}
+    try: d, ch, probs = xl.parse(blob, fund, q, cur)
+    except xl.WrongFile as e:
+        return JSONResponse({'error': 'wrong', 'msg': str(e)}, status_code=400)
+    except Exception as e:
+        return JSONResponse({'error': 'parse', 'msg': 'تعذّرت قراءة الملف. استخدم قالب المنصة بصيغة xlsx.'}, status_code=400)
+    # keep the uploaded file as the source of these figures
+    up = os.path.join(store.DATA, 'uploads', fund, q); os.makedirs(up, exist_ok=True)
+    safe = re.sub(r'[^A-Za-z0-9._-]', '_', getattr(f, 'filename', 'inputs.xlsx'))[-80:]
+    open(os.path.join(up, f"{datetime.datetime.now().strftime('%Y%m%d-%H%M%S')}-{safe}"), 'wb').write(blob)
+    store.event(fund, q, f"{me['name']}: قراءة ملف Excel ({len(ch)} تغيير)")
+    return {'ok': True, 'data': d, 'changes': ch, 'problems': probs}
+
+
+# ---------- backups (admin) ----------
+@app.get('/backups', response_class=HTMLResponse)
+def backups_page(req: Request):
+    me = need(req, 'admin')
+    return env.get_template('backups.html').render(me=me, roles=ROLE_AR, nav='backups', items=BK.listing(), keep=BK.KEEP_DAILY)
+
+
+@app.post('/api/backups')
+async def backups_take(req: Request):
+    me = need(req, 'admin')
+    name = await run_in_threadpool(BK.take, 'manual')
+    return {'ok': True, 'name': name, 'items': BK.listing()}
+
+
+@app.get('/backups/f/{name}')
+def backups_file(req: Request, name: str):
+    need(req, 'admin')
+    if not re.match(r'^[A-Za-z0-9._-]+\.zip$', name): raise HTTPException(404)
+    p = os.path.join(BK.DIR, name)
+    if not os.path.isfile(p): raise HTTPException(404)
+    return FileResponse(p, filename=name, media_type='application/zip')

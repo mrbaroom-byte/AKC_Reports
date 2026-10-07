@@ -152,3 +152,10 @@ def orig_struct_path(fund, q, lang):
 def all_records():
     with _lock, _c() as c:
         return [dict(r) for r in c.execute('select id,fund,q,status,updated,final_at from statements')]
+
+
+def delete(fund, q):
+    """Remove a statement row and its events (used to clear test data; a backup is taken first by the caller)."""
+    with _lock, _c() as c:
+        c.execute('delete from statements where id=?', (f'{fund}:{q}',))
+        c.execute('delete from events where sid=?', (f'{fund}:{q}',))

@@ -79,6 +79,10 @@
 <aside class="side">
   <div class="card"><h2>التحقق <span class="count" id="vcount"></span></h2><ul class="val" id="val"><li>يُحسب…</li></ul></div>
   <div class="card"><h2>المحسوب آليًا</h2><dl class="der" id="der"></dl></div>
+  <div class="card" id="xlcard"><h2>استلام الأرقام بملف Excel</h2>
+    <p class="muted small" style="margin:0 0 10px">نزّل القالب وأرسله للجهات: صفحة لـ FACO، وصفحة لإدارة أسواق المال، وصفحة لتداول. ثم ارفع الملف المعبّأ لتراجع التغييرات قبل اعتمادها في النموذج.</p>
+    <div style="display:flex;gap:8px;flex-wrap:wrap"><a class="btn sm" id="xldl" href="/s/{{ meta.fund }}/{{ meta.q }}/template.xlsx">تنزيل القالب</a>
+    <label class="btn sm blue" id="xlup" for="xlfile">رفع ملف معبّأ</label><input type="file" id="xlfile" accept=".xlsx,.xlsm" hidden></div></div>
   <div class="card"><h2>الملفات</h2><div id="files" class="files"><span class="muted small">لم تصدر مسودة بعد.</span></div><div class="muted small" id="jobMsg" style="margin-top:8px"></div></div>
   <div class="card"><h2>آخر الأحداث</h2><ul class="ev" id="evs"></ul></div>
 </aside>
@@ -311,6 +315,25 @@ async function poll(final){
 $('#saveNotes').onclick = async () => { busy($('#saveNotes'), true, 'يُحفظ'); try{ const r = await api(base + '/notes', {notes: $('#notes').value}); showEvents(r.events); toast('حُفظت الملاحظات.'); }catch(e){ toast(e.message, 'amber'); } busy($('#saveNotes'), false); };
 
 renderAll(); showEvents(); check();
+/* ---------- Excel intake ---------- */
+$('#xlfile').addEventListener('change', async ev => {
+  const f = ev.target.files[0]; ev.target.value = ''; if(!f) return;
+  if(LOCKED()){ toast('البيان مقفل، فلا يُستورد إليه.', 'warn'); return; }
+  const fd = new FormData(); fd.append('file', f); fd.append('data', JSON.stringify(D));
+  const lb = $('#xlup'); lb.textContent = 'تُقرأ…';
+  try {
+    const r = await fetch(base + '/import', {method: 'POST', body: fd}); const j = await r.json().catch(() => ({}));
+    if(!r.ok) throw new Error(j.msg || 'تعذّرت قراءة الملف.');
+    const fv = v => typeof v === 'number' ? v.toLocaleString('en-US', {maximumFractionDigits: 6}) : (v === null || v === undefined || v === '' ? '—' : v);
+    const rows = j.changes.map(c => `<tr><td>${esc(c.label)}</td><td class="num" dir="ltr">${esc(fv(c.before))}</td><td class="num" dir="ltr"><b>${esc(fv(c.after))}</b></td></tr>`).join('');
+    const probs = (j.problems || []).map(p => `<li class="warn">${esc(p)}</li>`).join('');
+    if(!j.changes.length && !probs){ toast('لا جديد في الملف: كل قيمه مطابقة للنموذج.'); return; }
+    const ok = await ask({title: 'قراءة ' + f.name, ok: j.changes.length ? 'تطبيق ' + j.changes.length + ' تغيير' : 'إغلاق',
+      html: (probs ? `<ul class="val">${probs}</ul>` : '') + (rows ? `<p class="muted small" style="margin:0 0 8px">تُطبَّق في النموذج ولا تُحفظ حتى تضغط «حفظ».</p><div class="tw" style="max-height:52vh;overflow:auto"><table><thead><tr><th>البند</th><th>الحالي</th><th>من الملف</th></tr></thead><tbody>${rows}</tbody></table></div>` : '')});
+    if(ok && j.changes.length){ D = j.data; renderAll(); dirty(); toast('طُبّق ' + j.changes.length + ' تغيير من الملف. راجعها ثم احفظ.'); }
+  } catch(e){ toast(e.message, 'bad'); }
+  finally { lb.textContent = 'رفع ملف معبّأ'; }
+});
 getj(base + '/job').then(r => { showFiles(r.files); $('#jobMsg').textContent = (r.log || []).join(' · '); if(r.job.state === 'running'){ busy($('#gen'), true, 'يُصدر'); poll(false); } });
 </script>
 {% endblock %}

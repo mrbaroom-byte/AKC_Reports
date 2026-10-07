@@ -22,7 +22,7 @@
     <nav aria-label="التنقل">
       <a href="/" {% if nav == 'home' %}aria-current="page"{% endif %}>الربع الحالي</a>
       <a href="/records" {% if nav == 'records' %}aria-current="page"{% endif %}>البيانات المنشورة</a>
-      {% if me.role == 'admin' %}<a href="/users" {% if nav == 'users' %}aria-current="page"{% endif %}>المستخدمون</a>{% endif %}
+      {% if me.role == 'admin' %}<a href="/users" {% if nav == 'users' %}aria-current="page"{% endif %}>المستخدمون</a><a href="/backups" {% if nav == 'backups' %}aria-current="page"{% endif %}>النسخ الاحتياطية</a>{% endif %}
       {% if doc_centre %}<a href="{{ doc_centre }}" target="_blank" rel="noopener">مركز المستندات ↗</a>{% endif %}
     </nav>
     <span class="sp"></span>
