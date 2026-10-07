@@ -30,16 +30,17 @@ function toast(msg, kind = '', ms = 3800) {
   setTimeout(() => { t.classList.add('out'); setTimeout(() => t.remove(), 250); }, ms);
 }
 
-/* ask({title, text, ok, cancel, input:'placeholder', required}) -> Promise<string|true|null> */
+/* ask({title, text|html, ok, cancel, input:'placeholder', value, dir, required, wide, collect(d)}) -> Promise<string|true|null>
+   collect(d) runs before the dialog closes; its result is left on o.collected */
 function ask(o) {
   return new Promise(res => {
-    const d = document.createElement('dialog');
+    const d = document.createElement('dialog'); if (o.wide) d.className = 'wide';
     d.innerHTML = `<form method="dialog"><div class="dh"><h2>${esc(o.title)}</h2></div><div class="db">${o.html || (o.text ? '<p style="margin:0">' + esc(o.text) + '</p>' : '')}
-      ${o.input !== undefined ? `<textarea name="v" placeholder="${esc(o.input)}"></textarea>` : ''}</div>
+      ${o.input !== undefined ? `<textarea name="v" dir="${esc(o.dir || 'auto')}" placeholder="${esc(o.input)}"></textarea>` : ''}</div>
       <div class="df"><button class="btn" value="cancel" type="submit">${esc(o.cancel || 'رجوع')}</button><button class="btn ${o.tone || 'primary'}" value="ok" type="submit">${esc(o.ok || 'متابعة')}</button></div></form>`;
     document.body.appendChild(d);
-    const ta = $('textarea', d);
-    d.addEventListener('close', () => { const ok = d.returnValue === 'ok'; const v = ta ? ta.value.trim() : true; d.remove(); res(ok ? v : null); });
+    const ta = $('textarea', d); if (ta && o.value) { ta.value = o.value; ta.style.minHeight = '260px'; }
+    d.addEventListener('close', () => { const ok = d.returnValue === 'ok'; if (ok && o.collect) o.collected = o.collect(d); const v = ta ? ta.value.trim() : true; d.remove(); res(ok ? v : null); });
     $('form', d).addEventListener('submit', e => {
       if (e.submitter && e.submitter.value === 'ok' && o.required && ta && ta.value.trim().length < o.required) { e.preventDefault(); ta.classList.add('bad'); ta.focus(); }
     });
@@ -69,6 +70,53 @@ function busy(btn, on, label) {
     b.addEventListener('click', () => {
       const t = ORDER[(ORDER.indexOf(b.dataset.v || 'system') + 1) % 3]; apply(t);
       document.cookie = 'theme=' + t + ';path=/;max-age=31536000;samesite=lax' + (location.protocol === 'https:' ? ';secure' : '');
+    });
+  });
+})();
+
+/* ---------- assistant panel ---------- */
+(function () {
+  const KEY = 'akc-asst';
+  let msgs = []; try { msgs = JSON.parse(sessionStorage.getItem(KEY) || '[]'); } catch (e) { msgs = []; }
+  const save = () => { try { sessionStorage.setItem(KEY, JSON.stringify(msgs.slice(-30))); } catch (e) {} };
+  const md = t => esc(t).replace(/\*\*(.+?)\*\*/g, '<b>$1</b>').replace(/^- (.*)$/gm, '<li>$1</li>').replace(/(<li>.*<\/li>\n?)+/g, m => '<ul>' + m + '</ul>').replace(/\n/g, '<br>');
+  function draw() {
+    const box = $('#asstMsgs'); if (!box) return;
+    box.innerHTML = msgs.map(m => `<div class="m ${m.role}">${m.role === 'user' ? esc(m.content) : md(m.content)}${(m.actions || []).map(a => a.kind === 'edit'
+      ? `<div class="act">عُدّل ${esc(a.label || a.fund + ' · ' + a.q)} (${a.n} تغيير) <button type="button" class="btn sm" data-undo="${a.undo}" ${a.undone ? 'disabled' : ''}>${a.undone ? 'تم التراجع' : 'تراجع'}</button>${document.body.dataset.fund === a.fund && document.body.dataset.q === a.q ? ' <button type="button" class="btn sm" data-reload>تحديث الصفحة</button>' : ''}</div>`
+      : `<div class="act">أُضيف إلى مسودة تصحيح ${esc(a.fund)} · ${esc(a.q)} (${a.n} تغيير) <a class="btn sm" href="/r/${esc(a.fund)}/${esc(a.q)}">فتح البيان</a></div>`).join('')}</div>`).join('');
+    $('#asstSugg').hidden = msgs.length > 0; box.scrollTop = box.scrollHeight;
+  }
+  function open(v) {
+    const p = $('#asst'), b = $('#asstBtn'); if (!p) return;
+    p.hidden = !v; b.setAttribute('aria-expanded', v ? 'true' : 'false'); if (v) { draw(); $('#asstIn').focus(); } else b.focus();
+  }
+  async function send(text) {
+    text = (text || '').trim(); if (!text) return;
+    msgs.push({role: 'user', content: text}); save(); draw(); $('#asstIn').value = '';
+    const go = $('#asstGo'); busy(go, true, '…');
+    const wait = document.createElement('div'); wait.className = 'm assistant wait'; wait.innerHTML = '<span class="spin"></span>'; $('#asstMsgs').appendChild(wait);
+    try {
+      const r = await api('/api/assistant', {messages: msgs.map(m => ({role: m.role, content: m.content})), page: {fund: document.body.dataset.fund, q: document.body.dataset.q}});
+      msgs.push({role: 'assistant', content: r.text || '—', actions: r.actions || []});
+    } catch (e) { msgs.push({role: 'assistant', content: e.message}); }
+    finally { busy(go, false); save(); draw(); }
+  }
+  document.addEventListener('DOMContentLoaded', () => {
+    if (!$('#asst')) return;
+    $('#asstBtn').addEventListener('click', () => open($('#asst').hidden));
+    $('#asstX').addEventListener('click', () => open(false));
+    $('#asstNew').addEventListener('click', () => { msgs = []; save(); draw(); $('#asstIn').focus(); });
+    $('#asstF').addEventListener('submit', e => { e.preventDefault(); send($('#asstIn').value); });
+    $('#asstIn').addEventListener('keydown', e => { if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); send($('#asstIn').value); } });
+    $$('#asstSugg .chip').forEach(c => c.addEventListener('click', () => send(c.textContent)));
+    document.addEventListener('keydown', e => { if (e.key === 'Escape' && !$('#asst').hidden) open(false); });
+    $('#asstMsgs').addEventListener('click', async e => {
+      const u = e.target.closest('[data-undo]'); if (u) {
+        try { await api('/api/assistant/undo/' + u.dataset.undo); msgs.forEach(m => (m.actions || []).forEach(a => { if (String(a.undo) === u.dataset.undo) a.undone = true; })); save(); draw(); toast('تم التراجع عن التعديل.'); }
+        catch (err) { toast(err.message, 'bad'); }
+      }
+      if (e.target.closest('[data-reload]')) location.reload();
     });
   });
 })();

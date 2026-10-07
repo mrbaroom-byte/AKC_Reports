@@ -9,7 +9,7 @@ import time
 from itsdangerous import URLSafeTimedSerializer, BadSignature
 from jinja2 import Environment, FileSystemLoader, select_autoescape
 from markupsafe import Markup
-import model as M, store, pipeline as P, records as R, backup as BK, xl, shutil, i18n, audit as A
+import model as M, store, pipeline as P, records as R, backup as BK, xl, shutil, i18n, audit as A, ai, intake as IN, commentary as CM, assistant as AS
 from jinja2 import BaseLoader, TemplateNotFound
 
 APP = os.path.dirname(os.path.abspath(__file__))
@@ -51,7 +51,7 @@ def page(req, _tpl, **ctx):
     lang = lang_of(req)
     ctx = i18n.deep(ctx, lang)
     ctx.update(lang=lang, dir='rtl' if lang == 'ar' else 'ltr', theme=theme_of(req), here=str(req.url.path) + (('?' + req.url.query) if req.url.query else ''),
-               t=lambda x: i18n.T(x, lang), alt_lang='en' if lang == 'ar' else 'ar')
+               t=lambda x: i18n.T(x, lang), alt_lang='en' if lang == 'ar' else 'ar', ai_on=ai.configured())
     return (env_en if lang == 'en' else env).get_template(_tpl).render(**ctx)
 
 
@@ -251,7 +251,10 @@ def users_reset(req: Request, username: str):
 
 
 @app.get('/health')
-def health(): return {'ok': True}
+def health():
+    # whether the AI key works is reported, the key itself never is
+    return {'ok': True, 'ai': {'configured': ai.configured(), 'ok': ai.STATUS['ok'], 'checked': ai.STATUS['checked'], 'model': ai.MODEL,
+                               'detail': ai.STATUS['detail'][:160] if ai.STATUS['ok'] is False else ai.STATUS['detail']}}
 
 
 # ---------- quarter helpers ----------
@@ -345,7 +348,7 @@ def home(req: Request, q: str = ''):
         if s.get('status') in DONE: prev, pq, v = s['data'], M.prev_q(q), []
         else:
             prev, pq, _ = prev_values(fund, q)
-            v = M.validate(fund, s['data'], prev, q) if s.get('data') and prev else []
+            v = _validate(fund, s['data'], prev, q) if s.get('data') and prev else []
         cards.append({'fund': fund, 'name': F['ar'], 'en': F['en'], 'status': STATUS.get(s.get('status', 'new')), 'st': s.get('status', 'new'), 'traded': F['traded'], 'symbol': F['symbol'],
                       'updated': s.get('updated', ''), 'blocks': sum(1 for x in v if x['level'] == 'block'),
                       'warns': sum(1 for x in v if x['level'] == 'warn'), 'base_ok': prev is not None, 'pq': pq})
@@ -369,11 +372,19 @@ def editor(req: Request, fund: str, q: str):
     F = M.FUNDS[fund]
     meta = {'fund': fund, 'q': q, 'ql': M.qlabel(q, 'ar'), 'pql': M.qlabel(pq, 'ar'), 'name': F['ar'], 'traded': F['traded'], 'symbol': F['symbol'], 'wad': F['wad'],
             'pe': F['pe'], 'perf': F['perf'], 'symbol': F['symbol'], 'periods': prev.get('periods_ar'), 'risk_names': M.RISK_AR, 'risk_keys': M.RISK, 'role': me['role'], 'st': s['status'], 'locked': s['status'] in LOCKED}
-    meta['statuses'] = STATUS; meta['en'] = F['en']
+    meta['statuses'] = STATUS; meta['en'] = F['en']; meta['ai'] = ai.configured()
     if lang_of(req) == 'en':
         meta = i18n.deep(meta, 'en'); meta['periods'] = prev.get('periods_en') or meta['periods']; meta['name'] = F['en']
     return page(req, 'editor.html', meta=meta, data_json=_js(s['data']), prev_json=_js(prev), meta_json=_js(meta), s=s,
                                                   status=STATUS.get(s['status']), doc_centre=DOC_CENTRE, events=store.events(fund, q), me=me, roles=ROLE_AR, nav='home')
+
+
+def _validate(fund, d, prev, q):
+    v = M.validate(fund, d, prev, q)
+    for l, name in (('ar', 'العربي'), ('en', 'الإنجليزي')):
+        if ((d or {}).get('commentary_mt') or {}).get(l):
+            v.insert(0, {'level': 'block', 'field': f'commentary.{l}', 'msg': f'تعليق مدير الصندوق {name} مترجم آليًا ولم تؤكَّد مراجعته.'})
+    return v
 
 
 def _clean(d):
@@ -406,7 +417,7 @@ async def save(req: Request, fund: str, q: str):
     s = store.put(fund, q, data=d, status=st)
     store.event(fund, q, f"{me['name']}: حفظ البيانات")
     A.log(req, 'statement.save', f'{fund}:{q}', changes=changes, n=len(changes), status_before=cur.get('status'))
-    v = M.validate(fund, d, prev, q); der = M.derive(d, prev)
+    v = _validate(fund, d, prev, q); der = M.derive(d, prev)
     return {'ok': True, 'st': s['status'], 'status': STATUS[s['status']], 'validation': v, 'derived': der, 'updated': s['updated'], 'events': store.events(fund, q)}
 
 
@@ -415,7 +426,7 @@ async def check(req: Request, fund: str, q: str):
     need(req); _ok(fund, q); body = await req.json(); d = _clean(body.get('data') or {})
     if not M.FUNDS[fund]['traded']: d['price'] = d.get('nav_unit')
     prev, pq, _ = prev_values(fund, q)
-    return {'validation': M.validate(fund, d, prev, q), 'derived': M.derive(d, prev)}
+    return {'validation': _validate(fund, d, prev, q), 'derived': M.derive(d, prev)}
 
 
 @app.post('/api/s/{fund}/{q}/notes')
@@ -438,7 +449,7 @@ def _generate_locked(fund, q, final, by):
         JOBS[key] = {'state': 'running', 'step': 'تجهيز البيانات'}
         s = store.get(fund, q); d = s['data']
         prev, pq, b = prev_values(fund, q)
-        v = M.validate(fund, d, prev, q)
+        v = _validate(fund, d, prev, q)
         if any(x['level'] == 'block' for x in v):
             JOBS[key] = {'state': 'error', 'msg': 'يوجد نقص يمنع الإصدار. راجع قائمة التحقق.'}; return
         od = store.out_dir(fund, q) if not final else os.path.join(store.out_dir(fund, q), 'final')
@@ -497,6 +508,8 @@ async def submit(req: Request, fund: str, q: str):
     me = need(req); _ok(fund, q); cur = store.get(fund, q) or {}
     if cur.get('status') != 'generated':
         return JSONResponse({'error': 'state', 'msg': 'أصدر المسودات بعد آخر تعديل، ثم ارفعها للاعتماد.'}, status_code=409)
+    if any(((cur.get('data') or {}).get('commentary_mt') or {}).values()):
+        return JSONResponse({'error': 'mt', 'msg': 'في التعليق نص مترجم آليًا لم تؤكَّد مراجعته.'}, status_code=409)
     store.put(fund, q, status='submitted')
     store.event(fund, q, f"{me['name']}: رفع المسودة للاعتماد")
     A.log(req, 'statement.submit', f'{fund}:{q}')
@@ -799,7 +812,7 @@ def audit_page(req: Request, actor: str = '', action: str = '', obj: str = '', s
     acts = {k: v[1 if lang == 'en' else 0] for k, v in i18n.ACTIONS.items()}
     request_q = '&'.join(f'{k}={v}' for k, v in req.query_params.items() if k != 'p' and v)
     return page(req, 'audit.html', request_q=request_q, me=me, roles=ROLE_AR, nav='audit', rows=rows, total=total, p=page_, pages=(total + 49) // 50, chain_ok=ok, chain_n=n,
-                f={'actor': actor, 'action': action, 'obj': obj, 'since': since, 'until': until, 'outcome': outcome}, actors=A.actors(), acts=acts, stats=A.stats())
+                f={'actor': actor, 'action': action, 'obj': obj, 'since': since, 'until': until, 'outcome': outcome}, actors=A.actors(), acts=acts, stats=A.stats(), aiu=ai.usage_summary())
 
 
 @app.get('/audit.csv')
@@ -812,3 +825,97 @@ def audit_csv(req: Request, actor: str = '', action: str = '', obj: str = '', si
 
 
 A.prune_access()
+
+
+# ---------- AI: any file in, commentary, assistant ----------
+@app.post('/api/s/{fund}/{q}/intake')
+async def intake_files(req: Request, fund: str, q: str):
+    me = need(req); _ok(fund, q); lang = lang_of(req)
+    s = store.get(fund, q) or {}
+    if s.get('status') in LOCKED: return JSONResponse({'error': 'locked', 'msg': 'البيان ' + STATUS[s['status']] + '، فلا يُستورد إليه.'}, status_code=409)
+    form = await req.form(); ups = [f for f in form.getlist('files') if hasattr(f, 'read')]
+    if not ups: return JSONResponse({'error': 'file', 'msg': 'اختر ملفًا واحدًا على الأقل.'}, status_code=400)
+    files, total = [], 0
+    up = os.path.join(store.DATA, 'uploads', fund, q); os.makedirs(up, exist_ok=True)
+    for f in ups[:20]:
+        b = await f.read(); total += len(b)
+        if total > 60 * 1024 * 1024: return JSONResponse({'error': 'size', 'msg': 'مجموع الملفات أكبر من 60 ميغابايت.'}, status_code=400)
+        name = os.path.basename(getattr(f, 'filename', '') or 'file')[-120:]
+        open(os.path.join(up, datetime.datetime.now().strftime('%Y%m%d-%H%M%S-') + re.sub(r'[^A-Za-z0-9._\u0600-\u06FF-]', '_', name)), 'wb').write(b)
+        files.append((name, b))
+    try: cur = json.loads(form.get('data') or 'null') or s.get('data') or {}
+    except ValueError: cur = s.get('data') or {}
+    prev, pq, _ = prev_values(fund, q)
+    if not prev: return JSONResponse({'error': 'base', 'msg': 'لا يوجد بيان معتمد للربع السابق.'}, status_code=409)
+    if not cur: cur = blank(prev, fund, q)
+    content = IN.read(files)
+    data, changes, problems = cur, [], list(content['skipped'])
+    for name, b in content['templates']:
+        try: data, ch, pr = xl.parse(b, fund, q, data); changes += ch; problems += pr
+        except xl.WrongFile as e: problems.append(f'{name}: {e}')
+    res = {'proposals': [], 'summary': '', 'conflicts': [], 'not_found': []}
+    if content['text'] or content['images']:
+        if not ai.configured():
+            problems.append('قراءة الملفات غير القالب تحتاج تفعيل الذكاء الاصطناعي.')
+        else:
+            try: res = await run_in_threadpool(IN.propose, fund, q, data, prev, content, me['user'], lang_of(req))
+            except ai.AIError as e: problems.append(str(e))
+    A.log(req, 'statement.intake', f'{fund}:{q}', files=[n for n, _ in files], template_changes=changes, proposals=res['proposals'], conflicts=res['conflicts'], problems=problems)
+    store.event(fund, q, f"{me['name']}: قراءة ملفات ({len(files)})")
+    if lang == 'en':
+        for p in res['proposals']: p['label'] = p['label'].split(' / ')[-1] if ' / ' in p['label'] else p['label']
+    return {'ok': True, 'data': data, 'changes': changes, 'problems': problems, **res}
+
+
+@app.post('/api/s/{fund}/{q}/commentary')
+async def commentary_ai(req: Request, fund: str, q: str):
+    me = need(req); _ok(fund, q); body = await req.json()
+    act, src = body.get('action'), body.get('lang')
+    text = (body.get('text') or '').strip()
+    if act not in ('improve', 'translate') or src not in ('ar', 'en') or not text:
+        return JSONResponse({'error': 'input', 'msg': 'اكتب نص التعليق أولًا.'}, status_code=400)
+    prev, _, _ = prev_values(fund, q)
+    try:
+        fn = CM.improve if act == 'improve' else CM.translate
+        r = await run_in_threadpool(fn, src, text, prev or {}, me['user'], f'{fund}:{q}', lang_of(req))
+    except ai.AIError as e:
+        return JSONResponse({'error': 'ai', 'msg': str(e)}, status_code=503)
+    dst = src if act == 'improve' else ('en' if src == 'ar' else 'ar')
+    other = ((body.get('data') or {}).get('commentary') or {}).get('en' if dst == 'ar' else 'ar', '') if act == 'improve' else text
+    r['figures'] = CM.check(r.get('text', ''), other, body.get('data') or {})
+    r['target'] = dst; r['action'] = act
+    A.log(req, 'commentary.' + act, f'{fund}:{q}', lang=src, target=dst, source=text, result=r.get('text', ''), changes=r.get('changes'), doubts=r.get('doubts'))
+    return r
+
+
+@app.post('/api/assistant')
+async def assistant_ask(req: Request):
+    me = need(req); body = await req.json(); lang = lang_of(req)
+    page_ = body.get('page') or {}
+    if page_.get('fund') not in M.FUNDS: page_ = {}
+    msgs = body.get('messages') or []
+    q_text = next((m.get('content') for m in reversed(msgs) if m.get('role') == 'user'), '')
+    sess = AS.Session(me, {'current_q': current_q, 'prev_values': prev_values, 'clean': _clean, 'verified': VERIFIED}, lang, page_)
+    try:
+        out = await run_in_threadpool(sess.run, msgs, req)
+    except ai.AIError as e:
+        A.log(req, 'assistant.ask', f"{page_.get('fund', '')}:{page_.get('q', '')}".strip(':'), 'failed', question=q_text, error=str(e))
+        return JSONResponse({'error': 'ai', 'msg': str(e)}, status_code=503)
+    A.log(req, 'assistant.ask', f"{page_.get('fund', '')}:{page_.get('q', '')}".strip(':'), question=q_text, answer=out['text'][:4000], tools=out['tools'], actions=out['actions'])
+    return out
+
+
+@app.post('/api/assistant/undo/{uid}')
+async def assistant_undo(req: Request, uid: int):
+    me = need(req)
+    r = AS.undo(uid, me, req)
+    if r.get('error'): return JSONResponse({'error': 'undo', 'msg': r['error']}, status_code=409)
+    return r
+
+
+@app.get('/api/ai/usage')
+def ai_usage(req: Request):
+    need(req, 'admin'); return ai.usage_summary()
+
+
+threading.Thread(target=ai.selfcheck, daemon=True, name='ai-selfcheck').start()
