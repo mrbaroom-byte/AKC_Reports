@@ -1,0 +1,20 @@
+{% extends "base.html" %}
+{% block title %}النسخ الاحتياطية{% endblock %}
+{% block body %}
+<div class="ph"><div class="t"><h1>النسخ الاحتياطية</h1><p class="lede">نسخة كاملة كل يوم تُحفظ آخر {{ keep }} منها، ونسخة قبل كل اعتماد نهائي أو تصحيح تُحفظ 90 يومًا. تضم قاعدة البيانات، وملفات البيانات وأصولها المنشورة، والملفات النهائية والمصحّحة، والملفات المرفوعة.</p></div>
+<div class="acts"><button class="btn primary" id="take">إنشاء نسخة الآن</button></div></div>
+<div class="card flush"><div class="tw"><table>
+<thead><tr><th>النسخة</th><th>النوع</th><th class="hide-sm">التاريخ</th><th class="hide-sm">الحجم</th><th></th></tr></thead>
+<tbody id="rows">
+{% for b in items %}<tr><td class="ltr small">{{ b.name }}</td><td>{{ {'daily':'يومية','event':'قبل اعتماد أو تصحيح','manual':'يدوية'}.get(b.name.split('-')[0], '') }}</td><td class="hide-sm muted">{{ b.at }}</td><td class="hide-sm muted num">{{ '%.1f'|format(b.size / 1048576) }} MB</td><td><a class="btn sm" href="/backups/f/{{ b.name }}">تنزيل</a></td></tr>
+{% else %}<tr><td colspan="5" class="empty">لا نسخ بعد. تُنشأ أول نسخة يومية خلال ساعة من تشغيل الخادم.</td></tr>{% endfor %}
+</tbody></table></div></div>
+<p class="muted small">النسخ محفوظة على خادم المنصة نفسه، فلا تحمي من فقدانه. نزّل نسخة دوريًا واحفظها في SharePoint إلى أن يُفعَّل النسخ الخارجي التلقائي.</p>
+<script>
+$('#take').addEventListener('click', async e => {
+  busy(e.currentTarget, true, 'تُنشأ');
+  try { await api('/api/backups'); toast('أُنشئت النسخة.'); location.reload(); }
+  catch(err){ toast(err.message, 'bad'); busy(e.currentTarget, false); }
+});
+</script>
+{% endblock %}
