@@ -78,9 +78,25 @@ details.sec[open]>summary::before{transform:rotate(90deg)}
 <div id="p-ar" class="pane"></div>
 <div id="p-en" class="pane ltr" dir="ltr" hidden></div>
 <div id="p-conf" class="pane" hidden>
+  {% if verified %}
+  <div class="box">
+  <h2>نتيجة التحقق من الملفات الأصلية المنشورة</h2>
+  <p class="msg muted">قُرئت هذه الاختلافات من صفحات البيان الأصلي بالعربية والإنجليزية، وثبت أنها في المنشور نفسه. «مقترح» يعني أن المستند نفسه يحسم القيمة الصحيحة؛ «يحتاج مصدرًا» يعني أن الحسم يتطلب الرقم من FACO أو إدارة أسواق المال.</p>
+  <div class="tw"><table class="chlist"><thead><tr><th>الحالة</th><th>النسخة</th><th>المنشور</th><th>المقترح</th><th>الدليل</th><th></th></tr></thead><tbody>
+  {% for v in verified %}<tr>
+    <td>{% if v.done %}<span class="pill ok">صُحِّح</span>{% elif v.status == 'proposed' %}<span class="pill ok">مقترح</span>{% else %}<span class="pill warn">يحتاج مصدرًا</span>{% endif %}</td>
+    <td>{{ 'عربي' if v.lang == 'ar' else 'EN' }}</td>
+    <td class="b {{ 'ltr' if v.lang == 'en' else '' }}">{{ v.before or '—' }}</td>
+    <td class="a {{ 'ltr' if v.lang == 'en' else '' }}">{{ v.after or '—' }}</td>
+    <td>{{ v.why }}</td>
+    <td>{% if meta.admin and v.after and not v.done %}<button class="btn" data-apply="{{ loop.index0 }}">ضعه في المسودة</button>{% endif %}</td>
+  </tr>{% endfor %}
+  </tbody></table></div>
+  </div>
+  {% endif %}
   <div class="box">
   {% if conflicts %}
-  <p class="msg muted">أرقام تختلف بين النسخة العربية والإنجليزية من البيان نفسه، رُصدت آليًا عند الاستيراد. بعضها قد يكون اختلافًا في الترتيب لا في القيمة. صحّح النسخة الخاطئة من تبويبها. لا تُقارن منحنيات الأداء لأن قيمها قُرئت من صور الرسوم المنشورة.</p>
+  <p class="msg muted">أرقام تختلف بين النسخة العربية والإنجليزية من البيان نفسه، رُصدت آليًا. صحّح النسخة الخاطئة من تبويبها. لا تُقارن منحنيات الأداء لأن قيمها قُرئت من صور الرسوم المنشورة.</p>
   <div class="tw"><table><thead><tr><th>النوع</th><th>القسم</th><th>البند</th><th>العربي</th><th>الإنجليزي</th></tr></thead><tbody>
   {% for c in conflicts|sort(attribute='kind', reverse=true) %}<tr><td>{{ 'رقم في جدول' if c.kind == 'figure' else 'رسم بياني' }}</td><td>{{ c.section }}</td><td>{{ c.label }}<div class="muted ltr">{{ c.label_en }}</div></td><td>{{ c.ar }}</td><td class="ltr">{{ c.en }}</td></tr>{% endfor %}
   </tbody></table></div>
@@ -184,6 +200,13 @@ async function poll(done){
   if(j.job.state === 'error'){ msg(j.job.msg, true); document.querySelectorAll('#bar .btn').forEach(b=>b.disabled=false); return; }
   done();
 }
+const VER = {{ verified_json|safe }};
+document.querySelectorAll('[data-apply]').forEach(b => b.onclick = () => {
+  const v = VER[+b.dataset.apply], ks = v.path.split('.'), blk = WORK[v.lang].blocks[+ks[0]], f = ks.slice(1).join('.');
+  if(get(blk, f) !== v.before && get(blk, f) !== v.after){ return msg('القيمة الحالية تغيّرت عن المنشور؛ عدّلها يدويًا.', true); }
+  set(blk, f, v.after); render(v.lang); dirty = true; $('#save').disabled = false; b.disabled = true; b.textContent = 'في المسودة';
+  msg('وُضع المقترح في المسودة. احفظ التعديلات، ثم عاين واعتمد مع ذكر السبب.');
+});
 if(ED){
   $('#save').onclick = async () => {
     try{ $('#save').disabled = true; msg('جارٍ الحفظ…');

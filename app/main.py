@@ -174,6 +174,7 @@ def blank(prev, fund, q):
 STATUS = {'new': 'لم يبدأ', 'draft': 'قيد الإدخال', 'generated': 'مسودة جاهزة', 'submitted': 'بانتظار الاعتماد', 'returned': 'أُعيد للتعديل', 'final': 'نهائي', 'published': 'منشور', 'corrected': 'منشور · مصحَّح'}
 LOCKED = ('submitted', 'final', 'published', 'corrected')
 DONE = ('published', 'corrected')
+VERIFIED = json.load(open(os.path.join(APP, 'verified.json'), encoding='utf-8'))   # AR/EN differences checked against the original PDFs
 
 
 # every statement already published in the fund documents becomes a record (idempotent; runs at each start)
@@ -407,9 +408,15 @@ def record_page(req: Request, fund: str, q: str):
     meta = {'fund': fund, 'q': q, 'admin': me['role'] == 'admin', 'draft': R.has_draft(fund, q), 'st': s['status'],
             'deps': [M.qlabel(x, 'ar') for x in R.dependents(fund, q)]}
     pend = sum(len(R.diff(cur[l], work[l], l)) for l in ('ar', 'en')) if meta['draft'] else 0
+    ver = [dict(v) for v in VERIFIED if v['fund'] == fund and v['q'] == q]
+    for v in ver:   # hide a proposal once it has been applied
+        if v.get('path') and v.get('after'):
+            ks = v['path'].split('.'); x = cur[v['lang']]['blocks'][int(ks[0])]
+            for k in ks[1:]: x = x[int(k)] if k.isdigit() else x[k]
+            v['done'] = (x == v['after'])
     return env.get_template('record.html').render(
         me=me, roles=ROLE_AR, s=s, status=STATUS[s['status']], name=M.FUNDS[fund]['ar'], ql=M.qlabel(q, 'ar'), fund=fund, q=q,
-        conflicts=store.get_conflicts(fund, q) or [], corrections=store.corrections(fund, q), events=store.events(fund, q), pend=pend,
+        conflicts=store.get_conflicts(fund, q) or [], verified=ver, verified_json=json.dumps(ver, ensure_ascii=False), corrections=store.corrections(fund, q), events=store.events(fund, q), pend=pend,
         cur_json=json.dumps(cur, ensure_ascii=False), work_json=json.dumps(work, ensure_ascii=False), meta_json=json.dumps(meta, ensure_ascii=False), meta=meta)
 
 

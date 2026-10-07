@@ -24,7 +24,9 @@ def _reads(v):
     t = str(v).translate(_DIG).replace('٫', '.').replace('٬', ',')
     t = re.sub(r'(?<=[\d\-]) +(?=[\d\-])', '', t)                       # «12.13 72», «- 0.89», «22.53 -»
     paren = bool(re.search(r'\(\s*[\d.,]+\s*\)', t))
-    if re.search(r'\d{1,3}(\.\d{3}){2,}', t): t = t.replace('.', '')    # «1.037.104.071» thousands with dots
+    m2 = re.search(r'\d{1,3}(?:\.\d{3})+\.\d{1,2}(?!\d)', t)               # «3.029.317.96»: dots for thousands, last one decimal
+    if m2: g = m2.group(0); i = g.rfind('.'); t = t.replace(g, g[:i].replace('.', '') + g[i:])
+    elif re.search(r'\d{1,3}(\.\d{3}){2,}', t): t = t.replace('.', '')    # «1.037.104.071» thousands with dots
     m = re.search(r'-?\d[\d,]*(?:\.\d+)?-?', t)
     if not m: return []
     x = m.group(0); neg = x.startswith('-') or x.endswith('-') or paren; x = x.strip('-')
@@ -37,11 +39,13 @@ def _reads(v):
     return out
 
 
-def _same(a, b):
-    """Equal once rounded to the coarser of the two precisions."""
-    for x, px in _reads(a):
-        for y, py in _reads(b):
-            if abs(x - y) <= 0.5 * 10 ** -min(px, py) + 1e-9: return True
+def _same(a, b, tol=0.0, exact=False):
+    """Equal once rounded to the coarser of the two precisions (plus a tolerance for values measured off a chart)."""
+    ra = [(float(a), 0 if float(a).is_integer() else len(repr(float(a)).split('.')[1]))] if isinstance(a, (int, float)) else _reads(a)
+    rb = [(float(b), 0 if float(b).is_integer() else len(repr(float(b)).split('.')[1]))] if isinstance(b, (int, float)) else _reads(b)
+    for x, px in ra:
+        for y, py in rb:
+            if abs(x - y) <= (1e-9 if exact else 0.5 * 10 ** -min(px, py) + tol + 1e-9): return True
     return False
 
 
@@ -49,34 +53,61 @@ def _isnum(v):
     return bool(_reads(v)) and len(re.sub(r'[\d\s.,٫٬%\-+()٠-٩]|ر\.?س\.?|SAR|SR|Days?|يوم|مليون|million', '', str(v), flags=re.I)) <= 2
 
 
-def _match(xs, ys):
-    """Pair each value with an equal one on the other side; return what is left unpaired on each side."""
-    ys = list(ys); left = []
-    for x in xs:
-        k = next((i for i, y in enumerate(ys) if _same(x[1], y[1])), None)
-        if k is None: left.append(x)
-        else: ys.pop(k)
+def _match(xs, ys, tol=0.0):
+    """Pair each value with an equal one on the other side (identical values first, then equal after rounding);
+    return what is left unpaired on each side."""
+    for exact in (True, False):
+        ys = list(ys); left = []
+        for x in xs:
+            k = next((i for i, y in enumerate(ys) if _same(x[1], y[1], tol, exact)), None)
+            if k is None: left.append(x)
+            else: ys.pop(k)
+        xs = left
     return left, ys
+
+
+CHECK_V = 3   # bump to recompute stored differences after the check changes
 
 
 def conflicts(A, E):
     """Figures that differ between the Arabic and English versions of the same statement.
-    Values are matched within each block regardless of row order; rounding differences are ignored."""
+    Table values are matched within each block regardless of row order, and chart values within each section regardless
+    of which chart comes first; rounding differences are ignored. Performance lines are not compared (read off images)."""
     out = []
     sa, se = _sections(A), _sections(E)
+    def cells(b):
+        if b['t'] == 'chart': return [((b.get('title') or '').split('\n')[0] + ': ' + str(s.get('group') or s.get('label')), s['value']) for s in b.get('series', [])]
+        return [(str(r[0]) + (' · ' + str((b.get('head') or [''] * (k + 1))[k]) if b['t'] == 'table' and len(b.get('head') or []) > k else ''), c)
+                for r in b.get('rows', []) for k, c in enumerate(r[1:], 1) if _isnum(c)]
     for (ha, ba), (he, be) in zip(sa, se):
-        da = [b for b in ba if b['t'] in TYPES]; de = [b for b in be if b['t'] in TYPES]
-        for a, e in zip(da, de):
+        ta = [b for b in ba if b['t'] in ('kv', 'table')]; te = [b for b in be if b['t'] in ('kv', 'table')]
+        for a, e in zip(ta, te):
             if a['t'] != e['t']: break
-            if a['t'] == 'chart' and a.get('kind') == 'line': continue   # performance lines were read point by point from the published images
-            kind = 'chart' if a['t'] == 'chart' else 'figure'
-            def cells(b):
-                if b['t'] == 'chart': return [((b.get('title') or '') + ': ' + str(s.get('group') or s.get('label')), s['value']) for s in b.get('series', [])]
-                return [(str(r[0]) + (' · ' + str((b.get('head') or [''] * (k + 1))[k]) if b['t'] == 'table' and len(b.get('head') or []) > k else ''), c)
-                        for r in b.get('rows', []) for k, c in enumerate(r[1:], 1) if _isnum(c)]
-            la, le = _match(cells(a), cells(e))
+            xa_, xe_ = cells(a), cells(e)
+            la, le = _match(xa_, xe_)
+            if a['t'] == 'table' and len(xa_) == len(xe_) and la:
+                # same grid in both languages: report the differing cells at their own position
+                pos = [(x, y) for x, y in zip(xa_, xe_) if not _same(x[1], y[1])]
+                if len(pos) == len(la): la, le = [x for x, _ in pos], [y for _, y in pos]
             for (xa, va), (xe, ve) in zip(la, le):
-                out.append({'kind': kind, 'section': ha, 'label': xa.strip(' ·:'), 'label_en': xe.strip(' ·:'), 'ar': str(va), 'en': str(ve)})
+                out.append({'kind': 'figure', 'section': ha, 'label': xa.strip(' ·:'), 'label_en': xe.strip(' ·:'), 'ar': str(va), 'en': str(ve)})
+    # charts: each Arabic chart is paired with the English chart that shares most of its values (the two versions may
+    # place the charts in a different order or section), then compared value by value
+    ca = [b for h, bs in sa for b in bs if b['t'] == 'chart' and b.get('kind') != 'line']
+    ce = [b for h, bs in se for b in bs if b['t'] == 'chart' and b.get('kind') != 'line']
+    used = set()
+    for a in ca:
+        best, score = None, -1
+        for j, e in enumerate(ce):
+            if j in used: continue
+            la, _ = _match(cells(a), cells(e)); sc = len(cells(a)) - len(la) - abs(len(a.get('series', [])) - len(e.get('series', []))) * 0.5
+            if sc > score: best, score = j, sc
+        if best is None: continue
+        used.add(best)
+        la, le = _match(cells(a), cells(ce[best]))
+        la, le = _match(la, le, tol=0.02)
+        for (xa, va), (xe, ve) in zip(la, le):
+            out.append({'kind': 'chart', 'section': (a.get('title') or '').split('\n')[0], 'label': xa.strip(' ·:'), 'label_en': xe.strip(' ·:'), 'ar': f'{va:g}', 'en': f'{ve:g}'})
     return out
 
 
@@ -87,6 +118,7 @@ def is_annex4(st):
 def import_history(seed_q=None):
     """Create a 'published' record for every statement in the engine that has none yet. Idempotent."""
     made = 0
+    redo = (store.get_conflicts('_meta', 'check') or [0])[0] != CHECK_V
     for fund, F in M.FUNDS.items():
         sd = os.path.join(ENG, F['dir'], 'struct')
         qs = sorted({os.path.basename(p)[:-8] for p in glob.glob(os.path.join(sd, 'q[1-4]-20[0-9][0-9].ar.json'))})
@@ -95,7 +127,7 @@ def import_history(seed_q=None):
             if not os.path.exists(pe) or not os.path.isdir(os.path.join(PUB, fund, q)): continue
             rec = store.get(fund, q)
             A = json.load(open(pa, encoding='utf-8')); E = json.load(open(pe, encoding='utf-8'))
-            if store.get_conflicts(fund, q) is None:
+            if redo or store.get_conflicts(fund, q) is None:
                 cur = {l: (json.load(open(store.struct_path(fund, q, l), encoding='utf-8')) if os.path.exists(store.struct_path(fund, q, l)) else s)
                        for l, s in (('ar', A), ('en', E))}
                 store.set_conflicts(fund, q, conflicts(cur['ar'], cur['en']))
@@ -119,6 +151,7 @@ def import_history(seed_q=None):
             store.put(fund, q, data=data, status='published', final_at='منشور', files={'published': fs})
             store.event(fund, q, 'استيراد البيان المنشور من مستندات الصناديق')
             made += 1
+    store.set_conflicts('_meta', 'check', [CHECK_V])
     return made
 
 
