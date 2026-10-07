@@ -9,7 +9,7 @@ import time
 from itsdangerous import URLSafeTimedSerializer, BadSignature
 from jinja2 import Environment, FileSystemLoader, select_autoescape
 from markupsafe import Markup
-import compare as CMP, mailer as MAIL
+import compare as CMP, mailer as MAIL, workflow as WF
 import mimetypes as _mt; _mt.add_type('image/webp', '.webp')
 import model as M, store, pipeline as P, records as R, backup as BK, xl, shutil, i18n, audit as A, ai, intake as IN, commentary as CM, assistant as AS
 from jinja2 import BaseLoader, TemplateNotFound
@@ -111,7 +111,7 @@ async def guard(req: Request, call_next):
 
 
 # ---------- auth ----------
-ROLE_AR = {'admin': 'المعتمِد', 'editor': 'مُدخل البيانات'}
+ROLE_AR = {k: v[0] for k, v in WF.ROLES.items()}
 
 
 def who(req: Request):
@@ -219,20 +219,21 @@ def app_en_js():
 @app.get('/users', response_class=HTMLResponse)
 def users_page(req: Request, new: str = '', pw: str = ''):
     u = need(req, 'admin')
-    return page(req, 'users.html', me=u, nav='users', users=store.users(), roles=ROLE_AR, new=new, pw=pw, mail=MAIL.status(), approvers=MAIL.approvers())
+    return page(req, 'users.html', me=u, nav='users', users=store.users(), roles=ROLE_AR, depts=WF.DEPARTMENTS, new=new, pw=pw, mail=MAIL.status(), approvers=MAIL.approvers())
 
 
 @app.post('/users')
-def users_add(req: Request, username: str = Form(...), name: str = Form(...), email: str = Form('')):
+def users_add(req: Request, username: str = Form(...), name: str = Form(...), email: str = Form(''), role: str = Form('editor')):
     need(req, 'admin')
     username = re.sub(r'[^a-z0-9._-]', '', username.strip().lower())[:40]
     if not username or username == 'admin': return RedirectResponse('/users', status_code=303)
-    pw = store.create_user(username, name.strip()[:80], 'editor')
+    role = role if role in WF.DEPARTMENTS else 'editor'
+    pw = store.create_user(username, name.strip()[:80], role)
     em = (MAIL.emails(email) or [None])[0]
     if em: store.set_email(username, em)
-    A.log(req, 'user.create', username, name=name.strip()[:80], role='editor', email=em)
+    A.log(req, 'user.create', username, name=name.strip()[:80], role=role, email=em)
     # the one-time password is shown on the next page only; it is never stored in clear
-    return HTMLResponse(page(req, 'users.html', me=who(req), nav='users', users=store.users(), roles=ROLE_AR, new=username, pw=pw, mail=MAIL.status(), approvers=MAIL.approvers()), headers={'Cache-Control': 'no-store'})
+    return HTMLResponse(page(req, 'users.html', me=who(req), nav='users', users=store.users(), roles=ROLE_AR, depts=WF.DEPARTMENTS, new=username, pw=pw, mail=MAIL.status(), approvers=MAIL.approvers()), headers={'Cache-Control': 'no-store'})
 
 
 @app.post('/api/users/{username}/email')
@@ -244,6 +245,17 @@ async def users_email(req: Request, username: str):
     if raw and not em: return JSONResponse({'error': 'input', 'msg': 'عنوان البريد غير صحيح.'}, status_code=400)
     store.set_email(username, em); A.log(req, 'user.email', username, before=cur.get('email'), after=em)
     return {'ok': True, 'email': em}
+
+
+@app.post('/api/users/{username}/role')
+async def users_role(req: Request, username: str):
+    need(req, 'admin'); body = await req.json()
+    cur = next((x for x in store.users() if x['username'] == username), None)
+    if not cur: raise HTTPException(404)
+    role = body.get('role')
+    if role not in WF.DEPARTMENTS: return JSONResponse({'error': 'input', 'msg': 'الجهة غير معروفة.'}, status_code=400)
+    store.set_role(username, role); A.log(req, 'user.role', username, before=cur.get('role'), after=role)
+    return {'ok': True, 'role': role}
 
 
 @app.post('/api/mail/settings')
@@ -285,7 +297,7 @@ def users_reset(req: Request, username: str):
     if not cur: return RedirectResponse('/users', status_code=303)
     pw = store.create_user(username, cur['name'], cur['role'])
     A.log(req, 'user.reset', username)
-    return HTMLResponse(page(req, 'users.html', me=who(req), nav='users', users=store.users(), roles=ROLE_AR, new=username, pw=pw, mail=MAIL.status(), approvers=MAIL.approvers()), headers={'Cache-Control': 'no-store'})
+    return HTMLResponse(page(req, 'users.html', me=who(req), nav='users', users=store.users(), roles=ROLE_AR, depts=WF.DEPARTMENTS, new=username, pw=pw, mail=MAIL.status(), approvers=MAIL.approvers()), headers={'Cache-Control': 'no-store'})
 
 
 @app.get('/health')
@@ -389,7 +401,7 @@ def home(req: Request, q: str = ''):
             prev, pq, _ = prev_values(fund, q)
             v = _validate(fund, s['data'], prev, q) if s.get('data') and prev else []
         cards.append({'fund': fund, 'name': F['ar'], 'en': F['en'], 'status': STATUS.get(s.get('status', 'new')), 'st': s.get('status', 'new'), 'traded': F['traded'], 'symbol': F['symbol'],
-                      'updated': s.get('updated', ''), 'blocks': sum(1 for x in v if x['level'] == 'block'),
+                      'updated': s.get('updated', ''), 'stage': WF.stage_label(WF.get(fund, q, s.get('status', 'new'))['stage']) if s else '', 'blocks': sum(1 for x in v if x['level'] == 'block'),
                       'warns': sum(1 for x in v if x['level'] == 'warn'), 'base_ok': prev is not None, 'pq': pq})
     qn, y = M.qparse(q); end = M.qend(qn, y); due = end + datetime.timedelta(days=10)
     left = (due - datetime.date.today()).days
@@ -411,6 +423,8 @@ def editor(req: Request, fund: str, q: str):
     F = M.FUNDS[fund]
     meta = {'fund': fund, 'q': q, 'ql': M.qlabel(q, 'ar'), 'pql': M.qlabel(pq, 'ar'), 'name': F['ar'], 'traded': F['traded'], 'symbol': F['symbol'], 'wad': F['wad'],
             'pe': F['pe'], 'perf': F['perf'], 'symbol': F['symbol'], 'periods': prev.get('periods_ar'), 'risk_names': M.RISK_AR, 'risk_keys': M.RISK, 'role': me['role'], 'st': s['status'], 'locked': s['status'] in LOCKED}
+    meta['wf'] = WF.view(fund, q, s['status'], me['role'], lang_of(req)); meta['locked'] = not meta['wf']['edit']
+    meta['role_label'] = WF.role_label(me['role'], lang_of(req))
     meta['statuses'] = STATUS; meta['en'] = F['en']; meta['ai'] = ai.configured()
     if lang_of(req) == 'en':
         meta = i18n.deep(meta, 'en'); meta['periods'] = prev.get('periods_en') or meta['periods']; meta['name'] = F['en']
@@ -422,7 +436,7 @@ def _validate(fund, d, prev, q):
     v = M.validate(fund, d, prev, q)
     for l, name in (('ar', 'العربي'), ('en', 'الإنجليزي')):
         if ((d or {}).get('commentary_mt') or {}).get(l):
-            v.insert(0, {'level': 'block', 'field': f'commentary.{l}', 'msg': f'تعليق مدير الصندوق {name} مترجم آليًا ولم تؤكَّد مراجعته.'})
+            v.insert(0, {'level': 'warn', 'field': f'commentary.{l}', 'msg': f'تعليق مدير الصندوق {name} مترجم آليًا ولم تؤكَّد مراجعته؛ يراجعه الاتصال المؤسسي قبل اعتماده.'})
     return v
 
 
@@ -445,19 +459,28 @@ def _clean(d):
 @app.post('/api/s/{fund}/{q}')
 async def save(req: Request, fund: str, q: str):
     me = need(req); _ok(fund, q)
-    cur0 = store.get(fund, q) or {}
-    if cur0.get('status') in LOCKED: return JSONResponse({'error': 'locked', 'msg': 'البيان ' + STATUS[cur0['status']] + '، فلا يُعدَّل إلا بعد إعادته للتعديل.'}, status_code=409)
+    cur = store.get(fund, q) or {}
+    w = WF.get(fund, q, cur.get('status', 'new'))
+    if cur.get('status') in DONE or not WF.can_edit_any(me['role'], w['stage']):
+        return JSONResponse({'error': 'locked', 'msg': 'لا تعديل لك على البيان في مرحلته الحالية.'}, status_code=409)
     body = await req.json(); d = _clean(body.get('data') or {})
     if not M.FUNDS[fund]['traded']: d['price'] = d.get('nav_unit')
     prev, pq, _ = prev_values(fund, q)
-    cur = store.get(fund, q) or {}
-    st = 'draft'
     changes = A.diff(cur.get('data') or {}, d)
+    bad = [c['f'] for c in changes if not WF.may_edit(me['role'], w['stage'], c['f'])]
+    # only Corporate Communications (or Product Development finalising the English) confirms a machine translation
+    bad += [c['f'] for c in changes if c['f'].startswith('commentary_mt') and not c['a'] and me['role'] not in ('ccd', 'pdd', 'admin')]
+    if bad:
+        A.log(req, 'statement.save', f'{fund}:{q}', 'denied', fields=bad[:20], stage=w['stage'])
+        return JSONResponse({'error': 'fields', 'msg': 'لا يحق لك تعديل هذه البنود في هذه المرحلة: ' + '، '.join(sorted(set(bad))[:6])}, status_code=403)
+    st = 'draft' if w['stage'] in ('faco', 'cmd') else cur.get('status', 'draft')
     s = store.put(fund, q, data=d, status=st)
+    if changes and w['stage'] not in ('faco', 'cmd'): WF.set_dirty(fund, q, True)
     store.event(fund, q, f"{me['name']}: حفظ البيانات")
-    A.log(req, 'statement.save', f'{fund}:{q}', changes=changes, n=len(changes), status_before=cur.get('status'))
+    A.log(req, 'statement.save', f'{fund}:{q}', changes=changes, n=len(changes), status_before=cur.get('status'), stage=w['stage'])
     v = _validate(fund, d, prev, q); der = M.derive(d, prev)
-    return {'ok': True, 'st': s['status'], 'status': STATUS[s['status']], 'validation': v, 'derived': der, 'updated': s['updated'], 'events': store.events(fund, q)}
+    return {'ok': True, 'st': s['status'], 'status': STATUS[s['status']], 'validation': v, 'derived': der, 'updated': s['updated'], 'events': store.events(fund, q),
+            'wf': WF.view(fund, q, s['status'], me['role'], lang_of(req))}
 
 
 @app.post('/api/s/{fund}/{q}/check')
@@ -518,9 +541,17 @@ def _generate_locked(fund, q, final, by):
             store.put(fund, q, status='final', final_at=store.now(), files={'draft': (s.get('files') or {}).get('draft'), 'final': files}, log=notes_)
             store.event(fund, q, f'{by}: اعتماد النسخة النهائية')
             act = ACTORS.get(key) or {}
-            MAIL.notify('final', fund, q, {'user': act.get('user', 'system'), 'role': act.get('role', '')}, by=by, base=act.get('base', ''))
+            w = WF.get(fund, q, 'final')
+            if w['stage'] == 'english':
+                w['dirty'] = False
+                WF.record(w, {'user': act.get('user', 'system'), 'name': by, 'role': act.get('role', '')}, 'final', 'publish')
+                _route_mail(fund, q, 'publish', by, act.get('base', ''), act)
+            else:
+                MAIL.notify('final', fund, q, {'user': act.get('user', 'system'), 'role': act.get('role', '')}, by=by, base=act.get('base', ''))
         else:
-            store.put(fund, q, status='generated', generated=store.now(), files={'draft': files, 'final': (s.get('files') or {}).get('final')}, log=notes_)
+            keep = s.get('status') if s.get('status') in ('submitted',) else 'generated'
+            store.put(fund, q, status=keep, generated=store.now(), files={'draft': files, 'final': (s.get('files') or {}).get('final')}, log=notes_)
+            WF.set_dirty(fund, q, False)
             store.event(fund, q, f'{by}: إصدار المسودات')
         JOBS[key] = {'state': 'done', 'notes': notes_}
         A.log(None, 'statement.final' if final else 'statement.generate', key, 'ok', actor=ACTORS.get(key), files=files, notes=notes_)
@@ -534,11 +565,12 @@ async def generate(req: Request, fund: str, q: str):
     me = need(req); _ok(fund, q); body = await req.json() if (await req.body()) else {}
     final = bool(body.get('final'))
     cur = store.get(fund, q) or {}
-    if final and me['role'] != 'admin': raise HTTPException(403)
-    if final and cur.get('status') != 'submitted':
-        return JSONResponse({'error': 'state', 'msg': 'يُعتمد البيان بعد أن يُرفع للاعتماد.'}, status_code=409)
-    if not final and cur.get('status') in LOCKED:
-        return JSONResponse({'error': 'locked', 'msg': 'البيان ' + STATUS[cur['status']] + '.'}, status_code=409)
+    w = WF.get(fund, q, cur.get('status', 'new'))
+    if final:
+        if w['stage'] != 'english' or me['role'] not in ('pdd', 'admin'):
+            return JSONResponse({'error': 'state', 'msg': 'تصدر النسخة النهائية بعد اعتماد مجلس إدارة الصندوق، وتصدرها إدارة تطوير المنتجات.'}, status_code=409)
+    elif w['stage'] not in WF.GEN_STAGES or not WF.can_edit_any(me['role'], w['stage']):
+        return JSONResponse({'error': 'locked', 'msg': 'لا تُصدر المسودات في هذه المرحلة، أو ليست لجهتك.'}, status_code=409)
     key = f'{fund}:{q}'
     if JOBS.get(key, {}).get('state') == 'running': return {'ok': True, 'running': True}
     JOBS[key] = {'state': 'running', 'step': 'في الطابور'}; ACTORS[key] = {'user': me['user'], 'role': me['role'], 'rid': req.state.rid, 'ip': A.client_ip(req), 'base': MAIL.app_url(req)}
@@ -547,41 +579,125 @@ async def generate(req: Request, fund: str, q: str):
     return {'ok': True}
 
 
+def _route_mail(fund, q, stage, by, base, actor, note=''):
+    """Tell whoever acts at the new stage (and Product Development, who follows every step)."""
+    if stage == 'done':
+        MAIL.notify('done', fund, q, {'user': actor.get('user', 'system'), 'role': actor.get('role', '')}, by=by, base=base,
+                    to=MAIL.by_roles(['pdd', 'cmd', 'faco']) + MAIL.approvers())
+        return
+    roles = list(WF.STAGE[stage][3]) + ['pdd']
+    to = MAIL.by_roles(roles)
+    if stage in ('dceo', 'board') or not to: to = to + MAIL.approvers()
+    MAIL.notify('stage', fund, q, {'user': actor.get('user', 'system'), 'role': actor.get('role', '')}, by=by, note=note, base=base, to=to,
+                stage=WF.stage_label(stage), stage_en=WF.stage_label(stage, 'en'))
+
+
+@app.post('/api/s/{fund}/{q}/wf')
+async def route(req: Request, fund: str, q: str):
+    """One step along the approval route: hand over, sign off, approve, publish or return."""
+    me = need(req); _ok(fund, q); body = await req.json() if (await req.body()) else {}
+    act = body.get('action'); note = (body.get('note') or '').strip()[:2000]
+    cur = store.get(fund, q) or {}
+    w = WF.get(fund, q, cur.get('status', 'new')); stage = w['stage']; role = me['role']
+    err = lambda m, c=409: JSONResponse({'error': 'state', 'msg': m}, status_code=c)
+    prev, pq, _ = prev_values(fund, q)
+    v = _validate(fund, cur.get('data') or {}, prev, q) if prev else []
+    blocks = [x for x in v if x['level'] == 'block']
+    mt = any(((cur.get('data') or {}).get('commentary_mt') or {}).values())
+    nxt = None
+    if act == 'faco_done':
+        if stage != 'faco' or not (WF.acts(role, 'faco') or role == 'pdd'): return err('هذا الإجراء لـ FACO في مرحلة الأرقام.', 403)
+        miss = [x for x in blocks if x.get('field') and WF.owner(x['field']) == 'faco']
+        if miss: return err('أكمل أرقام FACO أولًا: ' + '؛ '.join(x['msg'] for x in miss[:3]))
+        nxt = 'cmd'
+    elif act == 'submit':
+        if stage != 'cmd' or not (WF.acts(role, 'cmd') or role == 'pdd'): return err('ترفع إدارة أسواق المال البيان للمراجعة بعد إكمال محتواها.', 403)
+        if cur.get('status') != 'generated': return err('أصدر المسودات بعد آخر تعديل، ثم ارفعها للمراجعة.')
+        nxt = 'review'; w['signoffs'] = {}
+    elif act == 'signoff':
+        if stage != 'review': return err('لا مراجعة مفتوحة الآن.')
+        as_ = body.get('as') if role == 'admin' else role
+        if as_ not in WF.REVIEWERS: return err('يسجّل المراجعةَ تطويرُ الأعمال والالتزام.', 403)
+        if as_ in w['signoffs']: return err('سُجّلت هذه المراجعة من قبل.')
+        w['signoffs'][as_] = {'name': me['name'], 'at': store.now(), 'note': note}
+        WF.record(w, me, 'signoff:' + as_, None, note)
+        A.log(req, 'statement.wf', f'{fund}:{q}', step='signoff', reviewer=as_, note=note)
+        store.event(fund, q, f"{me['name']}: سجّل مراجعة «{WF.role_label(as_)}»" + (f' — {note}' if note else ''))
+        if all(r in w['signoffs'] for r in WF.REVIEWERS): nxt = 'ccd'
+        else: return {'ok': True, 'wf': WF.view(fund, q, cur.get('status'), role, lang_of(req)), 'events': store.events(fund, q)}
+    elif act in ('ccd_ok', 'approve', 'published', 'uploaded'):
+        want = {'ccd_ok': ('ccd',), 'approve': ('dceo', 'board'), 'published': ('publish',), 'uploaded': ('upload',)}[act]
+        if stage not in want: return err('هذا الإجراء ليس لهذه المرحلة.')
+        if not WF.acts(role, stage): return err('هذا الإجراء ليس لجهتك في هذه المرحلة.', 403)
+        if stage in ('ccd', 'dceo', 'board') and w['dirty']: return err('عُدّلت البيانات بعد آخر إصدار؛ أصدر المسودات أولًا ليُعتمد ما يراه الجميع.')
+        if stage == 'ccd' and mt: return err('أكّد مراجعة الترجمة الآلية في تعليق مدير الصندوق أولًا.')
+        nxt = WF.ORDER[WF.ORDER.index(stage) + 1]
+    elif act == 'return':
+        if not WF.can_return(role, stage): return err('لا يمكنك إعادة البيان في هذه المرحلة.', 403)
+        if not note: return err('اكتب ما يحتاج تعديلًا.')
+        to = 'faco' if body.get('to') == 'faco' else 'cmd'
+        notes_ = ((cur.get('notes') or '') + '\n\n' if cur.get('notes') else '') + f"[{store.now()} · {me['name']}] {note}"
+        store.put(fund, q, status='returned', notes=notes_)
+        w['signoffs'] = {}
+        WF.record(w, me, 'return', to, note)
+        WF.add_comment(fund, q, me, stage, 'return', note)
+        A.log(req, 'statement.return', f'{fund}:{q}', note=note, stage_before=stage, to=to)
+        store.event(fund, q, f"{me['name']}: أعاد البيان إلى «{WF.stage_label(to)}» — {note}")
+        MAIL.notify('returned', fund, q, {'user': me['user'], 'role': role}, by=me['name'], note=note, base=MAIL.app_url(req), to=MAIL.by_roles(list(WF.STAGE[to][3]) + ['pdd']))
+        return {'ok': True, 'st': 'returned', 'notes': notes_, 'wf': WF.view(fund, q, 'returned', role, lang_of(req)), 'events': store.events(fund, q)}
+    else:
+        return err('إجراء غير معروف.', 400)
+    if act == 'submit': store.put(fund, q, status='submitted')
+    WF.record(w, me, act, nxt, note)
+    A.log(req, 'statement.wf', f'{fund}:{q}', step=act, stage_before=stage, stage_after=nxt, note=note)
+    store.event(fund, q, f"{me['name']}: سلّم البيان إلى «{WF.stage_label(nxt)}»" + (f' — {note}' if note else ''))
+    _route_mail(fund, q, nxt, me['name'], MAIL.app_url(req), {'user': me['user'], 'role': role}, note)
+    s2 = store.get(fund, q) or {}
+    return {'ok': True, 'st': s2.get('status'), 'wf': WF.view(fund, q, s2.get('status'), role, lang_of(req)), 'events': store.events(fund, q)}
+
+
 @app.post('/api/s/{fund}/{q}/submit')
 async def submit(req: Request, fund: str, q: str):
-    me = need(req); _ok(fund, q); cur = store.get(fund, q) or {}
-    if cur.get('status') != 'generated':
-        return JSONResponse({'error': 'state', 'msg': 'أصدر المسودات بعد آخر تعديل، ثم ارفعها للاعتماد.'}, status_code=409)
-    if any(((cur.get('data') or {}).get('commentary_mt') or {}).values()):
-        return JSONResponse({'error': 'mt', 'msg': 'في التعليق نص مترجم آليًا لم تؤكَّد مراجعته.'}, status_code=409)
-    store.put(fund, q, status='submitted')
-    store.event(fund, q, f"{me['name']}: رفع المسودة للاعتماد")
-    A.log(req, 'statement.submit', f'{fund}:{q}')
-    MAIL.notify('submitted', fund, q, {'user': me['user'], 'role': me['role']}, by=me['name'], by_en=me['user'] if me['role'] != 'admin' else '', base=MAIL.app_url(req),
-                findings=(CMP.summary(fund, q).get('draft') or {}).get('warn'))
-    return {'ok': True, 'status': STATUS['submitted']}
+    return JSONResponse({'error': 'moved', 'msg': 'يُرفع البيان من مسار الاعتماد.'}, status_code=410)
 
 
 @app.post('/api/s/{fund}/{q}/return')
 async def return_(req: Request, fund: str, q: str):
-    me = need(req, 'admin'); _ok(fund, q); body = await req.json() if (await req.body()) else {}
-    cur = store.get(fund, q) or {}
-    if cur.get('status') not in ('submitted', 'final'): return JSONResponse({'error': 'state', 'msg': 'لا شيء بانتظار الاعتماد.'}, status_code=409)
-    note = (body.get('note') or '').strip()
-    notes_ = (cur.get('notes') or '')
-    if note: notes_ = (notes_ + '\n\n' if notes_ else '') + f"[{store.now()} · {me['name']}] {note}"
-    store.put(fund, q, status='returned', notes=notes_)
-    A.log(req, 'statement.return', f'{fund}:{q}', note=note, status_before=cur.get('status'))
-    store.event(fund, q, f"{me['name']}: إعادة البيان للتعديل" + (f' — {note}' if note else ''))
-    MAIL.notify('returned', fund, q, {'user': me['user'], 'role': me['role']}, by=me['name'], note=note, base=MAIL.app_url(req))
-    return {'ok': True, 'status': STATUS['returned'], 'notes': notes_}
+    return JSONResponse({'error': 'moved', 'msg': 'تُعاد البيانات من مسار الاعتماد.'}, status_code=410)
+
+
+@app.get('/api/s/{fund}/{q}/comments')
+def comments_list(req: Request, fund: str, q: str):
+    need(req); _ok(fund, q)
+    return {'items': WF.comments(fund, q)}
+
+
+@app.post('/api/s/{fund}/{q}/comments')
+async def comments_add(req: Request, fund: str, q: str):
+    me = need(req); _ok(fund, q); body = await req.json()
+    text = (body.get('body') or '').strip()[:4000]
+    if not text: return JSONResponse({'error': 'input', 'msg': 'اكتب التعليق.'}, status_code=400)
+    cur = store.get(fund, q) or {}; w = WF.get(fund, q, cur.get('status', 'new'))
+    section = body.get('section') if body.get('section') in ('faco', 'cm', 'mkt', 'general') else 'general'
+    cid = WF.add_comment(fund, q, me, w['stage'], section, text)
+    A.log(req, 'statement.comment', f'{fund}:{q}', id=cid, section=section, stage=w['stage'], body=text)
+    return {'ok': True, 'items': WF.comments(fund, q)}
+
+
+@app.post('/api/s/{fund}/{q}/comments/{cid}/resolve')
+async def comments_resolve(req: Request, fund: str, q: str, cid: int):
+    me = need(req); _ok(fund, q)
+    r = WF.resolve_comment(cid, me, fund, q)
+    if not r: raise HTTPException(404)
+    A.log(req, 'statement.comment_resolve', f'{fund}:{q}', id=cid)
+    return {'ok': True, 'items': WF.comments(fund, q)}
 
 
 @app.get('/api/s/{fund}/{q}/job')
 def job(req: Request, fund: str, q: str):
     need(req); _ok(fund, q); s = store.get(fund, q) or {}
     return {'st': s.get('status', 'new'), 'job': JOBS.get(f'{fund}:{q}', {'state': 'idle'}), 'files': s.get('files'), 'status': STATUS.get(s.get('status', 'new')),
-            'log': s.get('log'), 'events': store.events(fund, q), 'cmp': CMP.summary(fund, q)}
+            'log': s.get('log'), 'events': store.events(fund, q), 'cmp': CMP.summary(fund, q), 'wf': WF.view(fund, q, s.get('status', 'new'), who(req)['role'], lang_of(req))}
 
 
 @app.get('/s/{fund}/{q}/compare', response_class=HTMLResponse)

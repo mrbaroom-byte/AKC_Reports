@@ -17,7 +17,7 @@ td .acts{display:flex;gap:6px;justify-content:flex-end}
 .u .av{width:32px;height:32px;border-radius:50%;background:var(--mist);color:var(--blue);display:grid;place-items:center;font-weight:600;font-size:13px;flex-shrink:0}
 </style>{% endblock %}
 {% block body %}
-<div class="ph"><div class="t"><h1>المستخدمون</h1><p class="lede">حسابات مُدخلي البيانات. يُدخل كلٌّ منهم الأرقام ويُصدر المسودات ويرفعها للاعتماد، ولا يعتمد النسخة النهائية إلا المعتمِد.</p></div></div>
+<div class="ph"><div class="t"><h1>المستخدمون</h1><p class="lede">حساب لكل شخص، وجهته تحدد ما يفعله في مسار الاعتماد: FACO يُدخل الأرقام، وإدارة أسواق المال تكمل المحتوى، ثم المراجعة والتدقيق اللغوي والاعتماد والنشر. كل إجراء مسجَّل باسم صاحبه.</p></div></div>
 {% if pw %}
 <div class="secret" role="alert">
   <img src="/static/lines.svg" alt="" aria-hidden="true">
@@ -30,11 +30,11 @@ td .acts{display:flex;gap:6px;justify-content:flex-end}
 <div class="card flush">
   <div class="tw"><table>
   <thead><tr><th>المستخدم</th><th>البريد</th><th class="hide-sm">الصلاحية</th><th class="hide-sm">آخر دخول</th><th>الحالة</th><th></th></tr></thead><tbody>
-  <tr><td><div class="u"><span class="av" style="background:var(--navy);color:#fff">م</span><div>المعتمِد<div class="muted small ltr">admin</div></div></div></td><td class="small">{% if approvers %}<span class="ltr">{{ approvers|join(', ') }}</span>{% else %}<span class="muted">—</span>{% endif %}</td><td class="hide-sm">المعتمِد</td><td class="muted hide-sm">—</td><td><span class="pill blue">نشط</span></td><td class="muted small hide-sm">كلمة المرور في إعدادات Railway</td></tr>
+  <tr><td><div class="u"><span class="av" style="background:var(--navy);color:#fff">م</span><div>مدير المنصة<div class="muted small ltr">admin</div></div></div></td><td class="small">{% if approvers %}<span class="ltr">{{ approvers|join(', ') }}</span>{% else %}<span class="muted">—</span>{% endif %}</td><td class="hide-sm">مدير المنصة</td><td class="muted hide-sm">—</td><td><span class="pill blue">نشط</span></td><td class="muted small hide-sm">كلمة المرور في إعدادات Railway</td></tr>
   {% for u in users %}
   <tr><td><div class="u"><span class="av">{{ u.name[:1] }}</span><div>{{ u.name }}<div class="muted small ltr">{{ u.username }}</div></div></div></td>
   <td class="small"><button class="linkbtn" type="button" data-email="{{ u.username }}" data-v="{{ u.email or '' }}" data-name="{{ u.name }}">{% if u.email %}<span class="ltr">{{ u.email }}</span>{% else %}إضافة بريد{% endif %}</button></td>
-  <td class="hide-sm">{{ roles[u.role] }}</td><td class="muted small hide-sm">{{ u.last_login or 'لم يدخل بعد' }}</td>
+  <td class="hide-sm"><select class="rolesel" data-user="{{ u.username }}" aria-label="جهة {{ u.name }}">{% for r in depts %}<option value="{{ r }}" {{ "selected" if r == u.role }}>{{ roles[r] }}</option>{% endfor %}</select></td><td class="muted small hide-sm">{{ u.last_login or 'لم يدخل بعد' }}</td>
   <td>{% if u.active %}<span class="pill blue">نشط</span>{% else %}<span class="pill">موقوف</span>{% endif %}</td>
   <td><div class="acts">
     <form method="post" action="/users/{{ u.username }}/reset" class="reset" data-name="{{ u.name }}"><button class="btn sm" type="submit">كلمة مرور جديدة</button></form>
@@ -51,12 +51,13 @@ td .acts{display:flex;gap:6px;justify-content:flex-end}
     <form method="post" action="/users">
       <div style="margin-bottom:14px"><label class="l" for="nm">الاسم الظاهر</label><input id="nm" name="name" required maxlength="80" placeholder="مثل: إدارة تطوير المنتجات"></div>
       <div style="margin-bottom:14px"><label class="l" for="usr">اسم المستخدم (بالإنجليزية)</label><input id="usr" name="username" required dir="ltr" pattern="[A-Za-z0-9._\-]+" maxlength="40" placeholder="productdev" autocapitalize="off"></div>
+      <div style="margin-bottom:14px"><label class="l" for="rl">الجهة</label><select id="rl" name="role">{% for r in depts %}<option value="{{ r }}" {{ "selected" if r == "editor" }}>{{ roles[r] }}</option>{% endfor %}</select></div>
       <div style="margin-bottom:16px"><label class="l" for="em">البريد الإلكتروني <span class="muted">(للتنبيهات، اختياري)</span></label><input id="em" name="email" type="email" dir="ltr" maxlength="120" placeholder="name@alkhabeer.com" autocomplete="off"></div>
       <button class="btn primary" type="submit" style="width:100%">إنشاء الحساب</button>
     </form>
   </div>
   <div class="card" id="mailcard"><header><h2>تنبيهات البريد</h2>{% if mail.configured %}<span class="pill blue">مفعّلة</span>{% else %}<span class="pill">غير مفعّلة</span>{% endif %}</header>
-    <p class="small muted" style="margin:0 0 12px">يصل المعتمِدَ تنبيهٌ حين يُرفع بيان للاعتماد، ويصل مُدخلي البيانات تنبيهٌ حين يُعاد البيان للتعديل وحين يُعتمد.</p>
+    <p class="small muted" style="margin:0 0 12px">عند كل تسليم في مسار الاعتماد يصل التنبيه إلى الجهة التي عليها الدور، وإلى تطوير المنتجات. ويصل بريد «المعتمِدين» أدناه تنبيهُ مرحلتي نائب الرئيس التنفيذي ومجلس إدارة الصندوق أيضًا.</p>
     {% if not mail.configured %}<p class="small" style="margin:0 0 12px">لتفعيلها يُضاف خادم البريد في إعدادات Railway:</p><p class="small ltr" style="margin:-6px 0 12px"><code>M365_TENANT_ID, M365_CLIENT_ID, M365_CLIENT_SECRET, MAIL_FROM</code></p>{% endif %}
     <label class="l" for="appr">بريد المعتمِدين</label>
     <textarea id="appr" dir="ltr" rows="3" placeholder="approver@alkhabeer.com" style="min-height:76px">{{ approvers|join('\n') }}</textarea>
@@ -64,8 +65,15 @@ td .acts{display:flex;gap:6px;justify-content:flex-end}
   </div>
   <div class="card"><header><h2>الصلاحيات</h2></header>
     <dl class="roles" style="margin:0">
-      <dt>مُدخل البيانات</dt><dd>يُدخل أرقام الربع، ويُصدر المسودات، ويرفعها للاعتماد، ويكتب الملاحظات.</dd>
-      <dt>المعتمِد</dt><dd>يعتمد النسخة النهائية أو يعيدها للتعديل، ويصحّح البيانات المنشورة، ويدير الحسابات.</dd>
+      <dt>FACO</dt><dd>يُدخل الأرقام أولًا: حجم الصندوق، وصافي قيمة الوحدة، والمصاريف، والتوزيعات.</dd>
+      <dt>إدارة أسواق المال</dt><dd>تكمل التعليق والاستثمارات والتوزيع والعوائد والرسوم، وتُصدر المسودات وترفعها للمراجعة.</dd>
+      <dt>تطوير الأعمال والالتزام</dt><dd>يراجعان المسودة ويعلّقان؛ ينتقل البيان بعد تسجيل المراجعتين.</dd>
+      <dt>الاتصال المؤسسي</dt><dd>يدقّق العربية ويترجم الإنجليزية ويؤكد مراجعة الترجمة الآلية، ثم يرفع البيان على الموقع بعد نشره.</dd>
+      <dt>نائب الرئيس التنفيذي، ومجلس إدارة الصندوق</dt><dd>يعتمدان بالترتيب؛ يعتمد المجلس النسخة العربية.</dd>
+      <dt>تطوير المنتجات</dt><dd>يتابع كل مرحلة ويعيد البيان عند الحاجة، ويُنهي الإنجليزية ويُصدر النسخة النهائية.</dd>
+      <dt>الالتزام</dt><dd>ينشر البيان بعد صدور النسخة النهائية.</dd>
+      <dt>مُدخل البيانات</dt><dd>حساب عام يُدخل الأرقام والمحتوى معًا، لما قبل توزيع الحسابات على الجهات.</dd>
+      <dt>مدير المنصة</dt><dd>يدير الحسابات والإعدادات، ويستطيع الإجراء في أي مرحلة، ويُسجَّل ذلك باسمه.</dd>
     </dl>
   </div>
 </aside>
@@ -91,6 +99,10 @@ const tm = $('#testMail'); if(tm) tm.addEventListener('click', async () => {
   catch(err){ toast(err.message, 'bad'); }
   busy(tm, false);
 });
+$$('.rolesel').forEach(sel => sel.addEventListener('change', async () => {
+  try { await api('/api/users/' + encodeURIComponent(sel.dataset.user) + '/role', {role: sel.value}); toast('حُفظت الجهة.'); }
+  catch(err){ toast(err.message, 'bad'); }
+}));
 const cp = $('#copy'); if(cp) cp.onclick = () => navigator.clipboard.writeText(cp.dataset.v).then(() => toast('نُسخ اسم المستخدم وكلمة المرور.'));
 </script>
 {% endblock %}
