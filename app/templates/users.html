@@ -57,7 +57,7 @@ td .acts{display:flex;gap:6px;justify-content:flex-end}
   </div>
   <div class="card" id="mailcard"><header><h2>تنبيهات البريد</h2>{% if mail.configured %}<span class="pill blue">مفعّلة</span>{% else %}<span class="pill">غير مفعّلة</span>{% endif %}</header>
     <p class="small muted" style="margin:0 0 12px">يصل المعتمِدَ تنبيهٌ حين يُرفع بيان للاعتماد، ويصل مُدخلي البيانات تنبيهٌ حين يُعاد البيان للتعديل وحين يُعتمد.</p>
-    {% if not mail.configured %}<p class="small" style="margin:0 0 12px">لتفعيلها يُضاف خادم البريد في إعدادات Railway:</p><p class="small ltr" style="margin:-6px 0 12px"><code>SMTP_HOST, SMTP_USER, SMTP_PASSWORD, MAIL_FROM</code></p>{% endif %}
+    {% if not mail.configured %}<p class="small" style="margin:0 0 12px">لتفعيلها يُضاف خادم البريد في إعدادات Railway:</p><p class="small ltr" style="margin:-6px 0 12px"><code>M365_TENANT_ID, M365_CLIENT_ID, M365_CLIENT_SECRET, MAIL_FROM</code></p>{% endif %}
     <label class="l" for="appr">بريد المعتمِدين</label>
     <textarea id="appr" dir="ltr" rows="3" placeholder="approver@alkhabeer.com" style="min-height:76px">{{ approvers|join('\n') }}</textarea>
     <div style="display:flex;gap:8px;margin-top:10px;flex-wrap:wrap"><button class="btn sm primary" type="button" id="saveAppr">حفظ</button>{% if mail.configured %}<button class="btn sm" type="button" id="testMail">إرسال رسالة تجريبية</button>{% endif %}</div>

@@ -4,6 +4,8 @@ Sent when a statement is submitted for approval (to the approvers), returned for
 the data-entry users). Each message is in Arabic with an English summary underneath.
 
 Delivery, whichever is configured (checked in this order):
+  Microsoft 365 (Graph)  M365_TENANT_ID, M365_CLIENT_ID, M365_CLIENT_SECRET, MAIL_FROM (the mailbox that sends);
+         the app registration needs the Mail.Send application permission, ideally limited to that one mailbox
   SMTP   SMTP_HOST, SMTP_PORT (587 STARTTLS, 465 SSL), SMTP_USER, SMTP_PASSWORD, MAIL_FROM
   Resend RESEND_API_KEY, MAIL_FROM (the sending domain must be verified in Resend)
   MAIL_MOCK=1 writes the messages to DATA_DIR/outbox/ instead (local tests only).
@@ -20,6 +22,7 @@ EMAIL_RE = re.compile(r'^[^@\s,;]+@[^@\s,;]+\.[A-Za-z]{2,}$')
 
 def provider():
     if os.environ.get('MAIL_MOCK') == '1': return 'mock'
+    if os.environ.get('M365_CLIENT_ID') and os.environ.get('M365_TENANT_ID'): return 'm365'
     if os.environ.get('SMTP_HOST'): return 'smtp'
     if os.environ.get('RESEND_API_KEY'): return 'resend'
     return None
@@ -136,6 +139,31 @@ def _smtp(to, subj, html_, text):
         except Exception: pass
 
 
+_TOKEN = {'v': None, 'exp': 0}
+
+
+def _m365(to, subj, html_, text):
+    import time, urllib.parse
+    if not _TOKEN['v'] or _TOKEN['exp'] < time.time() + 60:
+        body = urllib.parse.urlencode({'client_id': os.environ['M365_CLIENT_ID'], 'client_secret': os.environ.get('M365_CLIENT_SECRET', ''),
+                                       'scope': 'https://graph.microsoft.com/.default', 'grant_type': 'client_credentials'}).encode()
+        r = urllib.request.Request(f"https://login.microsoftonline.com/{os.environ['M365_TENANT_ID']}/oauth2/v2.0/token", data=body, method='POST')
+        try:
+            with urllib.request.urlopen(r, timeout=30) as x: t = json.loads(x.read())
+        except urllib.error.HTTPError as e:
+            raise RuntimeError(f'token {e.code}: ' + e.read().decode('utf-8', 'replace')[:300])
+        _TOKEN.update(v=t['access_token'], exp=time.time() + int(t.get('expires_in', 3600)))
+    msg = {'message': {'subject': subj, 'body': {'contentType': 'HTML', 'content': html_},
+                       'toRecipients': [{'emailAddress': {'address': a}} for a in to]}, 'saveToSentItems': True}
+    r = urllib.request.Request(f"https://graph.microsoft.com/v1.0/users/{urllib.parse.quote(sender())}/sendMail", data=json.dumps(msg).encode(), method='POST',
+                               headers={'Authorization': 'Bearer ' + _TOKEN['v'], 'Content-Type': 'application/json'})
+    try:
+        with urllib.request.urlopen(r, timeout=30) as x: x.read()
+    except urllib.error.HTTPError as e:
+        if e.code == 401: _TOKEN['v'] = None
+        raise RuntimeError(f'{e.code}: ' + e.read().decode('utf-8', 'replace')[:300])
+
+
 def _resend(to, subj, html_, text):
     body = json.dumps({'from': f'Alkhabeer Reports <{sender()}>', 'to': to, 'subject': subj, 'html': html_, 'text': text}).encode()
     r = urllib.request.Request('https://api.resend.com/emails', data=body, method='POST',
@@ -157,7 +185,7 @@ def _deliver(kind, obj, to, subj, html_, text, actor):
     p = provider(); last = None
     for attempt in range(3):
         try:
-            {'smtp': _smtp, 'resend': _resend, 'mock': _mock}[p](to, subj, html_, text)
+            {'m365': _m365, 'smtp': _smtp, 'resend': _resend, 'mock': _mock}[p](to, subj, html_, text)
             A.log(None, 'mail.sent', obj, 'ok', actor=actor, event=kind, to=to, provider=p); return True
         except Exception as e:
             last = str(e)[:300]
