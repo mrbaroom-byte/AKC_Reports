@@ -276,13 +276,16 @@ const ACTS = {
   ccd: [['ccd_ok', 'اعتماد التدقيق والترجمة', 'يُسلَّم البيان إلى نائب الرئيس التنفيذي للاعتماد.']],
   dceo: [['approve', 'اعتماد', 'يُسلَّم البيان إلى مجلس إدارة الصندوق.']],
   board: [['approve', 'تسجيل اعتماد المجلس للنسخة العربية', 'تُنهي إدارة تطوير المنتجات الإنجليزية بعدها.']],
-  publish: [['published', 'تم النشر', 'يُسلَّم البيان إلى الاتصال المؤسسي لرفعه على الموقع.']],
-  upload: [['uploaded', 'تم الرفع على الموقع', 'يكتمل مسار البيان.']]};
+  publish: [['published', 'تم النشر', 'يرفعه بعدها تطوير المنتجات على تداول، والاتصال المؤسسي على الموقع.']]};
+const UPL = {pdd: ['tadawul', 'تم الرفع على تداول'], ccd: ['website', 'تم الرفع على الموقع']};
 function wfButtons(){
   const st = WF.stage, out = [];
   if(st === 'review'){
     const mine = META.role === 'admin' ? ['bdd', 'compliance'] : ['bdd', 'compliance'].filter(r => r === META.role);
     mine.filter(r => !WF.signoffs[r]).forEach(r => out.push(`<button class="btn primary" data-wf="signoff" data-as="${r}" data-msg="تُسجَّل المراجعة، وينتقل البيان إلى التدقيق اللغوي بعد المراجعتين.">تسجيل مراجعة: ${RLAB[r]}</button>`));
+  } else if(st === 'upload'){
+    const mine = META.role === 'admin' ? ['pdd', 'ccd'] : ['pdd', 'ccd'].filter(r => r === META.role);
+    mine.filter(r => !WF.signoffs[UPL[r][0]]).forEach(r => out.push(`<button class="btn primary" data-wf="uploaded" data-as="${r}" data-msg="يكتمل مسار البيان بعد الرفع على تداول والموقع.">${UPL[r][1]}</button>`));
   } else if(st === 'english' && WF.acts){
     out.push(`<button class="btn primary" id="finBtn">إصدار النسخة النهائية</button>`);
   } else if(WF.acts || (META.role === 'pdd' && (st === 'faco' || st === 'cmd'))){
@@ -298,6 +301,7 @@ function renderRoute(){
   $('#rStage').textContent = cur.label;
   $('#rWho').textContent = WF.stage === 'done' ? 'اكتمل مسار البيان.' : 'لدى: ' + cur.roles.join(document.documentElement.lang === 'en' ? ', ' : '، ');
   const info = [];
+  if(WF.stage === 'upload') info.push('الرفع: ' + [['tadawul', 'تداول'], ['website', 'الموقع']].map(([k, l]) => WF.signoffs[k] ? `${l} ✓ (${esc(WF.signoffs[k].name)})` : `${l}: لم يُسجَّل`).join(' · '));
   if(WF.stage === 'review') info.push('المراجعات: ' + ['bdd', 'compliance'].map(r => WF.signoffs[r] ? `${RLAB[r]} ✓ (${esc(WF.signoffs[r].name)})` : `${RLAB[r]}: لم تُسجَّل`).join(' · '));
   if(WF.dirty) info.push('عُدّلت البيانات بعد آخر إصدار؛ أصدر المسودات قبل المتابعة.');
   if(ST === 'returned') info.push('أُعيد البيان للتعديل. الملاحظة في «التعليقات».');
@@ -309,6 +313,8 @@ const STL = k => (WF.stages.find(x => x.key === k) || {}).label || k;
 function wfName(h){
   if(h.action === 'return') return 'أعاده إلى: ' + STL(h.to);
   if(h.action.startsWith('signoff:')) return 'سجّل مراجعة: ' + RLAB[h.action.split(':')[1]];
+  if(h.action === 'uploaded:tadawul') return 'رفع البيان على تداول';
+  if(h.action === 'uploaded:website') return 'رفع البيان على الموقع';
   return 'سلّمه إلى: ' + STL(h.to);
 }
 function ui(){
@@ -322,7 +328,7 @@ function ui(){
   $$('#form [data-del]').forEach(b => b.hidden = locked || !mayEdit(b.dataset.del));
   const lb = $('#lockb'); lb.hidden = !locked;
   lb.className = 'note';
-  lb.querySelector('span').textContent = WF.stage === 'done' ? 'اكتمل مسار البيان: اعتُمد ونُشر ورُفع على الموقع، وصار أساس الربع التالي.'
+  lb.querySelector('span').textContent = WF.stage === 'done' ? 'اكتمل مسار البيان: اعتُمد ونُشر ورُفع على تداول والموقع، وصار أساس الربع التالي.'
     : 'لا تعديل لك على البيان في مرحلته الحالية، ويمكنك قراءته والتعليق عليه.';
   $('#save').hidden = locked; $('#gen').hidden = locked;
   $('#gen').disabled = BLOCKS > 0; $('#gen').title = BLOCKS ? 'أكمل النقص المذكور في «التحقق» أولًا' : '';

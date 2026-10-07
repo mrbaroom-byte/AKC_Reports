@@ -2,8 +2,8 @@
 
 FACO enters the figures first; the fund managers (CMD) build on them and issue the drafts; BDD and Compliance review;
 Corporate Communications proofs the Arabic and translates the English; the DCEO approves; the Fund Board approves the
-Arabic; Product Development finalises the English and issues the final files; Compliance publishes; Corporate
-Communications uploads to the website. Product Development follows every step and can return the statement.
+Arabic; Product Development finalises the English and issues the final files; Compliance publishes; then Product Development
+uploads to Tadawul and Corporate Communications to the website, in parallel. Product Development follows every step and can return the statement.
 
 Each statement keeps its stage, the review sign-offs and a history of every hand-over in table `wf`; comments live in
 table `comments`. The platform administrator can act at any stage (every action is in the audit log under their name).
@@ -36,12 +36,13 @@ STAGES = [
     ('board', 'اعتماد مجلس إدارة الصندوق', 'Fund Board approval', ('board',)),
     ('english', 'إنهاء النسخة الإنجليزية', 'English finalised', ('pdd',)),
     ('publish', 'النشر', 'Publishing', ('compliance',)),
-    ('upload', 'الرفع على الموقع', 'Website upload', ('ccd',)),
+    ('upload', 'الرفع على تداول والموقع', 'Tadawul and website upload', ('pdd', 'ccd')),
     ('done', 'مكتمل', 'Complete', ()),
 ]
 ORDER = [s[0] for s in STAGES]
 STAGE = {s[0]: s for s in STAGES}
 REVIEWERS = ('bdd', 'compliance')
+UPLOADS = {'pdd': 'tadawul', 'ccd': 'website'}   # after publishing: PDD uploads to Tadawul, CCD to the website, in parallel
 EDIT_STAGES = ('faco', 'cmd', 'ccd', 'english')     # stages in which someone may change the data
 GEN_STAGES = ('faco', 'cmd', 'ccd', 'english')      # stages in which drafts can be (re)issued
 
