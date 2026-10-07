@@ -1,0 +1,795 @@
+{
+ "id": "q2-2021",
+ "lang": "en",
+ "title": "Alkhabeer Diversified Income Traded Fund",
+ "subtitle": "Investor Report",
+ "date": "Q2 2021",
+ "src_file": "pdf/cccaea0a.pdf",
+ "src_pages": 4,
+ "template": "ir",
+ "blocks": [
+  {
+   "t": "h2",
+   "num": "",
+   "text": "FUND OVERVIEW",
+   "p": 1,
+   "key": "ov.h"
+  },
+  {
+   "t": "p",
+   "text": "Alkhabeer Diversified Income Traded Fund (“the Fund”) is a closed-ended Shari’a-compliant investment traded fund, established in accordance with the applicable laws and regulations of the Kingdom of Saudi Arabia and regulated by the Capital Market Authority (CMA). The Fund’s investment objective is to generate periodic income to investors by investing in Shari’a-compliant income generating assets. The Fund Manager “Alkhabeer Capital” plans to invest in Sukuk, trade finance transactions, leasing transactions, income funds and Murabaha transactions, either directly or through investment funds.",
+   "p": 1,
+   "key": "ov.p"
+  },
+  {
+   "t": "h2",
+   "num": "",
+   "text": "KEY FUND FACTS",
+   "p": 1,
+   "key": "kf.h"
+  },
+  {
+   "t": "kv",
+   "caption": "",
+   "rows": [
+    [
+     "TADAWUL SYMBOL",
+     "4700"
+    ],
+    [
+     "BLOOMBERG SYMBOL",
+     "AKDICIF:AB"
+    ],
+    [
+     "LISTING DATE",
+     "19 January 2021"
+    ],
+    [
+     "FUND TERM",
+     "99 years, starting as from the Listing Date, renewable"
+    ],
+    [
+     "NET ASSET VALUE PER UNIT",
+     "10.1423"
+    ],
+    [
+     "FUND ASSETS SIZE*",
+     "SAR 519,715,457"
+    ],
+    [
+     "FUND’S TOTAL CAPITAL",
+     "SAR 472,814,700"
+    ],
+    [
+     "FINANCING AMOUNT*",
+     "SAR 37,458,037"
+    ],
+    [
+     "RATIO OF LOANS TO FUND’S TOTAL ASSET VALUE*",
+     "7.21%"
+    ],
+    [
+     "RATIO OF LOANS TO FUND’S NET ASSET VALUE AS AT THE END OF THE REPORTING QUARTER",
+     "7.81%"
+    ],
+    [
+     "VALUE AND PERCENTAGE OF FUND MANAGER’S INVESTMNET TO FUND’S NET ASSET VALUE AS AT THE END OF THE REPORTING QUARTER",
+     "0.0%"
+    ],
+    [
+     "RISK LEVEL",
+     "High"
+    ],
+    [
+     "FUND CURRENCY",
+     "Saudi Arabian Riyal (SAR)"
+    ],
+    [
+     "INVESTMENT ADVISOR AND FUND SUB-MANAGER",
+     "N/A"
+    ],
+    [
+     "RATIO OF UNDERLYING FUNDS’ MANAGEMENT FEES",
+     "N/A"
+    ]
+   ],
+   "p": 1,
+   "key": "kf.kv"
+  },
+  {
+   "t": "note",
+   "text": "* As at 30 June 2021 (Unaudited).",
+   "p": 1,
+   "key": "kf.note"
+  },
+  {
+   "t": "h2",
+   "num": "",
+   "text": "FUND PORTFOLIO INVESTMENT CONCENTRATION RATIOS",
+   "p": 1,
+   "key": "cr.h"
+  },
+  {
+   "t": "chart",
+   "kind": "pie",
+   "title": "FUND PORTFOLIO INVESTMENT CONCENTRATION RATIOS",
+   "unit": "%",
+   "series": [
+    {
+     "label": "Leasing Transactions",
+     "value": 36.0
+    },
+    {
+     "label": "Trade Finance Transactions",
+     "value": 24.6
+    },
+    {
+     "label": "Sukuk",
+     "value": 16.1
+    },
+    {
+     "label": "Income Funds",
+     "value": 14.2
+    },
+    {
+     "label": "Cash and Received Distributions",
+     "value": 9.1
+    },
+    {
+     "label": "Murabaha Transactions",
+     "value": 0.0
+    }
+   ],
+   "p": 1,
+   "key": "cr.chart"
+  },
+  {
+   "t": "h2",
+   "num": "",
+   "text": "FINANCIAL INDICATORS*",
+   "p": 1,
+   "key": "fi.h"
+  },
+  {
+   "t": "kv",
+   "caption": "",
+   "rows": [
+    [
+     "VALUATION FREQUENCY",
+     "Quarterly"
+    ],
+    [
+     "FUND’S TOTAL ASSET VALUE*",
+     "SAR 519,715,457"
+    ],
+    [
+     "FUND UNITS’ NET ASSET VALUE*",
+     "SAR 479,545,085"
+    ],
+    [
+     "AMOUNT AND RATIO OF TRANSACTION EXPENSES FOR THE REPORTING QUARTER TO FUND’S AVERAGE NET ASSET VALUE",
+     "0.00%"
+    ],
+    [
+     "RATIO OF TOTAL EXPENSES AND FEES TO FUND’S TOTAL ASSET VALUE*",
+     "0.26%"
+    ],
+    [
+     "RATIO OF FUND’S COSTS TO FUND’S TOTAL ASSET VALUE*",
+     "0.29%"
+    ],
+    [
+     "RATIO OF FUND’S COSTS TO FUND’S AVERAGE NET ASSET VALUE*",
+     "0.32%"
+    ],
+    [
+     "RATIO OF TOTAL EXPENSES AND FEES FOR THE REPORTING QUARTER TO FUND’S AVERAGE NET ASSET VALUE",
+     "0.29%"
+    ]
+   ],
+   "p": 1,
+   "key": "fi.kv"
+  },
+  {
+   "t": "note",
+   "text": "* As at 30 June 2021 (Unaudited).",
+   "p": 1,
+   "key": "fi.note"
+  },
+  {
+   "t": "h2",
+   "num": "",
+   "text": "DISTRIBUTION OF INVESTMENTS BY GEOGRAPHY",
+   "p": 1,
+   "key": "geo.h"
+  },
+  {
+   "t": "chart",
+   "kind": "pie",
+   "title": "DISTRIBUTION OF INVESTMENTS BY GEOGRAPHY",
+   "unit": "%",
+   "series": [
+    {
+     "label": "North America",
+     "value": 48.0
+    },
+    {
+     "label": "Europe",
+     "value": 39.0
+    },
+    {
+     "label": "KSA",
+     "value": 7.0
+    },
+    {
+     "label": "GCC, Excluding KSA",
+     "value": 4.0
+    },
+    {
+     "label": "Asia",
+     "value": 2.0
+    }
+   ],
+   "p": 1,
+   "key": "geo.chart"
+  },
+  {
+   "t": "h2",
+   "num": "",
+   "text": "FUND ASSETS INFORMATION",
+   "p": 1,
+   "key": "fa.h"
+  },
+  {
+   "t": "kv",
+   "caption": "",
+   "rows": [
+    [
+     "TRADE FINANCE PORTFOLIO TOTAL VALUE",
+     "SAR 127,993,122"
+    ],
+    [
+     "LEASING PORTFOLIO TOTAL VALUE",
+     "SAR 187,316,233"
+    ],
+    [
+     "SUKUK PORTFOLIO TOTAL VALUE",
+     "SAR 83,751,798"
+    ],
+    [
+     "INCOME FUNDS PORTFOLIO TOTAL VALUE",
+     "SAR 73,563,106"
+    ],
+    [
+     "TOTAL CASH AND CASH EQUIVALENT",
+     "SAR 47,091,198"
+    ]
+   ],
+   "p": 1,
+   "key": "fa.kv"
+  },
+  {
+   "t": "h2",
+   "num": "",
+   "text": "NET ASSET VALUE AND UNIT PRICE PERFORMANCE*",
+   "p": 1,
+   "key": "nav.h"
+  },
+  {
+   "t": "chart",
+   "kind": "bar",
+   "title": "NET ASSET VALUE AND UNIT PRICE PERFORMANCE*",
+   "unit": "SAR",
+   "series": [
+    {
+     "label": "Market Unit Price (SAR)",
+     "value": 9.2,
+     "group": "30 June 2021"
+    },
+    {
+     "label": "NAV/Unit (SAR)",
+     "value": 10.1,
+     "group": "30 June 2021"
+    },
+    {
+     "label": "Market Unit Price (SAR)",
+     "value": 9.1,
+     "group": "31 March 2021"
+    },
+    {
+     "label": "NAV/Unit (SAR)",
+     "value": 9.95,
+     "group": "31 March 2021"
+    },
+    {
+     "label": "Market Unit Price (SAR)",
+     "value": 10.0,
+     "group": "19 January 2021 (Listing Date)"
+    },
+    {
+     "label": "NAV/Unit (SAR)",
+     "value": 10.0,
+     "group": "19 January 2021 (Listing Date)"
+    }
+   ],
+   "p": 1,
+   "key": "nav.chart"
+  },
+  {
+   "t": "note",
+   "text": "* Based on the Unit Price.",
+   "p": 1,
+   "key": "nav.note"
+  },
+  {
+   "t": "h2",
+   "num": "",
+   "text": "FUND MARKET VALUE INFORMATION*",
+   "p": 1,
+   "key": "mv.h"
+  },
+  {
+   "t": "kv",
+   "caption": "",
+   "rows": [
+    [
+     "AS AT THE LISTING DATE",
+     "SAR 472,814,700"
+    ],
+    [
+     "AS AT 31 MARCH 2021",
+     "SAR 428,370,118"
+    ],
+    [
+     "AS AT 30 JUNE 2021",
+     "SAR 433,098,265"
+    ]
+   ],
+   "p": 1,
+   "key": "mv.kv"
+  },
+  {
+   "t": "note",
+   "text": "* Based on the Unit Price.",
+   "p": 1,
+   "key": "mv.note"
+  },
+  {
+   "t": "h2",
+   "num": "",
+   "text": "FUND UNITS INFORMATION",
+   "p": 2,
+   "key": "fu.h"
+  },
+  {
+   "t": "kv",
+   "caption": "",
+   "rows": [
+    [
+     "UNIT PRICE AS AT THE END OF Q2 (30 JUNE 2021)",
+     "SAR 9.16"
+    ],
+    [
+     "UNIT PRICE PERFORMANCE SINCE THE LISTING DATE (FROM THE LISTING DATE TO END Q2 2021)",
+     "-8.40%"
+    ],
+    [
+     "52-WEEK HIGH",
+     "SAR 12.00"
+    ],
+    [
+     "52-WEEK LOW",
+     "SAR 8.98"
+    ],
+    [
+     "NUMBER OF OUTSTANDING UNITS",
+     "47,281,470 Units"
+    ]
+   ],
+   "p": 2,
+   "key": "fu.kv"
+  },
+  {
+   "t": "h2",
+   "num": "",
+   "text": "DIVIDEND DISTRIBUTION FOR THE QUARTER",
+   "p": 2,
+   "key": "dd.h"
+  },
+  {
+   "t": "kv",
+   "caption": "",
+   "rows": [
+    [
+     "DIVIDEND DISTRIBUTION POLICY",
+     "The Fund Manager will semi-annually distribute to Unitholders 100% of the semi-annual dividends received from the proceeds of the Fund’s investments, following deduction of expenses, provided the first distribution is made within 40 days after the month of June 2021."
+    ],
+    [
+     "GROSS INCOME FOR THE PERIOD (30 JUNE 2021)",
+     "SAR 8,743,920"
+    ],
+    [
+     "INCOME FOR THE PERIOD ON UNIT PRICE (30 JUNE 2021)",
+     "2.02%"
+    ],
+    [
+     "TOTAL DIVIDENDS DISTRIBUTED IN THE REPORTING QUARTER (ANY DIVIDEND PAID SUBSEQUENT TO THE LATEST DISCLOSED REPORT)",
+     "N/A"
+    ],
+    [
+     "DIVIDENDS DISTRIBUTED PER UNIT",
+     "N/A"
+    ],
+    [
+     "DIVIDENDS DISTRIBUTED ON UNIT PRICE",
+     "0.0%"
+    ],
+    [
+     "ELIGIBILITY TO CASH DIVIDENDS DISTRIBUTED DURING THE REPORTING QUARTER",
+     "N/A"
+    ],
+    [
+     "TOTAL DIVIDENDS DISTRIBUTED IN THE REPORTING QUARTER",
+     "N/A"
+    ],
+    [
+     "RATIO OF DIVIDENDS DISTRIBUTED IN THE REPORTING QUARTER TO INITIAL UNIT PRICE",
+     "N/A"
+    ]
+   ],
+   "p": 2,
+   "key": "dd.kv"
+  },
+  {
+   "t": "h2",
+   "num": "",
+   "text": "FUND PERFORMANCE CRITERIA AND INDICATORS",
+   "p": 2,
+   "key": "pc.h"
+  },
+  {
+   "t": "kv",
+   "caption": "",
+   "rows": [
+    [
+     "BENCHMARK",
+     "12M LIBOR + 300 bps"
+    ],
+    [
+     "INTIAL UNIT PRICE (AT THE INITIAL OFFERING)",
+     "SAR 10"
+    ],
+    [
+     "UNIT PRICE PERFORMANCE SINCE THE PREVIOUS PERIOD*",
+     "1.10%"
+    ],
+    [
+     "UNIT PRICE PERFORMANCE SINCE THE DATE OF INCEPTION**",
+     "-8.40%"
+    ],
+    [
+     "TOTAL RETURN SINCE THE DATE OF INCEPTION***",
+     "-8.40%"
+    ]
+   ],
+   "p": 2,
+   "key": "pc.kv"
+  },
+  {
+   "t": "note",
+   "text": "* From end Q1 to end Q2 2021.\n** From the Fund’s Date of Inception to end Q2 2021.\n*** Total Return = Unit Price Performance + Total Dividend Distributions (if any).",
+   "p": 2,
+   "key": "pc.note"
+  },
+  {
+   "t": "h2",
+   "num": "",
+   "text": "PERFORMANCE ASSESSMENT CRITERIA AND INDICATORS*",
+   "p": 2,
+   "key": "pa.h"
+  },
+  {
+   "t": "table",
+   "caption": "",
+   "head": [
+    "",
+    "ALKHABEER INCOME FUND",
+    "12M LIBOR + 300 BPS"
+   ],
+   "rows": [
+    [
+     "NET ASSET VALUE PER UNIT AS AT THE BEGINNING OF THE PERIOD*",
+     "9.97",
+     "NOT APPLICABLE"
+    ],
+    [
+     "NET ASSET VALUE PER UNIT AS AT THE END OF THE PERIOD**",
+     "10.14",
+     "NOT APPLICABLE"
+    ],
+    [
+     "UNIT PERFORMANCE",
+     "1.70%",
+     "0.80%***"
+    ]
+   ],
+   "p": 2,
+   "key": "pa.table"
+  },
+  {
+   "t": "note",
+   "text": "* As at 1 April 2021.\n** As at 30 June 2021.\n** Benchmark return is 3.25%.",
+   "p": 2,
+   "key": "pa.note"
+  },
+  {
+   "t": "h2",
+   "num": "",
+   "text": "OWNERSHIP OF FUND INVESTMENTS",
+   "p": 2,
+   "key": "ow.h"
+  },
+  {
+   "t": "table",
+   "caption": "",
+   "head": [
+    "OWNERSHIP",
+    "PERCENTAGE* (%)"
+   ],
+   "rows": [
+    [
+     "FREEHOLD",
+     "100%"
+    ],
+    [
+     "LEASEHOLD",
+     "0%"
+    ]
+   ],
+   "p": 2,
+   "key": "ow.table"
+  },
+  {
+   "t": "h2",
+   "num": "",
+   "text": "RETURN",
+   "p": 3,
+   "key": "rt.h"
+  },
+  {
+   "t": "table",
+   "caption": "",
+   "head": [
+    "ITEM",
+    "3 MONTHS*",
+    "ONE YEAR FROM TH START OF THE FUND UP TO 30 JUNE 2021**"
+   ],
+   "rows": [
+    [
+     "FUND’S NET ASSET VALUE PERFORMANCE*",
+     "1.70%",
+     "1.42%"
+    ],
+    [
+     "BENCHMARK PERFORMANCE",
+     "0.80%",
+     "1.45%"
+    ],
+    [
+     "PERFORMANCE SPREAD",
+     "0.90%",
+     "-0.03%"
+    ]
+   ],
+   "p": 3,
+   "key": "rt.table"
+  },
+  {
+   "t": "note",
+   "text": "* For the period from 1 April 2021 to 30 June 2021\n** For the period from 19 January 2021 to 30 June 2021\n*** Knowing that the Unit Price in the Exchange may increase or decrease based on market factors.",
+   "p": 3,
+   "key": "rt.note"
+  },
+  {
+   "t": "h2",
+   "num": "",
+   "text": "PERFORMANCE AND RISKS",
+   "p": 3,
+   "key": "pr.h"
+  },
+  {
+   "t": "table",
+   "caption": "",
+   "head": [
+    "PERFORMANCE AND RISKS CRITERIA",
+    "ONE YEAR UP TO 30 JUNE 2021"
+   ],
+   "rows": [
+    [
+     "STANDARD DEVIATION",
+     "2.79"
+    ],
+    [
+     "SHARPE INDEX",
+     "0.75"
+    ],
+    [
+     "TRACKING ERROR",
+     "2.61"
+    ],
+    [
+     "BETA",
+     "NOT APPLICABLE"
+    ],
+    [
+     "ALPHA",
+     "-0.03%"
+    ],
+    [
+     "INFORMATION INDEX",
+     "-0.01%"
+    ]
+   ],
+   "p": 3,
+   "key": "pr.table"
+  },
+  {
+   "t": "h2",
+   "num": "",
+   "text": "FUND HIGHLIGHTS AND ANY FUNDAMENTAL, MATERIAL OR SIGNIFICANT CHANGES AFFECTING THE PERFORMANCE OF THE FUND",
+   "p": 3,
+   "key": "hl.h"
+  },
+  {
+   "t": "ul",
+   "items": [
+    "The Fund Manager invested 36.80% of the Fund’s assets in leasing transactions across several types of equipment and companies. The leasing portfolio is mainly invested in the United States, and expected to generate a total return of 6.5% annually over the next five-year term.",
+    "The Fund Manager invested 31% of the Fund’s assets in trade finance transactions with several counterparties and across various industries, mostly in the European continent. All executed transactions are of a short-term nature, with returns ranging between 6.5% to 7.0% annually.",
+    "The Fund Manager invested 16.6% of the Fund’s assets in Sukuk of different credit ratings, including sovereign, semi-sovereign and corporate Sukuk. The Fund Manager has obtained credit facilities that support increasing the portfolio’s returns to over 5% per annum, while maintaining a weighted average for classifying the portfolio as an investment grade.",
+    "To diversify the Fund’s investments, the Fund Manager invested 14.5% of the Fund’s assets in income funds, ranging from private financing and leasing to trade finance and securitization, with an expected average annual return of 6.5% to 7.0%.",
+    "The Fund Manager plans to distribute the profits earned as per the targeted timeframe specified in the Terms and Conditions.",
+    "The Fund seeks to benefit from financing, in accordance with Shari’a and as permitted by the Fund’s Terms and Conditions, in order to maximize the Fund’s performance and achieve the targeted returns. The Fund Manager is currently in discussions with banks to secure additional leverage for the Fund with the aim to deploy the funds across the targeted assets."
+   ],
+   "p": 3,
+   "key": "hl.ul"
+  },
+  {
+   "t": "h2",
+   "num": "",
+   "text": "OVERVIEW OF THE LEASING AND TRADE FINANCE INDUSTRY",
+   "p": 3,
+   "key": "ind.h"
+  },
+  {
+   "t": "h3",
+   "num": "",
+   "text": "LEASING INDUSTRY OVERVIEW",
+   "p": 3,
+   "key": "ind.l.h"
+  },
+  {
+   "t": "ul",
+   "items": [
+    "According to the World Leasing Review report, the overall performance of the leasing and equipment finance market varied vastly across various sectors, and remained heavily related to the local market conditions and (COVID-19) vaccination rates. While considerable financial impacts were witnessed in some segments of the industry, other segments experienced steady growth rates.",
+    "Meanwhile, the US market showcased a stable recovery in software investment and new business activities in leasing in 2021. As per the Equipment Leasing and Finance Foundation, the annual growth in equipment and software investment is expected to reach 11.2% in the US for 2021, as businesses realigned their strategies to adapt to a new post-pandemic normal. Notably, the US leasing monthly confidence index reached its highest level of 76.1 in April 2021, as compared to 22.3 in April 2020."
+   ],
+   "p": 3,
+   "key": "ind.l.ul"
+  },
+  {
+   "t": "h3",
+   "num": "",
+   "text": "TRADE FINANCE INDUSTRY OVERVIEW",
+   "p": 4,
+   "key": "ind.t.h"
+  },
+  {
+   "t": "ul",
+   "items": [
+    "According to Coalition, the research arm of S&P Global, the global pool of trade finance is expected to rebound to USD 52 billion in 2021 and to around USD 54 billion by 2022, surpassing the pre-pandemic level of USD 53 billion reported in 2019.",
+    "As over 80% to 90% of the world trade relies on trade finance, a 7.2% rise in the global trade volumes in 2021, as reported by the World Trade Organization (WTO), would largely support an increase in the trade finance transactions.",
+    "It is also expected an improvement in margins on trade finance transactions on account of lower funding costs due to low interest rates, would drive the growth of revenues of trade finance transactions.",
+    "Moreover, the recent implementation of stringent lending criteria (Basel III norms) has created an opportunity for private debt funds and investors to participate in the trade finance industry, which was once restricted only to traditional banks.",
+    "In addition to that, small and medium sized enterprises (SMEs) present a substantial opportunity for trade finance industry, as traditional banks generally focus on large transactions."
+   ],
+   "p": 4,
+   "key": "ind.t.ul"
+  },
+  {
+   "t": "h3",
+   "num": "",
+   "text": "SUKUK INDUSTRY OVERVIEW",
+   "p": 4,
+   "key": "ind.s.h"
+  },
+  {
+   "t": "ul",
+   "items": [
+    "Although higher oil prices, less government relief support and economic recovery could result in lower sovereign funding requirements, infrequent Sukuk issuers are expected to support 2021 Sukuk volumes.",
+    "As per S&P Global Ratings, Sukuk issuances rose to USD 90.6 billion in H1 2021, up from USD 86.4 billion in the same period last year. The increase in offerings from Saudi Arabia, Malaysia and Oman mainly supported the overall increase in Sukuk issuances.",
+    "It is further expected that bank and corporate issuances would drive the overall performance of the Sukuk market in the second half of 2021. As corporate activities were muted in 2020 due to the COVID-19 related restrictions, it is expected that a portion of these investments would be executed in 2021.",
+    "The expected refinancing of USD 20 billion maturing Sukuk in the second half of 2021, shall drive the overall level of issuances in the Sukuk market."
+   ],
+   "p": 4,
+   "key": "ind.s.ul"
+  },
+  {
+   "t": "h2",
+   "num": "",
+   "text": "PERFORMANCE OF THE UNIT PRICE TRADED ON THE EXCHANGE*",
+   "p": 4,
+   "key": "up.h"
+  },
+  {
+   "t": "chart",
+   "kind": "line",
+   "title": "PERFORMANCE OF THE UNIT PRICE TRADED ON THE EXCHANGE*",
+   "unit": "SAR",
+   "series": [
+    {
+     "label": "January",
+     "value": 10.0
+    },
+    {
+     "label": "January (peak)",
+     "value": 12.0
+    },
+    {
+     "label": "February",
+     "value": 9.25
+    },
+    {
+     "label": "March",
+     "value": 9.0
+    },
+    {
+     "label": "April",
+     "value": 9.05
+    },
+    {
+     "label": "May",
+     "value": 9.35
+    },
+    {
+     "label": "June",
+     "value": 9.16
+    }
+   ],
+   "note": "approximate, measured from the original chart (no data labels; values read at the month ticks plus the January peak; June = closing unit price SAR 9.16 from the report).",
+   "p": 4,
+   "key": "up.chart"
+  },
+  {
+   "t": "note",
+   "text": "* Prices as at the close of 30 June 2021.\nThe Fund’s performance in the chart is calculated based on the changes in the Unit Price on the Exchange, as the frequency of valuation of the Net Asset Value per Unit is quarterly.",
+   "p": 4,
+   "key": "up.note"
+  },
+  {
+   "t": "h2",
+   "num": "",
+   "text": "FOR FURTHER INFORMATION",
+   "p": 4,
+   "key": "z.h"
+  },
+  {
+   "t": "p",
+   "text": "Alkhabeer Capital\nPO Box 128289, Jeddah 21362\nKingdom of Saudi Arabia\nTel: +966 12 658 8888\nFax: +966 12 658 6663\nEmail: info@alkhabeer.com\nCR No: 4030177445\nCMA License No: 07074-37\nalkhabeer.com",
+   "p": 4,
+   "key": "z.p"
+  },
+  {
+   "t": "h2",
+   "num": "",
+   "text": "DISCLAIMER",
+   "p": 4,
+   "key": "dc.h"
+  },
+  {
+   "t": "note",
+   "text": "This document does not constitute an offer to buy, subscribe or participate in any way in Alkhabeer Diversified Income Traded Fund, nor shall it (or any part of it) form the basis of, or be relied on, in connection with, or act as inducement to enter into any contract whatsoever. Prospective investors should read carefully Alkhabeer Diversified Income Traded Fund’s Terms and Conditions and their contents related to investment risks as well as other Alkhabeer Diversified Income Traded Fund documents prior to making any investment decision. Alkhabeer Diversified Income Traded Fund documents are available on Alkhabeer Capital’s website www.alkhabeer.com. This investment is not a cash deposit with a local bank. The value of the amount invested and any other income which may arise therefrom, may increase or decrease. All prospective investors are required to make their own determination with their own financial and legal advisors, and evaluate all risks involved. No assurance can be given that the targeted and projected results will be achieved. Moreover, past performance of Alkhabeer Diversified Income Traded Fund is not a guarantee of the Fund’s future results. By investing in the Fund, the investor acknowledges having read and accepted the Alkhabeer Diversified Income Traded Fund’s Terms and Conditions.",
+   "p": 4,
+   "key": "dc.note"
+  }
+ ]
+}

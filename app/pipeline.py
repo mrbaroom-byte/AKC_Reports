@@ -18,14 +18,19 @@ def render_html(fund, q, lang, struct, outdir):
     """Write struct, run render.py + web.convert, apply v3 styling and review fixes; return final HTML path."""
     fd = os.path.join(ENG, FUNDDIR[fund])
     os.makedirs(os.path.join(fd, 'struct'), exist_ok=True)
-    json.dump(struct, open(os.path.join(fd, 'struct', f'{q}.{lang}.json'), 'w', encoding='utf-8'), ensure_ascii=False)
+    sp = os.path.join(fd, 'struct', f'{q}.{lang}.json')
+    keep = open(sp, 'rb').read() if os.path.exists(sp) else None   # the published original stays untouched in the engine
+    json.dump(struct, open(sp, 'w', encoding='utf-8'), ensure_ascii=False)
     env = dict(os.environ, FUND_DIR=fd)
-    r = subprocess.run([sys.executable, os.path.join(ENG, 'i30', 'render.py'), q, lang], env=env, capture_output=True, text=True)
-    if r.returncode: raise RuntimeError('render: ' + r.stderr[-1500:])
-    code = (
-        "import sys,json;sys.path.insert(0,%r);import web;m=web.convert(%r,%r);print(json.dumps(m))" % (os.path.join(ENG, 'i30'), q, lang))
-    r = subprocess.run([sys.executable, '-c', code], env=env, capture_output=True, text=True, cwd=os.path.join(ENG, 'i30'))
-    if r.returncode: raise RuntimeError('web: ' + r.stderr[-1500:])
+    try:
+        r = subprocess.run([sys.executable, os.path.join(ENG, 'i30', 'render.py'), q, lang], env=env, capture_output=True, text=True)
+        if r.returncode: raise RuntimeError('render: ' + r.stderr[-1500:])
+        code = (
+            "import sys,json;sys.path.insert(0,%r);import web;m=web.convert(%r,%r);print(json.dumps(m))" % (os.path.join(ENG, 'i30'), q, lang))
+        r = subprocess.run([sys.executable, '-c', code], env=env, capture_output=True, text=True, cwd=os.path.join(ENG, 'i30'))
+        if r.returncode: raise RuntimeError('web: ' + r.stderr[-1500:])
+    finally:
+        if keep is not None: open(sp, 'wb').write(keep)
     man = json.loads(r.stdout.strip().splitlines()[-1])
     hub = os.path.join(ENG, 'i30', 'hub')
     src = open(os.path.join(hub, man['html']), encoding='utf-8').read()

@@ -16,3 +16,7 @@
 ## البنية
 - `app/` الموقع (FastAPI): `model.py` البيانات والتحقق، `pipeline.py` الإخراج، `store.py` التخزين.
 - `engine/` محرك المستندات: `i30/render.py`، و`v3/` (الهوية والمراجعات وWord)، وقوالب الصناديق المنشورة للربع الثاني 2026م أساسًا أول.
+
+## Published statements as records
+At start-up every statement in `engine/published/<fund>/<q>` (with its AR/EN structs in `engine/<dir>/struct/`) is imported once as a `published` record; numbers that differ between the Arabic and English versions are stored in `conflicts`.
+`/records` lists them per fund; `/r/<fund>/<q>` shows every field. Only the admin corrects: save a draft (values only), preview PDF/Word, then approve with a reason. Approval keeps the original struct once (`structs/<fund>/original/`), logs each change in `corrections`, writes the corrected struct (the next quarter builds on it), issues a corrected PDF/Word under `out/<fund>/<q>/corrected/<time>/`, and sets the status `corrected`. Published files are never replaced; later quarters are not regenerated.

@@ -1,0 +1,212 @@
+{% extends "base.html" %}
+{% block title %}{{ name }} · {{ ql }}{% endblock %}
+{% block head %}<style>
+.hd{display:flex;gap:12px;align-items:flex-start;flex-wrap:wrap;justify-content:space-between;margin-bottom:12px}
+.files a{font-size:13px;margin-inline-end:10px}
+.bar{position:sticky;top:0;z-index:5;background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:12px 14px;margin-bottom:14px;display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+.bar .sp{flex:1}
+.tabs{display:flex;gap:6px;flex-wrap:wrap;margin:6px 0 14px;border-bottom:1px solid var(--line)}
+.tabs button{font:600 14px var(--body);background:none;border:0;border-bottom:3px solid transparent;padding:9px 12px;color:var(--muted);cursor:pointer}
+.tabs button.on{color:var(--navy);border-bottom-color:#3B7DD8}
+details.sec{background:var(--surface);border:1px solid var(--line);border-radius:12px;margin-bottom:10px}
+details.sec>summary{cursor:pointer;padding:12px 16px;font:600 15px var(--display);color:var(--navy);list-style:none;display:flex;gap:8px;align-items:center}
+details.sec>summary::-webkit-details-marker{display:none}
+details.sec>summary::before{content:'›';display:inline-block;transition:transform .15s;color:var(--muted)}
+details.sec[open]>summary::before{transform:rotate(90deg)}
+.sec .in{padding:0 16px 14px}
+.blk{margin:10px 0 14px}
+.blk .lbl{font-size:12px;color:var(--muted);margin-bottom:4px}
+.blk textarea{min-height:70px}
+.blk table input{padding:5px 7px;font-size:13px}
+.chg{background:var(--warn-bg)!important;border-color:#C98A2E!important}
+.ro input,.ro textarea{background:transparent;border-color:transparent;padding-inline:2px;resize:none}
+.ltr{direction:ltr;text-align:left}
+.sumbox{display:none}
+.sumbox.show{display:block}
+.chlist td{font-size:13px;vertical-align:top}
+.chlist .b{color:var(--bad-fg);text-decoration:line-through}
+.chlist .a{color:var(--ok-fg);font-weight:600}
+.msg{font-size:13.5px}
+#apv{display:none;margin-top:10px;width:100%}
+#apv.show{display:block}
+</style>{% endblock %}
+{% block body %}
+<div class="hd">
+  <div>
+    <div class="muted"><a href="/records?fund={{ fund }}">البيانات المنشورة</a> · {{ name }}</div>
+    <h1>{{ ql }}</h1>
+    <span class="pill ok">{{ status }}</span>{% if meta.draft %} <span class="pill warn">مسودة تصحيح: {{ pend }} تعديل</span>{% endif %}
+  </div>
+  <div class="files">
+    {% set fs = s.files or {} %}
+    {% for kind, title in (('published','المنشور'),('corrected','آخر تصحيح معتمد'),('corr','معاينة التصحيح')) %}{% if fs.get(kind) %}
+    <div><span class="muted">{{ title }}:</span>
+      {% for l, f in fs[kind].items() %}{% if f.pdf %}<a href="/f/{{ fund }}/{{ q }}/{{ kind }}/{{ f.pdf }}" target="_blank">PDF {{ 'عربي' if l == 'ar' else 'EN' }}</a>{% endif %}{% if f.docx %}<a href="/f/{{ fund }}/{{ q }}/{{ kind }}/{{ f.docx }}?dl=1">Word {{ 'عربي' if l == 'ar' else 'EN' }}</a>{% endif %}{% endfor %}
+    </div>{% endif %}{% endfor %}
+  </div>
+</div>
+
+{% if meta.admin %}
+<div class="bar" id="bar">
+  <button class="btn primary" id="save" disabled>حفظ التعديلات</button>
+  <button class="btn" id="prev" {% if not meta.draft %}disabled{% endif %}>معاينة PDF وWord</button>
+  <button class="btn" id="fin" {% if not meta.draft %}disabled{% endif %}>اعتماد التصحيح…</button>
+  <button class="btn" id="dis" {% if not meta.draft %}hidden{% endif %}>إلغاء المسودة</button>
+  <span class="sp"></span><span class="msg muted" id="msg">{% if meta.draft %}توجد مسودة تصحيح محفوظة.{% else %}عدّل أي قيمة ثم احفظ. يبقى المنشور كما هو حتى تعتمد التصحيح.{% endif %}</span>
+  <div id="apv" class="box" style="margin:10px 0 0">
+    <h3 style="margin-top:0">اعتماد التصحيح</h3>
+    {% if meta.deps %}<p class="msg"><span class="pill warn">تنبيه</span> البيانات اللاحقة لهذا الصندوق ({{ meta.deps|join('، ') }}) قد تتضمن أرقامًا من هذا البيان، ولا تُعدَّل تلقائيًا. راجعها إن لزم.</p>{% endif %}
+    <p class="msg">يُحفظ الأصل المنشور مرة واحدة، ويُسجَّل كل تعديل في سجل التصحيحات، وتُصدر نسخة مصحّحة (PDF وWord) دون استبدال الملفات المنشورة.</p>
+    <label class="muted" for="reason">سبب التصحيح</label>
+    <textarea id="reason" style="min-height:70px" placeholder="مثال: طلب هيئة السوق المالية رقم … بتاريخ …"></textarea>
+    <div style="margin-top:8px;display:flex;gap:8px"><button class="btn primary" id="go">اعتماد وإصدار النسخة المصحّحة</button><button class="btn" id="cancel">رجوع</button></div>
+  </div>
+</div>
+{% else %}
+<div class="box msg">عرض فقط. تصحيح البيانات المنشورة للمعتمِد.</div>
+{% endif %}
+
+<div class="box sumbox" id="sum"><h2>التعديلات المحفوظة في المسودة</h2><div class="tw"><table class="chlist"><thead><tr><th>اللغة</th><th>القسم</th><th>البند</th><th>قبل</th><th>بعد</th></tr></thead><tbody id="sumb"></tbody></table></div></div>
+
+<nav class="tabs" role="tablist">
+  <button data-t="ar" class="on">العربية</button>
+  <button data-t="en">English</button>
+  <button data-t="conf">الاختلافات بين النسختين ({{ conflicts|length }})</button>
+  <button data-t="log">سجل التصحيحات ({{ corrections|length }})</button>
+  <button data-t="ev">السجل</button>
+</nav>
+<div id="p-ar" class="pane"></div>
+<div id="p-en" class="pane ltr" dir="ltr" hidden></div>
+<div id="p-conf" class="pane" hidden>
+  <div class="box">
+  {% if conflicts %}
+  <p class="msg muted">أرقام تختلف بين النسخة العربية والإنجليزية من البيان نفسه، رُصدت آليًا عند الاستيراد. بعضها قد يكون اختلافًا في الترتيب لا في القيمة. صحّح النسخة الخاطئة من تبويبها. لا تُقارن منحنيات الأداء لأن قيمها قُرئت من صور الرسوم المنشورة.</p>
+  <div class="tw"><table><thead><tr><th>النوع</th><th>القسم</th><th>البند</th><th>العربي</th><th>الإنجليزي</th></tr></thead><tbody>
+  {% for c in conflicts|sort(attribute='kind', reverse=true) %}<tr><td>{{ 'رقم في جدول' if c.kind == 'figure' else 'رسم بياني' }}</td><td>{{ c.section }}</td><td>{{ c.label }}<div class="muted ltr">{{ c.label_en }}</div></td><td>{{ c.ar }}</td><td class="ltr">{{ c.en }}</td></tr>{% endfor %}
+  </tbody></table></div>
+  {% else %}<p class="msg">لا اختلاف في الأرقام بين النسختين.</p>{% endif %}
+  </div>
+</div>
+<div id="p-log" class="pane" hidden>
+  <div class="box">
+  {% if corrections %}<div class="tw"><table class="chlist"><thead><tr><th>التاريخ</th><th>بواسطة</th><th>اللغة</th><th>القسم</th><th>البند</th><th>قبل</th><th>بعد</th><th>السبب</th></tr></thead><tbody>
+  {% for c in corrections %}<tr><td>{{ c.at }}</td><td>{{ c.by }}</td><td>{{ 'عربي' if c.lang == 'ar' else 'EN' }}</td><td>{{ c.section }}</td><td>{{ c.label }}</td><td class="b">{{ c.before }}</td><td class="a">{{ c.after }}</td><td>{{ c.reason }}</td></tr>{% endfor %}
+  </tbody></table></div>{% else %}<p class="msg">لم يُصحَّح هذا البيان منذ نشره.</p>{% endif %}
+  </div>
+</div>
+<div id="p-ev" class="pane" hidden><div class="box">{% for e in events %}<div class="msg"><span class="muted">{{ e.at }}</span> · {{ e.what }}</div>{% endfor %}</div></div>
+
+<script>
+const CUR = {{ cur_json|safe }}, WORK = {{ work_json|safe }}, META = {{ meta_json|safe }};
+const F = META.fund, Q = META.q, ED = META.admin;
+const $ = s => document.querySelector(s);
+const AR = '٠١٢٣٤٥٦٧٨٩';
+function num(v){ v = String(v).trim().replace(/[٠-٩]/g, d => AR.indexOf(d)).replace(/[,٬\s%]/g,'').replace('٫','.');
+  let neg = /-$/.test(v); v = v.replace(/-$/,''); if(neg) v = '-' + v; const n = Number(v); return v !== '' && isFinite(n) ? n : null; }
+function get(o, path){ return path.split('.').reduce((a,k)=> a == null ? a : a[k], o); }
+function set(o, path, v){ const ks = path.split('.'); const last = ks.pop(); ks.reduce((a,k)=>a[k], o)[last] = v; }
+function input(l, i, f, v, opt={}){
+  const e = document.createElement(opt.area ? 'textarea' : 'input');
+  e.value = v == null ? '' : (opt.lines ? v.join('\n') : v); e.dataset.l = l; e.dataset.i = i; e.dataset.f = f;
+  if(opt.num) e.dataset.num = 1; if(opt.lines) e.dataset.lines = 1;
+  if(opt.num) e.className = 'num';
+  if(!ED) e.readOnly = true;
+  if(opt.area){ e.rows = Math.min(14, Math.max(2, Math.ceil(String(e.value).length / 95) + (e.value.match(/\n/g)||[]).length)); }
+  mark(e); return e;
+}
+function val(e){ if(e.dataset.lines) return e.value.split('\n').map(x=>x.trim()).filter(Boolean); if(e.dataset.num) return num(e.value); return e.value; }
+function mark(e){
+  const a = get(CUR[e.dataset.l].blocks[+e.dataset.i], e.dataset.f), b = get(WORK[e.dataset.l].blocks[+e.dataset.i], e.dataset.f);
+  e.classList.toggle('chg', JSON.stringify(a) !== JSON.stringify(b));
+}
+function cell(el){ const td = document.createElement('td'); td.appendChild(el); return td; }
+function render(l){
+  const pane = $('#p-' + l); pane.innerHTML = '';
+  const bl = WORK[l].blocks; let sec = null, inner = null, n = 0;
+  const open = () => { sec = document.createElement('details'); sec.className = 'sec' + (ED ? '' : ' ro'); const s = document.createElement('summary'); sec.appendChild(s); inner = document.createElement('div'); inner.className = 'in'; sec.appendChild(inner); pane.appendChild(sec); return s; };
+  bl.forEach((b, i) => {
+    if(b.t === 'h2'){ const s = open(); s.textContent = (b.num ? b.num + ' ' : '') + (b.text || ''); const w = document.createElement('div'); w.className='blk'; w.innerHTML = '<div class="lbl">' + (l==='ar'?'عنوان القسم':'Section title') + '</div>'; w.appendChild(input(l,i,'text',b.text)); inner.appendChild(w); return; }
+    if(!sec) open().textContent = l === 'ar' ? 'مقدمة' : 'Introduction';
+    const w = document.createElement('div'); w.className = 'blk'; inner.appendChild(w);
+    const lab = t => { const d = document.createElement('div'); d.className='lbl'; d.textContent = t; w.appendChild(d); };
+    if(b.t === 'h3'){ lab(l==='ar'?'عنوان فرعي':'Subheading'); w.appendChild(input(l,i,'text',b.text)); }
+    else if(b.t === 'p' || b.t === 'note'){ lab(b.t==='p' ? (l==='ar'?'فقرة':'Paragraph') : (l==='ar'?'ملاحظة':'Note')); w.appendChild(input(l,i,'text',b.text,{area:1})); }
+    else if(b.t === 'ul'){ lab(l==='ar'?'قائمة (بند في كل سطر)':'List (one item per line)'); w.appendChild(input(l,i,'items',b.items,{area:1,lines:1})); }
+    else if(b.t === 'kv' || b.t === 'table'){
+      if(b.caption) lab(b.caption);
+      const tw = document.createElement('div'); tw.className='tw'; const t = document.createElement('table'); tw.appendChild(t); w.appendChild(tw);
+      if(b.head){ const tr = t.insertRow(); b.head.forEach((h,k)=>{ const th = document.createElement('th'); th.appendChild(input(l,i,'head.'+k,h)); tr.appendChild(th); }); }
+      (b.rows||[]).forEach((r,ri)=>{ const tr = t.insertRow(); r.forEach((c,k)=> tr.appendChild(cell(input(l,i,'rows.'+ri+'.'+k,c)))); });
+    }
+    else if(b.t === 'chart'){
+      lab((l==='ar'?'رسم بياني':'Chart') + (b.kind ? ' · ' + b.kind : ''));
+      w.appendChild(input(l,i,'title',b.title||''));
+      const tw = document.createElement('div'); tw.className='tw'; const t = document.createElement('table'); tw.appendChild(t); w.appendChild(tw);
+      const hasG = (b.series||[]).some(s=>'group' in s);
+      const h = t.insertRow(); [l==='ar'?'البند':'Label'].concat(hasG?[l==='ar'?'المجموعة':'Group']:[]).concat([l==='ar'?'القيمة':'Value']).forEach(x=>{const th=document.createElement('th');th.textContent=x;h.appendChild(th);});
+      (b.series||[]).forEach((s,si)=>{ const tr = t.insertRow(); tr.appendChild(cell(input(l,i,'series.'+si+'.label',s.label)));
+        if(hasG) tr.appendChild(cell(input(l,i,'series.'+si+'.group',s.group)));
+        tr.appendChild(cell(input(l,i,'series.'+si+'.value',s.value,{num:1}))); });
+    }
+    n++;
+  });
+  pane.querySelectorAll('.chg').forEach(e => { const d = e.closest('details'); if(d) d.open = true; });
+  if(!pane.querySelector('details[open]') && pane.firstChild) pane.firstChild.open = true;
+}
+render('ar'); render('en');
+document.querySelectorAll('.tabs button').forEach(b => b.onclick = () => {
+  document.querySelectorAll('.tabs button').forEach(x => x.classList.toggle('on', x === b));
+  document.querySelectorAll('.pane').forEach(p => p.hidden = p.id !== 'p-' + b.dataset.t);
+});
+let dirty = false;
+function msg(t, bad){ const m = $('#msg'); if(m){ m.textContent = t; m.style.color = bad ? 'var(--bad-fg)' : ''; } }
+document.addEventListener('input', e => {
+  const x = e.target; if(!ED || !x.dataset || !x.dataset.f) return;
+  const v = val(x);
+  if(x.dataset.num && v === null && x.value.trim() !== ''){ x.classList.add('bad'); return; }
+  x.classList.remove('bad');
+  set(WORK[x.dataset.l].blocks[+x.dataset.i], x.dataset.f, v); mark(x);
+  dirty = true; $('#save').disabled = false; msg('تعديلات غير محفوظة.');
+});
+window.addEventListener('beforeunload', e => { if(dirty){ e.preventDefault(); e.returnValue = ''; } });
+async function post(url, body){
+  const r = await fetch(url, {method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify(body||{})});
+  const j = await r.json().catch(()=>({})); if(!r.ok) throw new Error(j.msg || ('خطأ ' + r.status)); return j;
+}
+function showSum(ch){
+  const tb = $('#sumb'); tb.innerHTML = '';
+  ch.forEach(c => { const tr = tb.insertRow(); [c.lang==='ar'?'عربي':'EN', c.section, c.label, c.before, c.after].forEach((v,k)=>{ const td = tr.insertCell(); td.textContent = v; if(k===3) td.className='b'; if(k===4) td.className='a'; if(c.lang==='en' && k>1) td.classList.add('ltr'); }); });
+  $('#sum').classList.toggle('show', ch.length > 0);
+}
+async function poll(done){
+  const r = await fetch(`/api/s/${F}/${Q}/job`); const j = await r.json();
+  if(j.job.state === 'running'){ msg('جارٍ: ' + (j.job.step || '') + '…'); return setTimeout(()=>poll(done), 2500); }
+  if(j.job.state === 'error'){ msg(j.job.msg, true); document.querySelectorAll('#bar .btn').forEach(b=>b.disabled=false); return; }
+  done();
+}
+if(ED){
+  $('#save').onclick = async () => {
+    try{ $('#save').disabled = true; msg('جارٍ الحفظ…');
+      const j = await post(`/api/r/${F}/${Q}/draft`, {ar: WORK.ar, en: WORK.en}); dirty = false;
+      showSum(j.changes);
+      $('#prev').disabled = $('#fin').disabled = !j.draft; $('#dis').hidden = !j.draft;
+      msg(j.draft ? `حُفظت المسودة: ${j.changes.length} تعديل. المنشور لم يتغير.` : 'لا فرق عن المنشور، فلم تُحفظ مسودة.');
+    }catch(e){ $('#save').disabled = false; msg(e.message, true); }
+  };
+  $('#prev').onclick = async () => {
+    if(dirty) return msg('احفظ التعديلات أولًا.', true);
+    try{ document.querySelectorAll('#bar .btn').forEach(b=>b.disabled=true); await post(`/api/r/${F}/${Q}/run`, {}); poll(()=>location.reload()); }
+    catch(e){ msg(e.message, true); document.querySelectorAll('#bar .btn').forEach(b=>b.disabled=false); }
+  };
+  $('#fin').onclick = () => { if(dirty) return msg('احفظ التعديلات أولًا.', true); $('#apv').classList.add('show'); $('#reason').focus(); };
+  $('#cancel').onclick = () => $('#apv').classList.remove('show');
+  $('#go').onclick = async () => {
+    try{ document.querySelectorAll('#bar .btn').forEach(b=>b.disabled=true);
+      await post(`/api/r/${F}/${Q}/run`, {approve: true, reason: $('#reason').value}); poll(()=>location.reload()); }
+    catch(e){ msg(e.message, true); document.querySelectorAll('#bar .btn').forEach(b=>b.disabled=false); }
+  };
+  $('#dis').onclick = async () => { try{ await post(`/api/r/${F}/${Q}/discard`); dirty = false; location.reload(); }catch(e){ msg(e.message, true); } };
+  if(META.draft) fetch(`/api/r/${F}/${Q}/changes`).then(r=>r.json()).then(j=>showSum(j.changes||[]));
+}
+</script>
+{% endblock %}

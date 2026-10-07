@@ -1,0 +1,802 @@
+{
+ "id": "q3-2025",
+ "lang": "en",
+ "title": "Alkhabeer Diversified Income Traded Fund",
+ "subtitle": "Quarterly Statement",
+ "date": "Q3 2025",
+ "src_file": "pdf/ebfd2e5c.pdf",
+ "src_pages": 6,
+ "blocks": [
+  {
+   "t": "h2",
+   "num": "a)",
+   "text": "Fund Objective:",
+   "p": 1
+  },
+  {
+   "t": "p",
+   "text": "The Fund investment objective is to generate periodic income to investors by investing in income generating assets, Trade Financing Transations, Leasing Transactions, Income Funds and Murabaha transactions, either directly or by way of Shari'a compliant investment funds.",
+   "p": 1
+  },
+  {
+   "t": "h2",
+   "num": "b)",
+   "text": "Key Fund Facts:",
+   "p": 1
+  },
+  {
+   "t": "kv",
+   "caption": "",
+   "rows": [
+    [
+     "Fund Inception Date",
+     "19 January 2021"
+    ],
+    [
+     "Initial Unit Price (at the Initial Offering)",
+     "SAR 10"
+    ],
+    [
+     "Fund Size *",
+     "SAR 427,817,526"
+    ],
+    [
+     "Fund Type",
+     "Closed-ended Traded Public Fund"
+    ],
+    [
+     "Fund Currency",
+     "SAR"
+    ],
+    [
+     "Risk Level",
+     "High"
+    ],
+    [
+     "Benchmark",
+     "12 months Term SOFR + 300 bps"
+    ],
+    [
+     "Frequency of Dividend Distribution (if any)",
+     "Semi Annually, in February and August of each Year"
+    ],
+    [
+     "Ratio of Management Fees of Underlying Funds",
+     "0.26%"
+    ],
+    [
+     "Investment Advisor and Fund Sub-Manager",
+     "N/A"
+    ],
+    [
+     "Number of Days Weighted Average (if any)",
+     "92 days"
+    ]
+   ],
+   "p": 1
+  },
+  {
+   "t": "note",
+   "text": "* Total Asset Value as at 30 September 2025 (unaudited).",
+   "p": 1
+  },
+  {
+   "t": "h2",
+   "num": "c)",
+   "text": "Definitions:",
+   "p": 1
+  },
+  {
+   "t": "kv",
+   "caption": "",
+   "rows": [
+    [
+     "Standard Deviation",
+     "Standard Deviation is a measure of risk. It is calculated as any volatility in returns over a period of time. The lower the volatility, the more homogeneous the set of returns."
+    ],
+    [
+     "Sharpe Ratio",
+     "Sharpe Ratio is a risk-adjusted performance measure. It is calculated as the difference of the Fund Manager excess return over the risk-free rate, divided by the Standard Deviation. The greater a portfolio's Sharpe Ratio, the better its risk-adjusted performance."
+    ],
+    [
+     "Tracking Error",
+     "Tracking Error is a measure of risks. It is calculated as the Standard Deviation between the Fund Manager's return and the Benchmark's return. The lower the Tracking Error, the lower the Fund Manager deviates from the Benchmark."
+    ],
+    [
+     "Beta",
+     "Beta is a measure of the average historical sensitivity of the Fund's returns compared to market returns. It is calculated by using the covariance of the Fund and the market on the variance of the market,"
+    ],
+    [
+     "Alpha",
+     "Alpha measures any excess return achieved by the Fund compared to the performance of the index."
+    ],
+    [
+     "Information Ratio",
+     "Information Ratio is a risk-adjusted performance measure. It is calculated as the active return of the Fund Manager, divided by its tracking error. The higher the Information ratio, the higher the Fund Manager ability to generate excess returns per Unit of excess risk."
+    ]
+   ],
+   "p": 1
+  },
+  {
+   "t": "h2",
+   "num": "d)",
+   "text": "Fund Manager's Commentary:",
+   "p": 1
+  },
+  {
+   "t": "p",
+   "text": "The Fund Manager continues to closely monitor the exit process from its \"Prestige Premium Agricultural\" income fund. The most recent valuation of Prestige Premium Agricultural Income Fund (US $ 25.14 per Unit) received by the Fund Manager was applied to the most recent valuation of Alkhabeer Diversifed Income Traded Fund. Unitholders will be kept informed of any material developments as and when they occur.",
+   "p": 1
+  },
+  {
+   "t": "p",
+   "text": "The Fund Manager also acknowledges that the exit process currently in progress by the Fund Manager, involves a number of risks, including:",
+   "p": 1
+  },
+  {
+   "t": "ul",
+   "items": [
+    "Potential delay in the exit time line or generating less than expected returns.",
+    "Decrease of the investment value if underlying assets are sold at less than their book value.",
+    "Risk of inability to recover the full value of the invested capital in the event the Fund faces unforeseen additional obligations or expenses after its liquidation."
+   ],
+   "p": 1
+  },
+  {
+   "t": "h2",
+   "num": "e)",
+   "text": "Contact Information:",
+   "p": 1
+  },
+  {
+   "t": "kv",
+   "caption": "",
+   "rows": [
+    [
+     "Telephone Number",
+     "+966 12 658 8888"
+    ],
+    [
+     "Website",
+     "www.alkhabeer.com"
+    ],
+    [
+     "Email",
+     "info@alkhabeer.com"
+    ]
+   ],
+   "p": 1
+  },
+  {
+   "t": "h2",
+   "num": "f)",
+   "text": "Price Information as at the End of the Reporting Quarter (September 2025):",
+   "p": 2
+  },
+  {
+   "t": "kv",
+   "caption": "",
+   "rows": [
+    [
+     "Unit Price as at the end of Q3",
+     "SAR 5.57"
+    ],
+    [
+     "Change in Unit Price Compared to Previous Quarter",
+     "-5.75%"
+    ],
+    [
+     "Dual Unit Price of Money Market Funds and Fixed Income Debt Funds",
+     "N/A"
+    ],
+    [
+     "Total Fund Units",
+     "47,281,470 Units"
+    ],
+    [
+     "Fund's Net Asset Value",
+     "SAR 425,271,686"
+    ],
+    [
+     "Price/Equity Ratio (P/E)",
+     "N/A"
+    ]
+   ],
+   "p": 2
+  },
+  {
+   "t": "h2",
+   "num": "g)",
+   "text": "Fund Information as at the End of Q3 (September 2025):",
+   "p": 2
+  },
+  {
+   "t": "table",
+   "caption": "",
+   "head": [
+    "Item",
+    "Saudi Riyal",
+    "%"
+   ],
+   "rows": [
+    [
+     "Total Expense Ratio (TER) to Fund's Average Net Asset Value",
+     "SAR 2,630,743",
+     "0.62%"
+    ],
+    [
+     "Ratio of Loans to Fund's Total Asset Value",
+     "N/A",
+     "N/A"
+    ],
+    [
+     "Percentage of Dealing Expenses to Fund's Average Net Asset Value",
+     "N/A",
+     "N/A"
+    ],
+    [
+     "Percentage of Fund Manager's Investment to Fund's Net Asset Value",
+     "N/A",
+     "N/A"
+    ],
+    [
+     "Distributed Dividends",
+     "SAR 9,456,294",
+     "2.22%"
+    ]
+   ],
+   "p": 2
+  },
+  {
+   "t": "h2",
+   "num": "h)",
+   "text": "Information on Ownership of Fund Investments:",
+   "p": 2
+  },
+  {
+   "t": "kv",
+   "caption": "",
+   "rows": [
+    [
+     "Freehold",
+     "100%"
+    ],
+    [
+     "Leasehold",
+     "0%"
+    ]
+   ],
+   "p": 2
+  },
+  {
+   "t": "h2",
+   "num": "i)",
+   "text": "Disclaimer:",
+   "p": 2
+  },
+  {
+   "t": "p",
+   "text": "This document does not constitute an offer to buy, subscribe or participate in any way in Alkhabeer Diversified Income Traded Fund, nor shall it (or any part of it) form the basis of, or be relied on, in connection with, or act as inducement to enter into any contract whatsoever. Prospective investors should read carefully Alkhabeer Diversified Income Traded Fund’s Terms and Conditions and their contents related to investment risks, as well as other Alkhabeer Diversified Income Traded Fund documents prior to making any investment decision. Alkhabeer Diversified Income Traded Fund documents are available on Alkhabeer Capital’s website www.alkhabeer.com. This investment is not a cash deposit with a local bank. The value of the amount invested and any other income which may arise therefrom may increase or decrease. All prospective investors are required to make their own determination with their own financial and legal advisors and to evaluate all risks involved. No assurance can be given that the targeted and projected results will be achieved. Moreover, past performance of Alkhabeer Diversified Income Traded Fund is not a guarantee of the Fund’s future results. By investing in the Fund, the investor acknowledges having read and accepted Alkhabeer Diversified Income Traded Fund’s Terms and Conditions, The Fund Manager or any of its affiliates shall not be liable for any financial loss which may be suffered by the Fund, unless such loss is deliberately caused by the Fund Manager.",
+   "p": 2
+  },
+  {
+   "t": "h2",
+   "num": "j)",
+   "text": "Graph Showing the Fund's Top Ten Investments:",
+   "p": 3
+  },
+  {
+   "t": "chart",
+   "kind": "bar",
+   "title": "Fund's Top Ten Investments",
+   "unit": "%",
+   "series": [
+    {
+     "label": "Lakemore Aquatine Fund IV",
+     "value": 7.64
+    },
+    {
+     "label": "Leasing Transactions I",
+     "value": 4.86
+    },
+    {
+     "label": "ATEL - Private Debt Fund",
+     "value": 4.5
+    },
+    {
+     "label": "Lakemore Aquatine Fund V",
+     "value": 4.44
+    },
+    {
+     "label": "Leasing Transactions I",
+     "value": 4.35
+    },
+    {
+     "label": "Leasing Transactions II",
+     "value": 3.86
+    },
+    {
+     "label": "Saudi Electricity Sukuk",
+     "value": 3.56
+    },
+    {
+     "label": "Prestige Premium Fund",
+     "value": 2.9
+    },
+    {
+     "label": "Leasing Translation III",
+     "value": 2.63
+    },
+    {
+     "label": "Leasing Transaction IV",
+     "value": 2.42
+    }
+   ],
+   "p": 3,
+   "note": "approximate, measured from the original chart (bar lengths of the vector drawing against the axis)"
+  },
+  {
+   "t": "h2",
+   "num": "k)",
+   "text": "Statement of Dividends Distributed to Unitholders (if any), as follows:",
+   "p": 3
+  },
+  {
+   "t": "kv",
+   "caption": "",
+   "rows": [
+    [
+     "Total Dividend Distributions for Q3",
+     "SAR 9,456,294.00"
+    ],
+    [
+     "Number of Outstanding Units Receiving Dividends in Q3",
+     "47,281,470 Units"
+    ],
+    [
+     "Distributed Dividends per Unit in Q3",
+     "SAR 0.20"
+    ],
+    [
+     "Ratio of Distributions to Fund's Net Asset Value",
+     "2.22%"
+    ],
+    [
+     "Entitlement to Cash Distributions Paid during the Reporting Quarter",
+     "According to the Shareholders' Register as at the close of Business on August 17, 2025"
+    ]
+   ],
+   "p": 3
+  },
+  {
+   "t": "h2",
+   "num": "l)",
+   "text": "Credit Rating of Underlying Debt Instruments of the Fund's Top Ten Investments, as follows:",
+   "p": 3
+  },
+  {
+   "t": "kv",
+   "caption": "",
+   "rows": [
+    [
+     "Credit Rating of the Debt Instrument",
+     "Aa3"
+    ],
+    [
+     "Credit Rating of the Issuer of the Debt Instrument",
+     "Aa3"
+    ],
+    [
+     "Name of the Credit Rating Agency",
+     "Moody’s"
+    ],
+    [
+     "Date of the Credit Rating",
+     "27 November 2024"
+    ]
+   ],
+   "p": 3
+  },
+  {
+   "t": "h2",
+   "num": "m)",
+   "text": "Graph Showing the Distribution of Fund Assets (by Sector/Geography):",
+   "p": 4
+  },
+  {
+   "t": "chart",
+   "kind": "pie",
+   "title": "Distribution of Investments by Geography",
+   "unit": "%",
+   "series": [
+    {
+     "label": "Asia",
+     "value": 3.0
+    },
+    {
+     "label": "North America",
+     "value": 53.0
+    },
+    {
+     "label": "Europe",
+     "value": 31.0
+    },
+    {
+     "label": "KSA",
+     "value": 8.0
+    },
+    {
+     "label": "KSA ex GCC",
+     "value": 5.0
+    }
+   ],
+   "p": 4
+  },
+  {
+   "t": "chart",
+   "kind": "pie",
+   "title": "Ratios of Investment Concentration in the Fund's Portfolio *",
+   "unit": "%",
+   "series": [
+    {
+     "label": "Trade Financing",
+     "value": 35.0
+    },
+    {
+     "label": "Leasing Transactions",
+     "value": 32.0
+    },
+    {
+     "label": "Income Funds",
+     "value": 20.0
+    },
+    {
+     "label": "Sukuk",
+     "value": 7.0
+    },
+    {
+     "label": "Cash",
+     "value": 6.0
+    }
+   ],
+   "p": 4
+  },
+  {
+   "t": "note",
+   "text": "* Average investment term of the Fund is 2-3 years.",
+   "p": 4
+  },
+  {
+   "t": "h2",
+   "num": "n)",
+   "text": "Returns:",
+   "p": 4
+  },
+  {
+   "t": "table",
+   "caption": "",
+   "head": [
+    "Item",
+    "3 Months (End of Q3)",
+    "Year to Date (YTD) **",
+    "One Year ***",
+    "3 Years",
+    "5 Years"
+   ],
+   "rows": [
+    [
+     "Total Return to Net Asset Value per Unit (Fund Performance) *",
+     "1.28%",
+     "-2.02%",
+     "-2.14%",
+     "8.00%",
+     "N/A"
+    ],
+    [
+     "Benchmark Performance",
+     "1.72%",
+     "5.18%",
+     "7.05%",
+     "25.29%",
+     "N/A"
+    ],
+    [
+     "Performance Spread",
+     "-0.44%",
+     "-7.20%",
+     "-9.19%",
+     "-17.29%",
+     "N/A"
+    ]
+   ],
+   "p": 4
+  },
+  {
+   "t": "note",
+   "text": "* Total Return = NAV/Unit plus dividend distributions.\n** For the period from 1 January 2025 to 30 September 2025.\n*** For the period from 30 September 2024 to 30 September 2025.\n**** For the period from 30 September 2022 to 30 September 2025.",
+   "p": 4
+  },
+  {
+   "t": "h2",
+   "num": "o)",
+   "text": "Performance and Risk:",
+   "p": 4
+  },
+  {
+   "t": "table",
+   "caption": "",
+   "head": [
+    "Performance and Risk Criteria",
+    "3 Months (End of Q3)",
+    "Year to Date (YTD) **",
+    "One Year ***",
+    "3 Years",
+    "5 Years"
+   ],
+   "rows": [
+    [
+     "Standard Deviation",
+     "10.21",
+     "8.34",
+     "8.01",
+     "14.66",
+     "N/A"
+    ],
+    [
+     "Sharpe Ratio",
+     "-1.04",
+     "-2.04",
+     "-1.18",
+     "-0.44",
+     "N/A"
+    ],
+    [
+     "Tracking Error",
+     "10.34",
+     "8.40",
+     "8.07",
+     "14.64",
+     "N/A"
+    ],
+    [
+     "Beta",
+     "(25.74)",
+     "(1.34)",
+     "(2.04)",
+     "1.13",
+     "N/A"
+    ],
+    [
+     "Alpha",
+     "184.31%",
+     "-3.33%",
+     "9.54%",
+     "-10.56%",
+     "N/A"
+    ],
+    [
+     "Information Ratio",
+     "-1.28%",
+     "-2.54%",
+     "-1.61%",
+     "-0.65%",
+     "N/A"
+    ]
+   ],
+   "p": 4
+  },
+  {
+   "t": "h2",
+   "num": "p)",
+   "text": "Equations Used to Calculate Performance and Risk:",
+   "p": 5
+  },
+  {
+   "t": "table",
+   "caption": "",
+   "head": [
+    "",
+    "",
+    ""
+   ],
+   "rows": [
+    [
+     "Standard Deviation",
+     "σp = √[ 1/(N − 1) · Σ(Rp,i − Rp)² ]",
+     "where\nRp,i = Portfolio return in period i\nRp = Average portfolio return\nN = Number of periods"
+    ],
+    [
+     "Sharpe Ratio",
+     "[(Average Annualised Return − Risk Free Rate) ÷ Standard Deviation]",
+     ""
+    ],
+    [
+     "Tracking Error",
+     "TE = √[ 1/(N − 1) · Σ[(Rp,i − Rb,i) − (Rp − Rb)]² ]",
+     "where\nRp,i = Portfolio return in period i\nRb,i = Portfolio return in period i\nRp = Average portfolio return\nRb = Average portfolio return\nN = Number of periods"
+    ],
+    [
+     "Beta",
+     "β = Cov(Rp, Rb) / Var (Rb)",
+     "where\nCov(Rp, Rb)= covariance between portfolio and benchmark returns\nVar (Rb)= variance of benchmark returns"
+    ],
+    [
+     "Alpha",
+     "α = Rp − [ Rf + β ∗ (Rb − Rf)]",
+     "where\n(Rp)= average portfolio return\n(Rb)= average benchmark return\n(Rf)= risk free rate\nβ= portfolio beta"
+    ],
+    [
+     "Information Ratio",
+     "IR = (Rp − Rb) / σ (Rp − Rb)",
+     "where\nRp = Return of the portfolio\nRb = Return of the benchmark\nRp-Rb = Active return (the difference between portfolio and benchmark returns\nσ(Rp−Rb) = Tracking error (standard deviation of the active return)"
+    ]
+   ],
+   "p": 5,
+   "note": "formulas transcribed from the equation graphics of the original page"
+  },
+  {
+   "t": "h2",
+   "num": "q)",
+   "text": "Graph Depicting Performance Since the Inception of the Fund:",
+   "p": 6
+  },
+  {
+   "t": "chart",
+   "kind": "line",
+   "title": "Graph Depicting Performance Since the Inception of the Fund",
+   "unit": "SAR",
+   "series": [
+    {
+     "label": "19 Jan 2021",
+     "value": 10.06
+    },
+    {
+     "label": "19 Mar 2021",
+     "value": 9.05
+    },
+    {
+     "label": "19 May 2021",
+     "value": 9.33
+    },
+    {
+     "label": "19 Jul 2021",
+     "value": 9.22
+    },
+    {
+     "label": "19 Sep 2021",
+     "value": 9.13
+    },
+    {
+     "label": "19 Nov 2021",
+     "value": 8.94
+    },
+    {
+     "label": "19 Jan 2022",
+     "value": 8.91
+    },
+    {
+     "label": "19 Mar 2022",
+     "value": 8.61
+    },
+    {
+     "label": "19 May 2022",
+     "value": 7.99
+    },
+    {
+     "label": "19 Jul 2022",
+     "value": 7.23
+    },
+    {
+     "label": "19 Sep 2022",
+     "value": 7.29
+    },
+    {
+     "label": "19 Nov 2022",
+     "value": 6.95
+    },
+    {
+     "label": "19 Jan 2023",
+     "value": 6.32
+    },
+    {
+     "label": "19 Mar 2023",
+     "value": 6.23
+    },
+    {
+     "label": "19 May 2023",
+     "value": 6.88
+    },
+    {
+     "label": "19 Jul 2023",
+     "value": 7.25
+    },
+    {
+     "label": "19 Sep 2023",
+     "value": 7.03
+    },
+    {
+     "label": "19 Nov 2023",
+     "value": 6.8
+    },
+    {
+     "label": "19 Jan 2024",
+     "value": 7.19
+    },
+    {
+     "label": "19 Mar 2024",
+     "value": 6.85
+    },
+    {
+     "label": "19 May 2024",
+     "value": 6.86
+    },
+    {
+     "label": "19 Jul 2024",
+     "value": 6.78
+    },
+    {
+     "label": "19 Sep 2024",
+     "value": 6.32
+    },
+    {
+     "label": "19 Nov 2024",
+     "value": 6.31
+    },
+    {
+     "label": "19 Jan 2025",
+     "value": 6.53
+    },
+    {
+     "label": "19 Mar 2025",
+     "value": 6.1
+    },
+    {
+     "label": "19 Apr 2025",
+     "value": 6.0
+    },
+    {
+     "label": "19 May 2025",
+     "value": 5.98
+    },
+    {
+     "label": "19 Jun 2025",
+     "value": 5.92
+    },
+    {
+     "label": "19 Jul 2025",
+     "value": 5.81
+    },
+    {
+     "label": "19 Aug 2025",
+     "value": 5.77
+    },
+    {
+     "label": "19 Sep 2025",
+     "value": 5.61
+    },
+    {
+     "label": "30 Sep 2025",
+     "value": 5.63
+    }
+   ],
+   "p": 6,
+   "note": "approximate, measured from the original chart (vector price path sampled at the dated axis ticks)"
+  },
+  {
+   "t": "note",
+   "text": "As at 30 September 2025",
+   "p": 6
+  },
+  {
+   "t": "h2",
+   "num": "",
+   "text": "FOR FURTHER INFORMATION",
+   "p": 6
+  },
+  {
+   "t": "p",
+   "text": "Alkhabeer Capital\nPO Box 128289, Jeddah 21362\nKingdom of Saudi Arabia\nTel: +966 12 658 8888\nFax: +966 12 658 6663\nEmail: info@alkhabeer.com\nCR No: 4030177445\nCMA License No: 07074-37\nalkhabeer.com",
+   "p": 6
+  }
+ ]
+}

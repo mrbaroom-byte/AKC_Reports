@@ -1,0 +1,773 @@
+{
+ "id": "q3-2022",
+ "lang": "en",
+ "title": "ALKHABEER GROWTH AND INCOME TRADED FUND",
+ "subtitle": "Investor Report",
+ "date": "Q3 2022",
+ "src_file": "pdf/fd496284.pdf",
+ "src_pages": 4,
+ "blocks": [
+  {
+   "t": "h2",
+   "num": "",
+   "text": "FUND OVERVIEW",
+   "p": 1
+  },
+  {
+   "t": "p",
+   "text": "Alkhabeer Growth and Income Traded Fund (“the Fund”) is a closed-ended Shari’a-compliant investment traded public equity fund established in accordance with the applicable laws and regulations of the Kingdom of Saudi Arabia and regulated by the Capital Market Authority (CMA). The Fund’s investment objective is to increase the Fund’s Net Asset Value by boosting the performance of the Fund’s investments in the long term and generating current income to investors from the dividend distributions of the companies in which the Fund invests, in addition to part of the capital appreciation resulting from the growth of market value of the securities invested in. This is achieved by investing in a diversified portfolio of global equities, public and private equities, initial public offerings of companies, private placements, cash and cash equivalents.",
+   "p": 1
+  },
+  {
+   "t": "h2",
+   "num": "",
+   "text": "KEY FUND FACTS",
+   "p": 1
+  },
+  {
+   "t": "kv",
+   "caption": "",
+   "rows": [
+    [
+     "TADAWUL SYMBOL",
+     "4701"
+    ],
+    [
+     "BLOOMBERG SYMBOL",
+     "AKGRINF AB EQUITY"
+    ],
+    [
+     "FUND TYPE",
+     "Closed-ended Traded Public Equity Fund"
+    ],
+    [
+     "LISTING DATE",
+     "27 April 2022"
+    ],
+    [
+     "FUND TERM",
+     "99 years, starting as from the Listing Date, renewable"
+    ],
+    [
+     "NET ASSET VALUE PER UNIT",
+     "SAR 8.7698"
+    ],
+    [
+     "FUND ASSETS SIZE*",
+     "SAR 879,134,310"
+    ],
+    [
+     "FUND’S TOTAL CAPITAL",
+     "SAR 1 BILLION"
+    ],
+    [
+     "FINANCING AMOUNT*",
+     "SAR 0.00"
+    ],
+    [
+     "RATIO OF LOANS TO FUND’S TOTAL ASSET VALUE",
+     "0.00%"
+    ],
+    [
+     "RATIO OF LOANS TO FUND’S NET ASSET VALUE AS AT THE END OF THE REPORTING QUARTER",
+     "0.00%"
+    ],
+    [
+     "VALUE AND PERCENTAGE OF FUND MANAGER’S INVESTMENT TO FUND’S NET ASSET VALUE AS AT THE END OF THE REPORTING QUARTER",
+     "0.00%"
+    ],
+    [
+     "RISK LEVEL",
+     "High"
+    ],
+    [
+     "FUND CURRENCY",
+     "Saudi Arabian Riyal (SAR)"
+    ],
+    [
+     "INVESTMENT ADVISOR AND FUND SUB-MANAGER",
+     "-"
+    ],
+    [
+     "RATIO OF UNDERLYING FUNDS’ MANAGEMENT FEES",
+     "-"
+    ]
+   ],
+   "p": 1
+  },
+  {
+   "t": "note",
+   "text": "* As at 29 September 2022 (Unaudited).",
+   "p": 1
+  },
+  {
+   "t": "h2",
+   "num": "",
+   "text": "FUND PORTFOLIO INVESTMENT CONCENTRATION RATIOS",
+   "p": 1
+  },
+  {
+   "t": "chart",
+   "kind": "pie",
+   "title": "FUND PORTFOLIO INVESTMENT CONCENTRATION RATIOS",
+   "unit": "%",
+   "series": [
+    {
+     "label": "Cash and Cash Equivalents",
+     "value": 4.68
+    },
+    {
+     "label": "Equity Funds",
+     "value": 17.02
+    },
+    {
+     "label": "Global and Local Listed Shares",
+     "value": 78.3
+    }
+   ],
+   "p": 1
+  },
+  {
+   "t": "note",
+   "text": "The chart shows the Fund's largest investments and sector allocation of investments.",
+   "p": 1
+  },
+  {
+   "t": "h2",
+   "num": "",
+   "text": "FINANCIAL INDICATORS*",
+   "p": 1
+  },
+  {
+   "t": "kv",
+   "caption": "",
+   "rows": [
+    [
+     "VALUATION FREQUENCY",
+     "Daily"
+    ],
+    [
+     "FUND’S TOTAL ASSET VALUE*",
+     "SAR 879,134,310"
+    ],
+    [
+     "FUND UNITS’ NET ASSET VALUE*",
+     "SAR 876,980,376"
+    ],
+    [
+     "AMOUNT OF TRANSACTION EXPENSES TO FUND NET ASSET VALUE FOR THE REPORTING QUARTER",
+     "SAR 257,636"
+    ],
+    [
+     "RATIO OF TRANSACTION EXPENSES FOR THE REPORTING QUARTER TO FUND’S AVERAGE NET ASSET VALUE****",
+     "0.03%"
+    ],
+    [
+     "RATIO OF TOTAL EXPENSES AND FEES TO FUND’S TOTAL ASSET VALUE**",
+     "0.37%"
+    ],
+    [
+     "RATIO OF FUND'S COSTS TO FUND'S TOTAL ASSET VALUE***",
+     "0.37%"
+    ],
+    [
+     "RATIO OF FUND’S COSTS TO FUND’S AVERAGE NET ASSET VALUE***",
+     "0.36%"
+    ],
+    [
+     "TOTAL EXPENSES AND FEES FOR THE REPORTING QUARTER",
+     "SAR 3,270,229"
+    ],
+    [
+     "RATIO OF TOTAL EXPENSES AND FEES FOR THE REPORTING QUARTER TO FUND’S AVERAGE NET ASSET VALUE**",
+     "0.36%"
+    ]
+   ],
+   "p": 1
+  },
+  {
+   "t": "note",
+   "text": "* As at 29 September 2022 (Unaudited).\n** Fund's expenses and fees are total Fund expenses during the reporting quarter, excluding financing costs.\n*** Fund's costs are all Fund's fees and expenses, including financing costs.\n**** Fund's average net asset value during the reporting quarter = SAR 906,560,828.",
+   "p": 1
+  },
+  {
+   "t": "h2",
+   "num": "",
+   "text": "DISTRIBUTION OF INVESTMENTS BY GEOGRAPHY",
+   "p": 1
+  },
+  {
+   "t": "chart",
+   "kind": "pie",
+   "title": "DISTRIBUTION OF INVESTMENTS BY GEOGRAPHY",
+   "unit": "%",
+   "series": [
+    {
+     "label": "North America",
+     "value": 47.13
+    },
+    {
+     "label": "Europe",
+     "value": 45.38
+    },
+    {
+     "label": "Saudi Arabia",
+     "value": 2.02
+    },
+    {
+     "label": "Asia",
+     "value": 0.79
+    },
+    {
+     "label": "Cash and Cash Equivalents",
+     "value": 4.68
+    }
+   ],
+   "p": 1
+  },
+  {
+   "t": "h2",
+   "num": "",
+   "text": "FUND ASSETS INFORMATION",
+   "p": 2
+  },
+  {
+   "t": "kv",
+   "caption": "",
+   "rows": [
+    [
+     "LISTED SHARES",
+     "SAR 832,842,534"
+    ],
+    [
+     "TOTAL CASH AND CASH EQUIVALENT",
+     "SAR 46,291,776"
+    ]
+   ],
+   "p": 2
+  },
+  {
+   "t": "h2",
+   "num": "",
+   "text": "FUND MARKET VALUE INFORMATION*",
+   "p": 2
+  },
+  {
+   "t": "kv",
+   "caption": "",
+   "rows": [
+    [
+     "AS AT THE LISTING DATE",
+     "SAR 1,000,000,000"
+    ],
+    [
+     "AS AT 30 JUNE 2022",
+     "SAR 691,000,000"
+    ],
+    [
+     "AS AT 29 SEPTEMBER 2022",
+     "SAR 617,000,000"
+    ]
+   ],
+   "p": 2
+  },
+  {
+   "t": "h2",
+   "num": "",
+   "text": "NET ASSET VALUE AND UNIT PRICE PERFORMANCE*",
+   "p": 2
+  },
+  {
+   "t": "chart",
+   "kind": "bar",
+   "title": "NET ASSET VALUE AND UNIT PRICE PERFORMANCE*",
+   "unit": "SAR",
+   "series": [
+    {
+     "label": "Net Unit Price (SAR)",
+     "value": 10.0,
+     "group": "27 Apr 2022 (Listing Date)"
+    },
+    {
+     "label": "Market Unit Price (SAR)",
+     "value": 10.0,
+     "group": "27 Apr 2022 (Listing Date)"
+    },
+    {
+     "label": "Net Unit Price (SAR)",
+     "value": 9.4,
+     "group": "30-Jun-22"
+    },
+    {
+     "label": "Market Unit Price (SAR)",
+     "value": 6.9,
+     "group": "30-Jun-22"
+    },
+    {
+     "label": "Net Unit Price (SAR)",
+     "value": 8.8,
+     "group": "29-Sep-22"
+    },
+    {
+     "label": "Market Unit Price (SAR)",
+     "value": 6.2,
+     "group": "29-Sep-22"
+    }
+   ],
+   "p": 2
+  },
+  {
+   "t": "note",
+   "text": "* Based on the Unit Price.",
+   "p": 2
+  },
+  {
+   "t": "h2",
+   "num": "",
+   "text": "FUND UNITS INFORMATION",
+   "p": 2
+  },
+  {
+   "t": "kv",
+   "caption": "",
+   "rows": [
+    [
+     "UNIT PRICE AS AT THE END OF Q3 (29 SEPTEMBR 2022)",
+     "SAR 6.17"
+    ],
+    [
+     "CHANGE IN UNIT PRICE DURING THE CURRENT QUARTER (FROM 30 JUNE 2022 TO 29 SEPTEMBER 2022)",
+     "-10.71%"
+    ],
+    [
+     "UNIT PRICE PERFORMANCE SINCE THE LISTING DATE (FROM THE LISTING DATE TO END Q3 2022)",
+     "-38.30%"
+    ],
+    [
+     "52-WEEK HIGH",
+     "SAR 9.06"
+    ],
+    [
+     "52-WEEK LOW",
+     "SAR 6.13"
+    ],
+    [
+     "NUMBER OF OUTSTANDING UNITS",
+     "100,000,000 Units"
+    ]
+   ],
+   "p": 2
+  },
+  {
+   "t": "h2",
+   "num": "",
+   "text": "DIVIDEND DISTRIBUTION",
+   "p": 2
+  },
+  {
+   "t": "kv",
+   "caption": "",
+   "rows": [
+    [
+     "DIVIDEND DISTRIBUTION POLICY",
+     "The Fund Manager may at its discretion distribute 100% of the net returns on the Fund's investments, which only include the distributions of Fund's underlying listed shares and may distribute up to 50% of the realized and unrealized net capital gains, twice a year, within Forty (40) business days after the date of issue of the semi-annual and annual financial statements. Distributions (if any) will be announced within ten (10) business days after the date of issue of the semi-annual and annual financial statements. Details of the cash distributions will be announced on Saudi Tadawul's website."
+    ],
+    [
+     "TOTAL DIVIDEND DISTRIBUTIONS FOR THE REPORTING QUARTER",
+     "SAR 0.00"
+    ],
+    [
+     "TOTAL DIVIDEND DISTRIBUTIONS FOR THE LAST SEMI-ANNUAL PERIOD",
+     "SAR 0.00"
+    ],
+    [
+     "DIVIDEND DISTRIBUTIONS FOR THE LAST SEMI-ANNUAL PERIOD PER UNIT",
+     "SAR 0.00"
+    ],
+    [
+     "RATIO OF DISTRIBUTED DIVIDENDS IN THE REPORTING QUARTER TO INITIAL UNIT PRICE",
+     "0.00%"
+    ],
+    [
+     "RATIO OF DISTRIBUTED DIVIDENDS TO UNIT PRICE",
+     "0.00%"
+    ],
+    [
+     "GAINS RECEIVED ON THE FUND'S UNDERLYING LISTED SHARES",
+     "SAR 2,318,349"
+    ],
+    [
+     "UNREALIZED (LOSS) ON THE FUND'S INVESTMENTS",
+     "SAR (100,806,364)"
+    ],
+    [
+     "(LOSS) ON FOREIGN CURRENCY RATE DIFFERENCES",
+     "SAR (14,699,377)"
+    ],
+    [
+     "TOTAL INCOME FOR THE REPORTING QUARTER",
+     "SAR (55,888,872)"
+    ],
+    [
+     "TOTAL INCOME FOR THE REPORTING QUARTER TO UNIT PRICE AS AT 29 SEPTEMBER 2022",
+     "-9.06%"
+    ]
+   ],
+   "p": 2
+  },
+  {
+   "t": "h2",
+   "num": "",
+   "text": "FUND PERFORMANCE CRITERIA AND INDICATORS",
+   "p": 2
+  },
+  {
+   "t": "kv",
+   "caption": "",
+   "rows": [
+    [
+     "BENCHMARK",
+     "Alkhabeer Global Equity Index"
+    ],
+    [
+     "INITIAL UNIT PRICE (AT THE INITIAL OFFERING)",
+     "SAR 10"
+    ],
+    [
+     "TOTAL RETURN TO NET ASSET VALUE PER UNIT SINCE THE DATE OF INCEPTION",
+     "-12.31%"
+    ]
+   ],
+   "p": 2
+  },
+  {
+   "t": "h2",
+   "num": "",
+   "text": "DESCRIPTION OF THE FUND’S BENCHMARK",
+   "p": 3
+  },
+  {
+   "t": "p",
+   "text": "Alkhabeer Global Equity Index is an index especially created for the Fund in collaboration with the Index Service Provider, who will calculate the valuations of the companies that are included in the Index and will manage the Index on behalf of the Fund. The Index includes companies which are diversified by sector and size in the largest global capital markets, as well as the largest leading companies in the Kingdom of Saudi Arabia. The companies will be filtered based on a market value exceeding US $ 100 million, and a trade value exceeding US $ 1 million per day. The Index includes 160 global companies representing the largest global capital markets, in addition to the largest 10 listed companies on the Saudi Stock Exchange, compliant with the guidelines of the Shari’a Supervisory Committee. The global companies included in the index are divided by market cap into three categories: the largest 70 in terms of market value of free float shares among large market cap companies, the largest 50 companies in terms of market value of free float shares among medium market cap companies, and the largest 40 companies in terms of market value of free float shares among small market cap companies.",
+   "p": 3
+  },
+  {
+   "t": "p",
+   "text": "Large market cap companies are defined as companies representing the largest market capitalization. It is the segment which represents up to 70% of the aggregate capitalization of the market combined, while the medium cap segment represents more than 70% up to 85% of the aggregate market capitalization, and the small cap represents more than 85% up to 100% of the aggregate market capitalization.",
+   "p": 3
+  },
+  {
+   "t": "h2",
+   "num": "",
+   "text": "PERFORMANCE ASSESSMENT CRITERIA AND INDICATORS*",
+   "p": 3
+  },
+  {
+   "t": "table",
+   "caption": "",
+   "head": [
+    "",
+    "ALKHABEER GROWTH AND INCOME TRADED FUND",
+    "ALKHABEER GLOBAL EQUITY INDEX"
+   ],
+   "rows": [
+    [
+     "NET ASSET VALUE PER UNIT AS AT THE BEGINNING OF THE PERIOD",
+     "SAR 9.3614",
+     "87.3440"
+    ],
+    [
+     "NET ASSET VALUE PER UNIT AS AT THE END OF THE PERIOD",
+     "SAR 8.7698",
+     "81.6604"
+    ],
+    [
+     "UNIT PERFORMANCE",
+     "-6.32%",
+     "-6.51%"
+    ]
+   ],
+   "p": 3
+  },
+  {
+   "t": "h2",
+   "num": "",
+   "text": "OWNERSHIP OF FUND INVESTMENTS",
+   "p": 3
+  },
+  {
+   "t": "table",
+   "caption": "",
+   "head": [
+    "OWNERSHIP",
+    "PERCENTAGE (%)"
+   ],
+   "rows": [
+    [
+     "FREEHOLD",
+     "100%"
+    ],
+    [
+     "LEASEHOLD",
+     "0%"
+    ]
+   ],
+   "p": 3
+  },
+  {
+   "t": "h2",
+   "num": "",
+   "text": "RETURNS",
+   "p": 3
+  },
+  {
+   "t": "table",
+   "caption": "",
+   "head": [
+    "ITEM",
+    "REPORTING QUARTER"
+   ],
+   "rows": [
+    [
+     "TOTAL RETURN TO NET ASSET VALUE PER UNIT",
+     "-6.32%"
+    ],
+    [
+     "BENCHMARK PERFORMANCE",
+     "-6.51%"
+    ],
+    [
+     "PERFORMANCE SPREAD",
+     "0.19%"
+    ]
+   ],
+   "p": 3
+  },
+  {
+   "t": "h2",
+   "num": "",
+   "text": "PERFORMANCE AND RISKS",
+   "p": 3
+  },
+  {
+   "t": "table",
+   "caption": "",
+   "head": [
+    "PERFORMANCE AND RISKS CRITERIA",
+    "REPORTING QUARTER"
+   ],
+   "rows": [
+    [
+     "STANDARD DEVIATION1",
+     "8.81"
+    ],
+    [
+     "SHARPE RATIO2",
+     "-1.04"
+    ],
+    [
+     "TRACKING ERROR3",
+     "7.92"
+    ],
+    [
+     "BETA4",
+     "0.59"
+    ],
+    [
+     "ALPHA5",
+     "0.16"
+    ],
+    [
+     "INFORMATION RATIO6",
+     "0.02"
+    ]
+   ],
+   "p": 3
+  },
+  {
+   "t": "note",
+   "text": "1. Standard Deviation is a measure of risk. It is calculated as any volatility in returns over a period of time. The lower the volatility, the more homogeneous the set of returns.\n2. Sharpe Ratio is a risk-adjusted performance measure. It is calculated as the difference of the Fund Manager excess return over the risk-free rate, divided by the Standard Deviation. The greater a portfolio's Sharpe Ratio, the better its risk-adjusted performance.\n3. Tracking Error is a measure of risks. It is calculated as the Standard Deviation between the Fund Manager's return and the Benchmark's return. The lower the Tracking Error, the lower the Fund Manager deviates from the Benchmark.\n4. Beta is a measure of the average historical sensitivity of the Fund's returns compared to market returns. It is calculated by using the covariance of the Fund and the market on the variance of the market.\n5. Alpha measures any excess return achieved by the Fund compared to the performance of the index.\n6. Information Ratio is a risk-adjusted performance measure. It is calculated as the active return of the Fund Manager, divided by its tracking error. The higher the Information ratio, the higher the Fund Manager ability to generate excess returns per Unit of excess risk.\nThe performance and risk parameters were calculated based on the Unit's net value.",
+   "p": 3
+  },
+  {
+   "t": "h2",
+   "num": "",
+   "text": "FUND HIGHLIGHTS AND ANY FUNDAMENTAL OR NON FUNDAMENTAL CHANGES AFFECTING THE PERFORMANCE OF THE FUND",
+   "p": 4
+  },
+  {
+   "t": "h2",
+   "num": "",
+   "text": "OVERVIEW OF GLOBAL MARKETS",
+   "p": 4
+  },
+  {
+   "t": "ul",
+   "items": [
+    "The global equity markets witnessed increasing volatility in 2022 driven fundamentally by interest rates, inflation, supply chain interruptions, China’s Zero-Covid Approach and Europe’s geo-political concerns. These pressures on the markets forced expectations of growth and earnings to be downsized across sectors and companies. Consequently, the performance of the equity markets was weak, and major global indices suffered double digit declines.",
+    "On the bright side, the IMF expected global GDP growth to be positive, reaching 3.2% in 2022. Developed markets are also expected to grow by 2.5%, while emerging markets grow by 3.6%.",
+    "Global market valuations are currently in line with their historical levels. Fund flows to equity markets are expected to increase in the coming quarters."
+   ],
+   "p": 4
+  },
+  {
+   "t": "h2",
+   "num": "",
+   "text": "FUND NET UNIT VALUE PERFORMANCE COMPARED TO THE BENCHMARK SINCE THE INCEPTION OF THE FUND",
+   "p": 4
+  },
+  {
+   "t": "chart",
+   "kind": "line",
+   "title": "FUND NET UNIT VALUE PERFORMANCE COMPARED TO THE BENCHMARK SINCE THE INCEPTION OF THE FUND",
+   "unit": "%",
+   "series": [
+    {
+     "label": "27 April 2022",
+     "value": 0.13,
+     "group": "Fund"
+    },
+    {
+     "label": "1 May 2022",
+     "value": 0.13,
+     "group": "Fund"
+    },
+    {
+     "label": "15 May 2022",
+     "value": -0.04,
+     "group": "Fund"
+    },
+    {
+     "label": "1 June 2022",
+     "value": 1.23,
+     "group": "Fund"
+    },
+    {
+     "label": "15 June 2022",
+     "value": -7.56,
+     "group": "Fund"
+    },
+    {
+     "label": "1 July 2022",
+     "value": -6.26,
+     "group": "Fund"
+    },
+    {
+     "label": "15 July 2022",
+     "value": -7.58,
+     "group": "Fund"
+    },
+    {
+     "label": "1 August 2022",
+     "value": -1.36,
+     "group": "Fund"
+    },
+    {
+     "label": "15 August 2022",
+     "value": 1.24,
+     "group": "Fund"
+    },
+    {
+     "label": "1 September 2022",
+     "value": -6.24,
+     "group": "Fund"
+    },
+    {
+     "label": "15 September 2022",
+     "value": -6.92,
+     "group": "Fund"
+    },
+    {
+     "label": "30 September 2022",
+     "value": -12.18,
+     "group": "Fund"
+    },
+    {
+     "label": "27 April 2022",
+     "value": 2.21,
+     "group": "Benchmark"
+    },
+    {
+     "label": "1 May 2022",
+     "value": 0.79,
+     "group": "Benchmark"
+    },
+    {
+     "label": "15 May 2022",
+     "value": -2.64,
+     "group": "Benchmark"
+    },
+    {
+     "label": "1 June 2022",
+     "value": 0.01,
+     "group": "Benchmark"
+    },
+    {
+     "label": "15 June 2022",
+     "value": -9.83,
+     "group": "Benchmark"
+    },
+    {
+     "label": "1 July 2022",
+     "value": -7.81,
+     "group": "Benchmark"
+    },
+    {
+     "label": "15 July 2022",
+     "value": -7.46,
+     "group": "Benchmark"
+    },
+    {
+     "label": "1 August 2022",
+     "value": -2.24,
+     "group": "Benchmark"
+    },
+    {
+     "label": "15 August 2022",
+     "value": 0.69,
+     "group": "Benchmark"
+    },
+    {
+     "label": "1 September 2022",
+     "value": -7.22,
+     "group": "Benchmark"
+    },
+    {
+     "label": "15 September 2022",
+     "value": -8.18,
+     "group": "Benchmark"
+    },
+    {
+     "label": "30 September 2022",
+     "value": -14.04,
+     "group": "Benchmark"
+    }
+   ],
+   "note": "approximate, measured from the original chart: values digitised from the chart's vector line paths (y calibrated on the printed % axis labels); dates placed linearly between the first and last plotted points",
+   "digitized": true,
+   "p": 4
+  },
+  {
+   "t": "h2",
+   "num": "",
+   "text": "FOR FURTHER INFORMATION",
+   "p": 4
+  },
+  {
+   "t": "p",
+   "text": "Alkhabeer Capital\nPO Box 128289, Jeddah 21362\nKingdom of Saudi Arabia\nTel: +966 12 658 8888\nFax: +966 12 658 6663\nEmail: info@alkhabeer.com\nCR No: 4030177445\nCMA License No: 07074-37\nalkhabeer.com",
+   "p": 4
+  },
+  {
+   "t": "h2",
+   "num": "",
+   "text": "DISCLAIMER",
+   "p": 4
+  },
+  {
+   "t": "note",
+   "text": "This document does not constitute an offer to buy, subscribe or participate in any way in Alkhabeer Growth and Income Traded Fund, nor shall it (or any part of it) form the basis of, or be relied on, in connection with, or act as inducement to enter into any contract whatsoever. Prospective investors should read carefully Alkhabeer Growth and Income Traded Fund’s Terms and Conditions and their contents related to investment risks, as well as other Alkhabeer Growth and Income Traded Fund documents prior to making any investment decision. Alkhabeer Growth and Income Traded Fund documents are available on Alkhabeer Capital’s website www.alkhabeer.com. This investment is not a cash deposit with a local bank. The value of the amount invested and any other income which may arise therefrom may increase or decrease. All prospective investors are required to make their own determination with their own financial and legal advisors and to evaluate all risks involved. No assurance can be given that the targeted and projected results will be achieved. Moreover, past performance of Alkhabeer Growth and Income Traded Fund is not a guarantee of the Fund’s future results. By investing in the Fund, the investor acknowledges having read and accepted Alkhabeer Growth and Income Traded Fund’s Terms and Conditions, The Fund Manager or any of its affiliates shall not be liable for any financial loss which may be suffered by the Fund, unless such loss is deliberately caused by the Fund Manager.",
+   "p": 4
+  }
+ ]
+}

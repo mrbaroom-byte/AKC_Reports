@@ -1,0 +1,1015 @@
+{
+ "id": "q1-2025",
+ "lang": "en",
+ "title": "Alkhabeer Diversified Income Traded Fund 2030",
+ "subtitle": "Investor Report",
+ "date": "Q1 2025",
+ "src_file": "EN_4945b044.pdf",
+ "src_pages": 5,
+ "template": "ir",
+ "blocks": [
+  {
+   "t": "h2",
+   "num": "",
+   "text": "FUND OVERVIEW",
+   "p": 1,
+   "key": "ov.h"
+  },
+  {
+   "t": "p",
+   "text": "Alkhabeer Diversified Income Traded Fund 2030 (“the Fund”) is a public closed-ended Shari’a-compliant investment traded fund established in accordance with the Investment Funds Regulations and the applicable laws and regulations of the Kingdom of Saudi Arabia and regulated by the Capital Market Authority (CMA). The Fund’s investment objective is to generate periodic income to investors by investing in income generating assets using a Shari’a-compliant investment structure. The Fund Manager “Alkhabeer Capital” plans to invest in Sukuk, trade finance transactions, leasing transactions, structured income instruments, asset backed debts, income funds and Murabaha transactions, either directly or through investment funds.",
+   "p": 1,
+   "key": "ov.p"
+  },
+  {
+   "t": "h2",
+   "num": "",
+   "text": "KEY FUND FACTS",
+   "p": 1,
+   "key": "kf.h"
+  },
+  {
+   "t": "kv",
+   "caption": "",
+   "rows": [
+    [
+     "TADAWUL SYMBOL",
+     "4702"
+    ],
+    [
+     "BLOOMBERG SYMBOL",
+     "AKDI2030: AB"
+    ],
+    [
+     "FUND TYPE",
+     "Closed-ended Traded Public Fund"
+    ],
+    [
+     "LISTING DATE",
+     "17 July 2024"
+    ],
+    [
+     "FUND TERM",
+     "6 years, starting as from the Listing Date"
+    ],
+    [
+     "NET ASSET VALUE PER UNIT",
+     "SAR 10.1585"
+    ],
+    [
+     "FUND ASSETS SIZE*",
+     "SAR 311,650,974"
+    ],
+    [
+     "FUND’S TOTAL CAPITAL AS AT THE LISTING DATE",
+     "SAR 305,456,350"
+    ],
+    [
+     "FINANCING AMOUNT*",
+     "SAR 0"
+    ],
+    [
+     "RATIO OF LOANS TO FUND’S TOTAL ASSET VALUE*",
+     "0%"
+    ],
+    [
+     "RATIO OF LOANS TO FUND’S NET ASSET VALUE AS AT THE END OF THE REPORTING QUARTER",
+     "0%"
+    ],
+    [
+     "FUND MANAGER’S INVESTMENT VALUE AT THE END OF THE REPORTING QUARTER",
+     "SAR 50,792,541"
+    ],
+    [
+     "RATIO OF FUND MANAGER'S INVESTMENT TO FUND'S NET ASSET VALUE AS AT THE END OF THE REPORTING QUARTER",
+     "16.37%"
+    ],
+    [
+     "RISK LEVEL",
+     "High"
+    ],
+    [
+     "FUND CURRENCY",
+     "Saudi Arabian Riyal (SAR)"
+    ],
+    [
+     "INVESTMENT ADVISOR AND FUND SUB-MANAGER",
+     "N/A"
+    ],
+    [
+     "RATIO OF UNDERLYING FUNDS’ MANAGEMENT FEES",
+     "0%"
+    ],
+    [
+     "NUMBER OF DAYS WEIGHTED AVERAGE",
+     "90 Days"
+    ]
+   ],
+   "p": 1,
+   "key": "kf.kv"
+  },
+  {
+   "t": "note",
+   "text": "* As of 31 March 2025 (Unaudited).",
+   "p": 1,
+   "key": "kf.note"
+  },
+  {
+   "t": "h2",
+   "num": "",
+   "text": "FUND PORTFOLIO INVESTMENT CONCENTRATION RATIOS *",
+   "p": 1,
+   "key": "cr.h"
+  },
+  {
+   "t": "chart",
+   "kind": "pie",
+   "title": "FUND PORTFOLIO INVESTMENT CONCENTRATION RATIOS *",
+   "unit": "%",
+   "series": [
+    {
+     "label": "Structured Income Instruments",
+     "value": 39.1
+    },
+    {
+     "label": "Trade Finance Transactions",
+     "value": 28.5
+    },
+    {
+     "label": "Asset Backed Debts",
+     "value": 19.2
+    },
+    {
+     "label": "Leasing Transactions",
+     "value": 12.8
+    },
+    {
+     "label": "Income Funds",
+     "value": 0.1
+    },
+    {
+     "label": "Cash & Cash Equivalents",
+     "value": 0.2
+    }
+   ],
+   "p": 1,
+   "key": "cr.chart"
+  },
+  {
+   "t": "note",
+   "text": "* The average term of Fund investments is 1.9 years.",
+   "p": 1,
+   "key": "cr.note"
+  },
+  {
+   "t": "h2",
+   "num": "",
+   "text": "FINANCIAL INDICATORS*",
+   "p": 1,
+   "key": "fi.h"
+  },
+  {
+   "t": "kv",
+   "caption": "",
+   "rows": [
+    [
+     "VALUATION FREQUENCY",
+     "Semi-annually"
+    ],
+    [
+     "FUND’S TOTAL ASSET VALUE",
+     "SAR 311,650,974"
+    ],
+    [
+     "FUND UNITS’ NET ASSET VALUE",
+     "SAR 310,298,086"
+    ],
+    [
+     "AMOUNT OF DEALING EXPENSES FOR THE REPORTING QUARTER TO FUND’S AVERAGE NET ASSET VALUE",
+     "N/A"
+    ],
+    [
+     "RATIO OF DEALING EXPENSES FOR THE REPORTING QUARTER TO FUND’S AVERAGE NET ASSET VALUE",
+     "N/A"
+    ],
+    [
+     "RATIO OF TRANSACTION EXPENSES FOR THE REPORTING QUARTER TO FUND'S AVERAGE NET ASSET VALUE",
+     "N/A"
+    ],
+    [
+     "RATIO OF FUND'S EXPENSES AND FEES TO FUND’S TOTAL ASSET VALUE",
+     "0.46%"
+    ],
+    [
+     "RATIO OF FUND’S TOTAL COSTS TO FUND’S TOTAL ASSET VALUE**",
+     "0.46%"
+    ],
+    [
+     "RATIO OF FUND’S TOTAL COSTS/FEES TO FUND’S AVERAGE NET ASSET VALUE",
+     "0.46%"
+    ],
+    [
+     "FUND'S TOTAL COSTS FOR THE REPORTING QUARTER",
+     "SAR 1,431,981"
+    ]
+   ],
+   "p": 1,
+   "key": "fi.kv"
+  },
+  {
+   "t": "note",
+   "text": "* As of 31 March 2025 (Unaudited).\n** Fund expenses and fees are all Fund expenses during the reporting quarter, excluding financing costs.\n*** Fund total costs are all Fund fees and expenses, including financing costs.\n**** Fund average NAV for the reporting period = SAR 312,006,639",
+   "p": 1,
+   "key": "fi.note"
+  },
+  {
+   "t": "h2",
+   "num": "",
+   "text": "DISTRIBUTION OF INVESTMENTS BY GEOGRAPHY",
+   "p": 1,
+   "key": "geo.h"
+  },
+  {
+   "t": "chart",
+   "kind": "pie",
+   "title": "DISTRIBUTION OF INVESTMENTS BY GEOGRAPHY",
+   "unit": "%",
+   "series": [
+    {
+     "label": "Europe",
+     "value": 53.2
+    },
+    {
+     "label": "North America",
+     "value": 34.8
+    },
+    {
+     "label": "Asia",
+     "value": 9.4
+    },
+    {
+     "label": "GCC ex KSA",
+     "value": 2.5
+    },
+    {
+     "label": "Saudi Arabia",
+     "value": 0.1
+    }
+   ],
+   "p": 1,
+   "key": "geo.chart"
+  },
+  {
+   "t": "h2",
+   "num": "",
+   "text": "LARGEST TEN INVESTMENTS IN THE FUND",
+   "p": 2,
+   "key": "top.h"
+  },
+  {
+   "t": "chart",
+   "kind": "bar",
+   "title": "LARGEST TEN INVESTMENTS IN THE FUND",
+   "unit": "%",
+   "series": [
+    {
+     "label": "Asset Backed Debt Financing Tranche 1",
+     "value": 3.75
+    },
+    {
+     "label": "Trade Finance Transaction 1",
+     "value": 3.7
+    },
+    {
+     "label": "Trade Finance Transaction 2",
+     "value": 3.39
+    },
+    {
+     "label": "Trade Finance Transaction 3",
+     "value": 3.2
+    },
+    {
+     "label": "Trade Finance Transaction 4",
+     "value": 3.05
+    },
+    {
+     "label": "Trade Finance Transaction 5",
+     "value": 3.0
+    },
+    {
+     "label": "Trade Finance Transaction 6",
+     "value": 2.89
+    },
+    {
+     "label": "Trade Finance Transaction 7",
+     "value": 2.84
+    },
+    {
+     "label": "Trade Finance Transaction 8",
+     "value": 2.49
+    },
+    {
+     "label": "Asset Backed Debt Financing Tranche 2",
+     "value": 2.37
+    }
+   ],
+   "p": 2,
+   "key": "top.chart",
+   "xnote": "Horizontal bar chart (series \"Weight\", x-axis 0.0%-4.0%) has no data labels; individual weights cannot be read from the page.",
+   "digitized": true,
+   "precision": "approx ±0.02 pp"
+  },
+  {
+   "t": "h2",
+   "num": "",
+   "text": "FUND ASSETS INFORMATION",
+   "p": 2,
+   "key": "fa.h"
+  },
+  {
+   "t": "kv",
+   "caption": "",
+   "rows": [
+    [
+     "ASSET BACKED DEBTS PORTFOLIO TOTAL VALUE",
+     "SAR 59,984,914"
+    ],
+    [
+     "TRADE FINANCE PORTFOLIO TOTAL VALUE",
+     "SAR 88,816,990"
+    ],
+    [
+     "STRUCTURED INCOME PORTFOLIO TOTAL VALUE",
+     "SAR 122,011,276"
+    ],
+    [
+     "LEASING INCOME PORTFOLIO TOTAL VALUE",
+     "SAR 39,921,185"
+    ],
+    [
+     "INCOME FUNDS PORTFOLIO TOTAL VALUE",
+     "SAR 344,561"
+    ],
+    [
+     "TOTAL CASH AND CASH EQUIVALENT",
+     "SAR 572,049"
+    ]
+   ],
+   "p": 2,
+   "key": "fa.kv"
+  },
+  {
+   "t": "h2",
+   "num": "",
+   "text": "FUND MARKET VALUE INFORMATION*",
+   "p": 2,
+   "key": "mv.h"
+  },
+  {
+   "t": "kv",
+   "caption": "",
+   "rows": [
+    [
+     "AS AT THE LISTING DATE",
+     "SAR 305,456,350"
+    ],
+    [
+     "AS AT 30 SEPTEMBER 2024",
+     "SAR 227,564,981"
+    ],
+    [
+     "AS AT 31 DECEMBER 2024",
+     "SAR 226,037,699"
+    ],
+    [
+     "AS AT 31 MARCH 2025",
+     "SAR 233,674,108"
+    ]
+   ],
+   "p": 2,
+   "key": "mv.kv"
+  },
+  {
+   "t": "note",
+   "text": "*Based on the Unit Price.",
+   "p": 2,
+   "key": "mv.note"
+  },
+  {
+   "t": "h2",
+   "num": "",
+   "text": "NET ASSET VALUE AND UNIT PRICE PERFORMANCE",
+   "p": 2,
+   "key": "nav.h"
+  },
+  {
+   "t": "chart",
+   "kind": "bar",
+   "title": "NET ASSET VALUE AND UNIT PRICE PERFORMANCE",
+   "unit": "SAR",
+   "series": [
+    {
+     "label": "Market Unit Price (SAR)",
+     "value": 7.7,
+     "group": "31 March 2025G"
+    },
+    {
+     "label": "NAV/Unit (SAR)",
+     "value": 10.2,
+     "group": "31 March 2025G"
+    },
+    {
+     "label": "Market Unit Price (SAR)",
+     "value": 7.4,
+     "group": "31 December 2024G"
+    },
+    {
+     "label": "NAV/Unit (SAR)",
+     "value": 10.3,
+     "group": "31 December 2024G"
+    },
+    {
+     "label": "Market Unit Price (SAR)",
+     "value": 7.5,
+     "group": "30 September 2024G"
+    },
+    {
+     "label": "NAV/Unit (SAR)",
+     "value": 10.1,
+     "group": "30 September 2024G"
+    },
+    {
+     "label": "Market Unit Price (SAR)",
+     "value": 10.0,
+     "group": "17 July 2024G"
+    },
+    {
+     "label": "NAV/Unit (SAR)",
+     "value": 10.0,
+     "group": "17 July 2024G"
+    }
+   ],
+   "p": 2,
+   "key": "nav.chart",
+   "xnote": "Clustered horizontal bar chart; pairing of the data labels to dates and series read from the page image."
+  },
+  {
+   "t": "h2",
+   "num": "",
+   "text": "FUND UNITS INFORMATION",
+   "p": 2,
+   "key": "fu.h"
+  },
+  {
+   "t": "kv",
+   "caption": "",
+   "rows": [
+    [
+     "UNIT PRICE AS AT THE END OF Q1 (31 MARCH 2025)",
+     "SAR 7.65"
+    ],
+    [
+     "CHANGE IN UNIT PRICE COMPARED TO THE PREVIOUS QUARTER*",
+     "3.38%"
+    ],
+    [
+     "UNIT PRICE PERFORMANCE SINCE THE LISTING DATE (FROM THE LISTING DATE TO END Q1 2025)",
+     "-23.50%"
+    ],
+    [
+     "52-WEEK HIGH",
+     "SAR 10"
+    ],
+    [
+     "52-WEEK LOW",
+     "SAR 7.01"
+    ],
+    [
+     "NUMBER OF OUTSTANDING UNITS",
+     "30,545,635 Units"
+    ],
+    [
+     "P/E RATIO",
+     "N/A"
+    ],
+    [
+     "DUAL UNIT PRICE OF MONEY MARKET FUNDS AND FIXED INCOME DEBT INSTRUMENTS FUNDS",
+     "N/A"
+    ]
+   ],
+   "p": 2,
+   "key": "fu.kv"
+  },
+  {
+   "t": "note",
+   "text": "*Unit Price as at 31 December 2024 = SAR 7.40.",
+   "p": 2,
+   "key": "fu.note"
+  },
+  {
+   "t": "h2",
+   "num": "",
+   "text": "DIVIDEND DISTRIBUTION",
+   "p": 3,
+   "key": "dd.h"
+  },
+  {
+   "t": "h3",
+   "num": "",
+   "text": "DIVIDEND DISTRIBUTION POLICY",
+   "p": 3,
+   "key": "dd.h3"
+  },
+  {
+   "t": "p",
+   "text": "The Fund Manager will distribute returns on Fund investments (after deducting expenses, provisions and reserves) to Fund Unitholders semi-annually, with the exception of capital gains resulting from the sale of underlying assets, which may be reinvested in other assets or distributed in whole or in part at the Fund Manager’s discretion. The Fund will distribute dividends within (40) business days after the last day of each semi-annual period and at the end of each Gregorian year. The Fund Manager may distribute the returns on the Fund’s investments, after deducting expenses and provisions, to Unitholders more than twice per year at the Fund Manager’s discretion.",
+   "p": 3,
+   "key": "dd.p"
+  },
+  {
+   "t": "kv",
+   "caption": "",
+   "rows": [
+    [
+     "TOTAL DIVIDENDS PAID IN THE REPORTING QUARTER*",
+     "SAR 8,247,321"
+    ],
+    [
+     "TOTAL DIVIDENDS DISTRIBUTED FOR THE LAST SEMI-ANNUAL PERIOD",
+     "SAR 8,247,321"
+    ],
+    [
+     "DIVIDENDS DISTRIBUTED FOR THE LAST SEMI-ANNUAL PERIOD PER UNIT",
+     "SAR 0.27"
+    ],
+    [
+     "RATIO OF DIVIDENDS DISTRIBUTED IN THE REPORTING QUARTER TO THE INITIAL UNIT PRICE",
+     "2.70%"
+    ],
+    [
+     "DIVIDENDS DISTRIBUTED ON UNIT PRICE",
+     "3.53%"
+    ],
+    [
+     "TOTAL INCOME FOR THE REPORTING QUARTER*",
+     "SAR 6,250,634"
+    ],
+    [
+     "RATIO OF TOTAL INCOME FOR THE REPORTING QUARTER TO THE UNIT PRICE (31 MARCH 2025)",
+     "2.67%"
+    ]
+   ],
+   "p": 3,
+   "key": "dd.kv"
+  },
+  {
+   "t": "note",
+   "text": "* From 31 December 2024 to 31 March 2025.",
+   "p": 3,
+   "key": "dd.note"
+  },
+  {
+   "t": "h2",
+   "num": "",
+   "text": "FUND PERFORMANCE CRITERIA AND INDICATORS",
+   "p": 3,
+   "key": "pc.h"
+  },
+  {
+   "t": "kv",
+   "caption": "",
+   "rows": [
+    [
+     "BENCHMARK",
+     "The Benchmark is a composite index comprised of 70% of the Dow Jones Sukuk Investment Grade Total Return +30% of the Secured Overnight Financing Rate for three months (SOFR 3M), which is a Shari’a compliant benchmark."
+    ],
+    [
+     "INITIAL UNIT PRICE (AT THE INITIAL OFFERING*)",
+     "SAR 10"
+    ],
+    [
+     "UNIT PRICE PERFORMANCE SINCE THE PREVIOUS PERIOD",
+     "3.38%"
+    ],
+    [
+     "UNIT PRICE PERFORMANCE SINCE THE DATE OF INCEPTION *",
+     "-23.50%"
+    ],
+    [
+     "TOTAL RETURN SINCE THE DATE OF INCEPTION**",
+     "-20.80%"
+    ]
+   ],
+   "p": 3,
+   "key": "pc.kv"
+  },
+  {
+   "t": "note",
+   "text": "* From the listing date of 17 July 2024 to 31 March 2025.\n** Including cash dividend distributions from the listing date up to the end of the reporting quarter.",
+   "p": 3,
+   "key": "pc.note"
+  },
+  {
+   "t": "h2",
+   "num": "",
+   "text": "DESCRIPTION OF THE FUND’S BENCHMARK",
+   "p": 3,
+   "key": "bd.h"
+  },
+  {
+   "t": "p",
+   "text": "The Fund’s Benchmark is a composite index comprised of 70% of the Dow Jones Sukuk Investment Grade Total Return +30% of the Secured Overnight Financing Rate for three months (SOFR 3M), which is a Shari’a compliant benchmark.",
+   "p": 3,
+   "key": "bd.p"
+  },
+  {
+   "t": "h2",
+   "num": "",
+   "text": "PERFORMANCE ASSESSMENT CRITERIA AND INDICATORS",
+   "p": 3,
+   "key": "pa.h"
+  },
+  {
+   "t": "table",
+   "caption": "",
+   "head": [
+    "",
+    "ALKHABEER INCOME FUND",
+    "BENCHMARK"
+   ],
+   "rows": [
+    [
+     "NET ASSET VALUE PER UNIT AS AT THE BEGINNING OF THE PERIOD *",
+     "10.2708",
+     "N/A"
+    ],
+    [
+     "NET ASSET VALUE PER UNIT AS AT THE END OF THE PERIOD **",
+     "10.1585",
+     "N/A"
+    ],
+    [
+     "UNIT PERFORMANCE",
+     "-1.09%",
+     "1.15%"
+    ]
+   ],
+   "p": 3,
+   "key": "pa.table"
+  },
+  {
+   "t": "note",
+   "text": "* As at 31 December 2024G.\n** As at 31 March 2025G.",
+   "p": 3,
+   "key": "pa.note"
+  },
+  {
+   "t": "h2",
+   "num": "",
+   "text": "OWNERSHIP OF FUND INVESTMENTS",
+   "p": 3,
+   "key": "ow.h"
+  },
+  {
+   "t": "table",
+   "caption": "",
+   "head": [
+    "OWNERSHIP",
+    "PERCENTAGE (%)"
+   ],
+   "rows": [
+    [
+     "FREEHOLD",
+     "100%"
+    ],
+    [
+     "LEASEHOLD",
+     "0%"
+    ]
+   ],
+   "p": 3,
+   "key": "ow.table"
+  },
+  {
+   "t": "h2",
+   "num": "",
+   "text": "RETURNS",
+   "p": 4,
+   "key": "rt.h"
+  },
+  {
+   "t": "table",
+   "caption": "",
+   "head": [
+    "ITEM",
+    "3 MONTHS*",
+    "YEAR TO DATE*",
+    "ONE YEAR**",
+    "3 YEARS**",
+    "5 YEARS**"
+   ],
+   "rows": [
+    [
+     "TOTAL RETURN/NAV PER UNIT \"FUND PERFORMANCE\"",
+     "1.54%",
+     "1.54%",
+     "N/A",
+     "N/A",
+     "N/A"
+    ],
+    [
+     "BENCHMARK PERFORMANCE",
+     "1.15%",
+     "1.15%",
+     "N/A",
+     "N/A",
+     "N/A"
+    ],
+    [
+     "PERFORMANCE SPREAD",
+     "0.39%",
+     "0.39%",
+     "N/A",
+     "N/A",
+     "N/A"
+    ]
+   ],
+   "p": 4,
+   "key": "rt.table"
+  },
+  {
+   "t": "note",
+   "text": "* For the period from 31 December 2024 to 31 March 2025, including 2.70% cash distributions.\n** Not applicable as at the listing date of 17 July 2024G.",
+   "p": 4,
+   "key": "rt.note"
+  },
+  {
+   "t": "h2",
+   "num": "",
+   "text": "PERFORMANCE AND RISKS",
+   "p": 4,
+   "key": "pr.h"
+  },
+  {
+   "t": "table",
+   "caption": "",
+   "head": [
+    "PERFORMANCE AND RISKS CRITERIA",
+    "3 MONTHS*",
+    "YEAR TO DATE*",
+    "ONE YEAR**",
+    "3 YEARS**",
+    "5 YEARS**"
+   ],
+   "rows": [
+    [
+     "STANDARD DEVIATION",
+     "14.33",
+     "14.33",
+     "N/A",
+     "N/A",
+     "N/A"
+    ],
+    [
+     "SHARPE RATIO",
+     "0.76",
+     "0.76",
+     "N/A",
+     "N/A",
+     "N/A"
+    ],
+    [
+     "TRACKING ERROR",
+     "14.33",
+     "14.33",
+     "N/A",
+     "N/A",
+     "N/A"
+    ],
+    [
+     "BETA",
+     "0.12",
+     "0.12",
+     "N/A",
+     "N/A",
+     "N/A"
+    ],
+    [
+     "ALPHA",
+     "-0.14",
+     "-0.14",
+     "N/A",
+     "N/A",
+     "N/A"
+    ],
+    [
+     "INFORMATION RATIO",
+     "1.00",
+     "1.00",
+     "N/A",
+     "N/A",
+     "N/A"
+    ]
+   ],
+   "p": 4,
+   "key": "pr.table"
+  },
+  {
+   "t": "note",
+   "text": "* For the period from 31 December 2024 to 31 March 2025.\n** Not applicable as at the listing date of 17 July 2024G.",
+   "p": 4,
+   "key": "pr.note"
+  },
+  {
+   "t": "h2",
+   "num": "",
+   "text": "FUND HIGHLIGHTS AND ANY FUNDAMENTAL OR NON-FUNDAMENTAL CHANGES AFFECTING THE PERFORMANCE OF THE FUND",
+   "p": 4,
+   "key": "hl.h"
+  },
+  {
+   "t": "p",
+   "text": "There were no fundamental or non-fundamental developments or changes affecting the performance of the Fund.",
+   "p": 4,
+   "key": "hl.p"
+  },
+  {
+   "t": "h2",
+   "num": "",
+   "text": "PERFORMANCE OF THE UNIT PRICE TRADED ON THE EXCHANGE SINCE THE INCEPTION OF THE FUND",
+   "p": 5,
+   "key": "up.h"
+  },
+  {
+   "t": "chart",
+   "kind": "line",
+   "title": "PERFORMANCE OF THE UNIT PRICE TRADED ON THE EXCHANGE SINCE THE INCEPTION OF THE FUND",
+   "unit": "SAR",
+   "series": [
+    {
+     "label": "2024-07-16",
+     "value": 10.0
+    },
+    {
+     "label": "2024-07-17",
+     "value": 9.21
+    },
+    {
+     "label": "2024-07-22",
+     "value": 8.14
+    },
+    {
+     "label": "2024-07-29",
+     "value": 8.02
+    },
+    {
+     "label": "2024-07-31",
+     "value": 7.66
+    },
+    {
+     "label": "2024-08-06",
+     "value": 7.01
+    },
+    {
+     "label": "2024-08-12",
+     "value": 7.08
+    },
+    {
+     "label": "2024-08-15",
+     "value": 7.36
+    },
+    {
+     "label": "2024-08-19",
+     "value": 7.55
+    },
+    {
+     "label": "2024-08-30",
+     "value": 7.55
+    },
+    {
+     "label": "2024-09-03",
+     "value": 7.6
+    },
+    {
+     "label": "2024-09-14",
+     "value": 7.49
+    },
+    {
+     "label": "2024-09-29",
+     "value": 7.49
+    },
+    {
+     "label": "2024-10-06",
+     "value": 7.21
+    },
+    {
+     "label": "2024-10-14",
+     "value": 7.26
+    },
+    {
+     "label": "2024-10-29",
+     "value": 7.28
+    },
+    {
+     "label": "2024-11-13",
+     "value": 7.21
+    },
+    {
+     "label": "2024-11-18",
+     "value": 7.19
+    },
+    {
+     "label": "2024-11-28",
+     "value": 7.28
+    },
+    {
+     "label": "2024-12-13",
+     "value": 7.35
+    },
+    {
+     "label": "2024-12-28",
+     "value": 7.4
+    },
+    {
+     "label": "2024-12-31",
+     "value": 7.4
+    },
+    {
+     "label": "2025-01-05",
+     "value": 7.65
+    },
+    {
+     "label": "2025-01-12",
+     "value": 7.46
+    },
+    {
+     "label": "2025-01-27",
+     "value": 7.71
+    },
+    {
+     "label": "2025-02-04",
+     "value": 7.65
+    },
+    {
+     "label": "2025-02-11",
+     "value": 7.85
+    },
+    {
+     "label": "2025-02-12",
+     "value": 8.05
+    },
+    {
+     "label": "2025-02-18",
+     "value": 7.49
+    },
+    {
+     "label": "2025-02-26",
+     "value": 7.51
+    },
+    {
+     "label": "2025-03-13",
+     "value": 7.67
+    },
+    {
+     "label": "2025-03-17",
+     "value": 7.8
+    },
+    {
+     "label": "2025-03-27",
+     "value": 7.67
+    }
+   ],
+   "p": 5,
+   "key": "up.chart",
+   "xnote": "Line chart of the traded unit price from 16 Jul 2024 to 23 Mar 2025 (5-day x-axis ticks, y-axis 0-12) with no data labels; values cannot be read from the page.",
+   "digitized": true,
+   "precision": "approx ±0.05 SAR; dates ±1 day"
+  },
+  {
+   "t": "h2",
+   "num": "",
+   "text": "FOR FURTHER INFORMATION",
+   "p": 5,
+   "key": "z.h"
+  },
+  {
+   "t": "p",
+   "text": "Alkhabeer Capital\nPO Box 128289, Jeddah 21362\nKingdom of Saudi Arabia\nTel: +966 12 658 8888\nFax: +966 12 658 6663\nEmail: info@alkhabeer.com\nCR No: 4030177445\nCMA License No: 07074-37\nalkhabeer.com",
+   "p": 5,
+   "key": "z.p"
+  },
+  {
+   "t": "h2",
+   "num": "",
+   "text": "DISCLAIMER",
+   "p": 5,
+   "key": "dc.h"
+  },
+  {
+   "t": "note",
+   "text": "This document does not constitute an offer to buy, subscribe or participate in any way in Alkhabeer Diversified Income Traded Fund 2030, nor shall it (or any part of it) form the basis of, or be relied on, in connection with, or act as inducement to enter into any contract whatsoever. Prospective investors should read carefully Alkhabeer Diversified Income Traded Fund’s 2030 Terms and Conditions and their contents related to investment risks, as well as other Alkhabeer Diversified Income Traded Fund 2030 documents prior to making any investment decision. Alkhabeer Diversified Income Traded Fund 2030 documents are available on Alkhabeer Capital’s website www.alkhabeer.com. This investment is not a cash deposit with a local bank. The value of the amount invested and any other income which may arise therefrom may increase or decrease. All prospective investors are required to make their own determination with their own financial and legal advisors and to evaluate all risks involved. No assurance can be given that the targeted and projected results will be achieved. Moreover, past performance of Alkhabeer Diversified Income Traded Fund 2030 is not a guarantee of the Fund’s future results. By investing in the Fund, the investor acknowledges having read and accepted Alkhabeer Diversified Income Traded Fund’s 2030 Terms and Conditions, The Fund Manager or any of its affiliates shall not be liable for any financial loss which may be suffered by the Fund, unless such loss is deliberately caused by the Fund Manager.",
+   "p": 5,
+   "key": "dc.note"
+  }
+ ]
+}

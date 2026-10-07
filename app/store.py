@@ -100,3 +100,55 @@ def check_user(username, pw):
         if not _s.compare_digest(_hash(pw, r['salt']), r['hash']): return None
         c.execute('update users set last_login=? where username=?', (now(), username))
         return dict(r)
+
+
+# ---------- historical records: AR/EN conflicts and the correction log ----------
+def _rec_c():
+    c = _c()
+    c.execute('create table if not exists conflicts(sid text primary key, items text, at text)')
+    c.execute('''create table if not exists corrections(id integer primary key autoincrement, sid text, at text, by text,
+                 lang text, section text, label text, before text, after text, reason text)''')
+    return c
+
+
+def set_conflicts(fund, q, items):
+    with _lock, _rec_c() as c:
+        c.execute('insert or replace into conflicts values(?,?,?)', (f'{fund}:{q}', json.dumps(items, ensure_ascii=False), now()))
+
+
+def get_conflicts(fund, q):
+    with _lock, _rec_c() as c:
+        r = c.execute('select items from conflicts where sid=?', (f'{fund}:{q}',)).fetchone()
+        return json.loads(r['items']) if r else None
+
+
+def add_corrections(fund, q, by, reason, rows):
+    with _lock, _rec_c() as c:
+        for r in rows:
+            c.execute('insert into corrections(sid,at,by,lang,section,label,before,after,reason) values(?,?,?,?,?,?,?,?,?)',
+                      (f'{fund}:{q}', now(), by, r['lang'], r['section'], r['label'], r['before'], r['after'], reason))
+
+
+def corrections(fund, q):
+    with _lock, _rec_c() as c:
+        return [dict(r) for r in c.execute('select at,by,lang,section,label,before,after,reason from corrections where sid=? order by id desc', (f'{fund}:{q}',))]
+
+
+def correction_counts():
+    with _lock, _rec_c() as c:
+        return {r['sid']: r['n'] for r in c.execute('select sid, count(*) n from corrections group by sid')}
+
+
+def draft_struct_path(fund, q, lang):
+    d = os.path.join(DATA, 'structs', fund, 'draft'); os.makedirs(d, exist_ok=True)
+    return os.path.join(d, f'{q}.{lang}.json')
+
+
+def orig_struct_path(fund, q, lang):
+    d = os.path.join(DATA, 'structs', fund, 'original'); os.makedirs(d, exist_ok=True)
+    return os.path.join(d, f'{q}.{lang}.json')
+
+
+def all_records():
+    with _lock, _c() as c:
+        return [dict(r) for r in c.execute('select id,fund,q,status,updated,final_at from statements')]

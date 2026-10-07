@@ -1,0 +1,1098 @@
+{
+ "id": "q3-2023",
+ "lang": "en",
+ "title": "Alkhabeer Diversified Income Traded Fund",
+ "subtitle": "Investor Report",
+ "date": "Q3 2023",
+ "src_file": "pdf/e7fc2d65.pdf",
+ "src_pages": 5,
+ "template": "ir",
+ "blocks": [
+  {
+   "t": "h2",
+   "num": "",
+   "text": "FUND OVERVIEW",
+   "p": 1,
+   "key": "ov.h"
+  },
+  {
+   "t": "p",
+   "text": "Alkhabeer Diversified Income Traded Fund (“the Fund”) is a closed-ended Shari’a-compliant investment traded fund established in accordance with the applicable laws and regulations of the Kingdom of Saudi Arabia and regulated by the Capital Market Authority (CMA). The Fund’s investment objective is to generate periodic income to investors by investing in Shari’a-compliant income generating assets. The Fund Manager “Alkhabeer Capital” plans to invest in Sukuk, trade finance transactions, leasing transactions, income funds and Murabaha transactions, either directly or through investment funds.",
+   "p": 1,
+   "key": "ov.p"
+  },
+  {
+   "t": "h2",
+   "num": "",
+   "text": "KEY FUND FACTS",
+   "p": 1,
+   "key": "kf.h"
+  },
+  {
+   "t": "kv",
+   "caption": "",
+   "rows": [
+    [
+     "TADAWUL SYMBOL",
+     "4700"
+    ],
+    [
+     "BLOOMBERG SYMBOL",
+     "AKDICIF:AB"
+    ],
+    [
+     "FUND TYPE",
+     "Closed-ended Traded Fund"
+    ],
+    [
+     "LISTING DATE",
+     "19 January 2021"
+    ],
+    [
+     "FUND TERM",
+     "99 years, starting as from the Listing Date, renewable"
+    ],
+    [
+     "NET ASSET VALUE PER UNIT",
+     "SAR 9.7595"
+    ],
+    [
+     "FUND ASSETS SIZE*",
+     "SAR 95,804,675"
+    ],
+    [
+     "FUND’S TOTAL CAPITAL AS AT THE LISTING DATE",
+     "SAR 472,814,700"
+    ],
+    [
+     "FINANCING AMOUNT*",
+     "SAR 31,297,923"
+    ],
+    [
+     "RATIO OF LOANS TO FUND’S TOTAL ASSET VALUE*",
+     "6.31%"
+    ],
+    [
+     "RATIO OF LOANS TO FUND’S NET ASSET VALUE AS AT THE END OF THE REPORTING QUARTER",
+     "6.78%"
+    ],
+    [
+     "RATIO OF LOANS TO FUND’S NET ASSET VALUE AS AT THE END OF THE REPORTING QUARTER",
+     "0.00%"
+    ],
+    [
+     "RATIO OF FUND MANAGER'S INVESTMENT TO FUND'S NET ASSET VALUE AS AT THE END OF THE REPORTING QUARTER",
+     "0.00%"
+    ],
+    [
+     "RISK LEVEL",
+     "High"
+    ],
+    [
+     "FUND CURRENCY",
+     "Saudi Arabian Riyal (SAR)"
+    ],
+    [
+     "INVESTMENT ADVISOR AND FUND SUB-MANAGER",
+     "N/A"
+    ],
+    [
+     "RATIO OF UNDERLYING FUNDS’ MANAGEMENT FEES",
+     "0.36%"
+    ],
+    [
+     "NUMBER OF DAYS WEIGHTED AVERAGE",
+     "92 Days"
+    ]
+   ],
+   "p": 1,
+   "key": "kf.kv",
+   "src_note": "Source prints \"SAR 95,804,675\" for Fund Assets Size (SAR 495,804,675 under Financial Indicators) and repeats the \"Ratio of loans to NAV\" label on a second row (0.00%), where the Arabic has the value of the Fund Manager's investment; both kept as printed."
+  },
+  {
+   "t": "note",
+   "text": "* As of 30 September 2023 (Unaudited).",
+   "p": 1,
+   "key": "kf.note"
+  },
+  {
+   "t": "h2",
+   "num": "",
+   "text": "FUND PORTFOLIO INVESTMENT CONCENTRATION RATIOS *",
+   "p": 1,
+   "key": "cr.h"
+  },
+  {
+   "t": "chart",
+   "kind": "pie",
+   "title": "FUND PORTFOLIO INVESTMENT CONCENTRATION RATIOS *",
+   "unit": "%",
+   "series": [
+    {
+     "label": "Ijara Transactions",
+     "value": 34.47
+    },
+    {
+     "label": "Income Funds",
+     "value": 24.98
+    },
+    {
+     "label": "Trade Financing Transactions",
+     "value": 21.0
+    },
+    {
+     "label": "Cash and Distributions Received",
+     "value": 13.52
+    },
+    {
+     "label": "Sukuk",
+     "value": 6.03
+    }
+   ],
+   "p": 1,
+   "key": "cr.chart"
+  },
+  {
+   "t": "note",
+   "text": "The average term of Fund investments are 3.6 years.",
+   "p": 1,
+   "key": "cr.note"
+  },
+  {
+   "t": "h2",
+   "num": "",
+   "text": "FINANCIAL INDICATORS*",
+   "p": 1,
+   "key": "fi.h"
+  },
+  {
+   "t": "kv",
+   "caption": "",
+   "rows": [
+    [
+     "VALUATION FREQUENCY",
+     "Quarterly"
+    ],
+    [
+     "FUND’S TOTAL ASSET VALUE*",
+     "SAR 495,804,675"
+    ],
+    [
+     "FUND UNITS’ NET ASSET VALUE*",
+     "SAR 461,445,661"
+    ],
+    [
+     "AMOUNT OF DEALING EXPENSES FOR THE REPORTING QUARTER TO FUND’S AVERAGE NET ASSET VALUE",
+     "N/A"
+    ],
+    [
+     "RATIO OF DEALING EXPENSES FOR THE REPORTING QUARTER TO FUND’S AVERAGE NET ASSET VALUE",
+     "0.00%"
+    ],
+    [
+     "RATIO OF TRANSACTION EXPENSES FOR THE REPORTING QUARTER TO FUND'S AVERAGE NET ASSET VALUE",
+     "0.00%"
+    ],
+    [
+     "RATIO OF FUND'S EXPENSES AND FEES TO FUND’S TOTAL ASSET VALUE**",
+     "0.85%"
+    ],
+    [
+     "RATIO OF FUND’S TOTAL COSTS TO FUND’S TOTAL ASSET VALUE***",
+     "0.99%"
+    ],
+    [
+     "RATIO OF FUND’S TOTAL COSTS TO FUND’S AVERAGE NET ASSET VALUE****",
+     "1.05%"
+    ],
+    [
+     "FUND'S TOTAL COSTS FOR THE REPORTING QUARTER",
+     "SAR 4,885,658"
+    ]
+   ],
+   "p": 1,
+   "key": "fi.kv"
+  },
+  {
+   "t": "note",
+   "text": "* As of 30 September 2023 (Unaudited).\n** Fund expenses and fees are all Fund expenses during the reporting quarter, excluding financing costs.\n*** Fund total costs are all Fund fees and expenses, including financing costs.\n**** Fund average NAV for the reporting period = SAR 465,927,902",
+   "p": 1,
+   "key": "fi.note"
+  },
+  {
+   "t": "h2",
+   "num": "",
+   "text": "DISTRIBUTION OF INVESTMENTS BY GEOGRAPHY",
+   "p": 1,
+   "key": "geo.h"
+  },
+  {
+   "t": "chart",
+   "kind": "pie",
+   "title": "DISTRIBUTION OF INVESTMENTS BY GEOGRAPHY",
+   "unit": "%",
+   "series": [
+    {
+     "label": "North America",
+     "value": 54
+    },
+    {
+     "label": "Europe",
+     "value": 31
+    },
+    {
+     "label": "Saudi Arabia",
+     "value": 7
+    },
+    {
+     "label": "GCC Excluding Saudi Arabia",
+     "value": 7
+    },
+    {
+     "label": "Asia",
+     "value": 1
+    }
+   ],
+   "p": 1,
+   "key": "geo.chart"
+  },
+  {
+   "t": "h2",
+   "num": "",
+   "text": "FUND ASSETS INFORMATION",
+   "p": 2,
+   "key": "fa.h"
+  },
+  {
+   "t": "kv",
+   "caption": "",
+   "rows": [
+    [
+     "TRADE FINANCE PORTFOLIO TOTAL VALUE",
+     "SAR 104,106,379"
+    ],
+    [
+     "LEASING PORTFOLIO TOTAL VALUE",
+     "SAR 170,924,164"
+    ],
+    [
+     "SUKUK PORTFOLIO TOTAL VALUE",
+     "SAR 29,891,303"
+    ],
+    [
+     "INCOME FUNDS PORTFOLIO TOTAL VALUE",
+     "SAR 123,872,809"
+    ],
+    [
+     "TOTAL CASH AND CASH EQUIVALENT",
+     "SAR 67,010,020"
+    ]
+   ],
+   "p": 2,
+   "key": "fa.kv"
+  },
+  {
+   "t": "h2",
+   "num": "",
+   "text": "NET ASSET VALUE AND UNIT PRICE PERFORMANCE*",
+   "p": 2,
+   "key": "nav.h"
+  },
+  {
+   "t": "chart",
+   "kind": "bar",
+   "title": "NET ASSET VALUE AND UNIT PRICE PERFORMANCE*",
+   "unit": "SAR",
+   "series": [
+    {
+     "label": "Market Unit Price (SAR)",
+     "value": 7.0,
+     "group": "30-Sep-23"
+    },
+    {
+     "label": "NAV/Unit (SAR)",
+     "value": 9.8,
+     "group": "30-Sep-23"
+    },
+    {
+     "label": "Market Unit Price (SAR)",
+     "value": 7.0,
+     "group": "30-Jun-23"
+    },
+    {
+     "label": "NAV/Unit (SAR)",
+     "value": 9.9,
+     "group": "30-Jun-23"
+    },
+    {
+     "label": "Market Unit Price (SAR)",
+     "value": 6.3,
+     "group": "31-Mar-23"
+    },
+    {
+     "label": "NAV/Unit (SAR)",
+     "value": 9.8,
+     "group": "31-Mar-23"
+    },
+    {
+     "label": "Market Unit Price (SAR)",
+     "value": 6.0,
+     "group": "31-Dec-22"
+    },
+    {
+     "label": "NAV/Unit (SAR)",
+     "value": 9.9,
+     "group": "31-Dec-22"
+    },
+    {
+     "label": "Market Unit Price (SAR)",
+     "value": 7.2,
+     "group": "30-Sep-22"
+    },
+    {
+     "label": "NAV/Unit (SAR)",
+     "value": 9.8,
+     "group": "30-Sep-22"
+    },
+    {
+     "label": "Market Unit Price (SAR)",
+     "value": 7.2,
+     "group": "30-Jun-22"
+    },
+    {
+     "label": "NAV/Unit (SAR)",
+     "value": 10.0,
+     "group": "30-Jun-22"
+    },
+    {
+     "label": "Market Unit Price (SAR)",
+     "value": 8.5,
+     "group": "31-Mar-22"
+    },
+    {
+     "label": "NAV/Unit (SAR)",
+     "value": 10.0,
+     "group": "31-Mar-22"
+    },
+    {
+     "label": "Market Unit Price (SAR)",
+     "value": 8.7,
+     "group": "31-Dec-21"
+    },
+    {
+     "label": "NAV/Unit (SAR)",
+     "value": 10.3,
+     "group": "31-Dec-21"
+    },
+    {
+     "label": "Market Unit Price (SAR)",
+     "value": 9.1,
+     "group": "30-Sep-21"
+    },
+    {
+     "label": "NAV/Unit (SAR)",
+     "value": 10.1,
+     "group": "30-Sep-21"
+    },
+    {
+     "label": "Market Unit Price (SAR)",
+     "value": 9.2,
+     "group": "30-Jun-21"
+    },
+    {
+     "label": "NAV/Unit (SAR)",
+     "value": 10.1,
+     "group": "30-Jun-21"
+    },
+    {
+     "label": "Market Unit Price (SAR)",
+     "value": 10.0,
+     "group": "(Listing Date) 19-Jan-2022"
+    },
+    {
+     "label": "NAV/Unit (SAR)",
+     "value": 10.0,
+     "group": "(Listing Date) 19-Jan-2022"
+    }
+   ],
+   "note": "The listing-date category is printed as \"19-Jan-2022\" in the source (the listing date was 19 January 2021); kept as printed.",
+   "p": 2,
+   "key": "nav.chart"
+  },
+  {
+   "t": "note",
+   "text": "*Based on the Unit Price.",
+   "p": 2,
+   "key": "nav.note"
+  },
+  {
+   "t": "h2",
+   "num": "",
+   "text": "FUND MARKET VALUE INFORMATION*",
+   "p": 2,
+   "key": "mv.h"
+  },
+  {
+   "t": "kv",
+   "caption": "",
+   "rows": [
+    [
+     "AS AT THE LISTING DATE",
+     "SAR 472,814,700"
+    ],
+    [
+     "AS AT 31 MARCH 2021",
+     "SAR 428,370,118"
+    ],
+    [
+     "AS AT 30 JUNE 2021",
+     "SAR 433,098,265"
+    ],
+    [
+     "AS AT 30 SEPTEMBER 2021",
+     "SAR 427,897,304"
+    ],
+    [
+     "AS AT 31 DECEMBER 2021",
+     "SAR 409,930,345"
+    ],
+    [
+     "AS AT 31 MARCH 2022",
+     "SAR 402,838,124"
+    ],
+    [
+     "AS AT 30 JUNE 2022",
+     "SAR 342,317,843"
+    ],
+    [
+     "AS AT 30 SEPTEMBER 2022",
+     "SAR 339,480,955"
+    ],
+    [
+     "AS AT 31 DECEMBER 2022",
+     "SAR 281,324,747"
+    ],
+    [
+     "AS AT 31 MARCH 2023",
+     "SAR 297,873,261"
+    ],
+    [
+     "AS AT 30 JUNE 2023",
+     "SAR 329,079,031"
+    ],
+    [
+     "AS AT 30 SEPTEMBER 2023",
+     "SAR 329,551,846"
+    ]
+   ],
+   "p": 2,
+   "key": "mv.kv"
+  },
+  {
+   "t": "h2",
+   "num": "",
+   "text": "FUND UNITS INFORMATION",
+   "p": 2,
+   "key": "fu.h"
+  },
+  {
+   "t": "kv",
+   "caption": "",
+   "rows": [
+    [
+     "UNIT PRICE AS AT THE END OF Q3 (30 SEPTEMBER 2023)",
+     "SAR 6.97"
+    ],
+    [
+     "CHANGE IN UNIT PRICE COMPARED TO THE PREVIOUS QUARTER (FROM 30 JUNE 2023 TO 30 SEPTEMBER 2023)*",
+     "0.14%"
+    ],
+    [
+     "UNIT PRICE PERFORMANCE SINCE THE LISTING DATE (FROM THE LISTING DATE TO END Q2 2023)",
+     "-30.30%"
+    ],
+    [
+     "52-WEEK HIGH",
+     "SAR 7.79"
+    ],
+    [
+     "52-WEEK LOW",
+     "SAR 5.91"
+    ],
+    [
+     "NUMBER OF OUTSTANDING UNITS",
+     "47,281,470 Units"
+    ]
+   ],
+   "p": 2,
+   "key": "fu.kv"
+  },
+  {
+   "t": "note",
+   "text": "* Unit Price as at 30 June 2023 = SAR 6.96.",
+   "p": 2,
+   "key": "fu.note"
+  },
+  {
+   "t": "h2",
+   "num": "",
+   "text": "DIVIDEND DISTRIBUTION",
+   "p": 2,
+   "key": "dd.h"
+  },
+  {
+   "t": "kv",
+   "caption": "",
+   "rows": [
+    [
+     "DIVIDEND DISTRIBUTION POLICY",
+     "The Fund Manager will distribute 100% of the semi-annual profits received from the returns on the Fund's investments after deducting the expenses from the Unitholders twice a year, provided distributions are made during the months of August and February annually."
+    ],
+    [
+     "TOTAL DIVIDENDS DISTRIBUTED IN THE REPORTING QUARTER*",
+     "SAR 0.00"
+    ],
+    [
+     "TOTAL DIVIDENDS DISTRIBUTED FOR THE LAST SEMI-ANNUAL PERIOD**",
+     "SAR 13,238,812"
+    ],
+    [
+     "DIVIDENDS DISTRIBUTED FOR THE LAST SEMI-ANNUAL PERIOD PER UNIT",
+     "SAR 0.28"
+    ],
+    [
+     "RATIO OF DIVIDENDS DISTRIBUTED IN THE REPORTING QUARTER TO THE INTIAL UNIT PRICE",
+     "2.80%"
+    ],
+    [
+     "DIVIDENDS DISTRIBUTED ON UNIT PRICE",
+     "4.02%"
+    ],
+    [
+     "TOTAL INCOME FOR THE REPORTING QUARTER*",
+     "SAR 9,171,701"
+    ],
+    [
+     "RATIO OF TOTAL INCOME FOR THE REPORTING QUARTER TO THE UNIT PRICE (30 SEPTEMBER 2023)",
+     "2.78%"
+    ]
+   ],
+   "p": 2,
+   "key": "dd.kv"
+  },
+  {
+   "t": "note",
+   "text": "* From 1 July 2023 to 30 September 2023.\n** From 1 January to 30 June 2023",
+   "p": 2,
+   "key": "dd.note"
+  },
+  {
+   "t": "h2",
+   "num": "",
+   "text": "FUND PERFORMANCE CRITERIA AND INDICATORS",
+   "p": 3,
+   "key": "pc.h"
+  },
+  {
+   "t": "kv",
+   "caption": "",
+   "rows": [
+    [
+     "BENCHMARK",
+     "12 months Term SOFR + 300 bps*"
+    ],
+    [
+     "INITIAL UNIT PRICE (AT THE INITIAL OFFERING)",
+     "SAR 10"
+    ],
+    [
+     "UNIT PRICE PERFORMANCE SINCE THE PREVIOUS PERIOD**",
+     "0.14%"
+    ],
+    [
+     "UNIT PRICE PERFORMANCE SINCE THE DATE OF INCEPTION***",
+     "-30.30%"
+    ],
+    [
+     "TOTAL RETURN SINCE THE DATE OF INCEPTION****",
+     "-17.63%"
+    ]
+   ],
+   "p": 3,
+   "key": "pc.kv"
+  },
+  {
+   "t": "note",
+   "text": "* On 16 May 2023, the Fund has changed Its benchmark from the London Interbank Offered Rate (LIBOR) 12 months + 300 basis points to the Secured Overnight Financing Rate (Term SOFR) 12 months + 300 basis points.\n** Unit Price as at 30 June 2023 = SAR 6.96.\n*** From the Fund’s Date of Inception to end Q3 2023.\n**** Total Return = Unit Price Performance + Total Dividend Distributions (if any).\nNote: It should be noted that the Unit Price on the Exchange may increase or decrease based on market factors.",
+   "p": 3,
+   "key": "pc.note"
+  },
+  {
+   "t": "h2",
+   "num": "",
+   "text": "DESCRIPTION OF THE FUND’S BENCHMARK",
+   "p": 3,
+   "key": "bd.h"
+  },
+  {
+   "t": "p",
+   "text": "The Fund’s Benchmark is 12 months Term SOFR plus 300 bps.",
+   "p": 3,
+   "key": "bd.p"
+  },
+  {
+   "t": "h2",
+   "num": "",
+   "text": "PERFORMANCE ASSESSMENT CRITERIA AND INDICATORS*",
+   "p": 3,
+   "key": "pa.h"
+  },
+  {
+   "t": "table",
+   "caption": "",
+   "head": [
+    "",
+    "ALKHABEER INCOME FUND",
+    "12M TERM SOFR + 300 BPS*"
+   ],
+   "rows": [
+    [
+     "NET ASSET VALUE PER UNIT AS AT THE BEGINNING OF THE PERIOD**",
+     "9.9491",
+     "N/A"
+    ],
+    [
+     "NET ASSET VALUE PER UNIT AS AT THE END OF THE PERIOD***",
+     "9.7595",
+     "N/A"
+    ],
+    [
+     "UNIT PERFORMANCE",
+     "-1.91%",
+     "2.07%****"
+    ]
+   ],
+   "p": 3,
+   "key": "pa.table"
+  },
+  {
+   "t": "note",
+   "text": "* On 16 May 2023, the Fund has changed Its benchmark from the London Interbank Offered Rate (LIBOR) 12 months + 300 basis points to the Secured Overnight Financing Rate (Term SOFR) 12 months + 300 basis points\n** As at 30 June 2023.\n***As at 30 September 2023.\n**** Benchmark average return is 8.39% per annum, or a return of 2.07% for the reporting quarter.",
+   "p": 3,
+   "key": "pa.note"
+  },
+  {
+   "t": "h2",
+   "num": "",
+   "text": "OWNERSHIP OF FUND INVESTMENTS",
+   "p": 3,
+   "key": "ow.h"
+  },
+  {
+   "t": "table",
+   "caption": "",
+   "head": [
+    "OWNERSHIP",
+    "PERCENTAGE (%)"
+   ],
+   "rows": [
+    [
+     "FREEHOLD",
+     "100%"
+    ],
+    [
+     "LEASEHOLD",
+     "0%"
+    ]
+   ],
+   "p": 3,
+   "key": "ow.table"
+  },
+  {
+   "t": "h2",
+   "num": "",
+   "text": "RETURNS",
+   "p": 3,
+   "key": "rt.h"
+  },
+  {
+   "t": "table",
+   "caption": "",
+   "head": [
+    "ITEM",
+    "3 MONTHS*",
+    "ONE YEAR UP TO 30 JUNE 2023*",
+    "ONE YEAR***",
+    "3 YEARS",
+    "5 YEARS"
+   ],
+   "rows": [
+    [
+     "TOTAL RETURN/NAV PER UNIT \"FUND PERFORMANCE\"",
+     "0.91%",
+     "3.83%",
+     "5.64%",
+     "N/A",
+     "N/A"
+    ],
+    [
+     "BENCHMARK PERFORMANCE",
+     "2.07%",
+     "6.20%",
+     "8.44%",
+     "N/A",
+     "N/A"
+    ],
+    [
+     "PERFORMANCE SPREAD",
+     "-1.16%",
+     "-2.37%",
+     "--2.81%",
+     "N/A",
+     "N/A"
+    ]
+   ],
+   "p": 3,
+   "key": "rt.table"
+  },
+  {
+   "t": "note",
+   "text": "* For the period from 30 June 2023 to 30 September 2023, including cash distributions of 2.8%.\n** For the period from 31 December 2022 to 30 September 2023, including cash distributions of 5.60%.\n*** For the period from 30 September 2022 to 30 September 2023, including cash distributions of 5.60%.",
+   "p": 3,
+   "key": "rt.note"
+  },
+  {
+   "t": "h2",
+   "num": "",
+   "text": "PERFORMANCE AND RISKS",
+   "p": 4,
+   "key": "pr.h"
+  },
+  {
+   "t": "table",
+   "caption": "",
+   "head": [
+    "PERFORMANCE AND RISKS CRITERIA",
+    "3 MONTHS1",
+    "YEAR TO DATE2",
+    "ONE YEAR3",
+    "3 YEARS",
+    "5 YEARS"
+   ],
+   "rows": [
+    [
+     "STANDARD DEVIATION4",
+     "11.48",
+     "18.77",
+     "19.42",
+     "N/A",
+     "N/A"
+    ],
+    [
+     "SHARPE RATIO5",
+     "0.61",
+     "1.66",
+     "-0.09",
+     "N/A",
+     "N/A"
+    ],
+    [
+     "TRACKING ERROR6",
+     "11.47",
+     "18.78",
+     "19.46",
+     "N/A",
+     "N/A"
+    ],
+    [
+     "BETA7",
+     "0.16",
+     "-0.55",
+     "-0.18",
+     "N/A",
+     "N/A"
+    ],
+    [
+     "ALPHA8",
+     "3.27",
+     "23.27",
+     "-5.06",
+     "N/A",
+     "N/A"
+    ],
+    [
+     "INFORMATION RATIO9",
+     "0.29",
+     "1.24",
+     "-0.26",
+     "N/A",
+     "N/A"
+    ]
+   ],
+   "p": 4,
+   "key": "pr.table"
+  },
+  {
+   "t": "note",
+   "text": "1. For the period from 30 June 2023 to 30 September 2023\n2. For the period from 31 December 2022 to 30 September 2023\n3. For the period from 30 September 2022 to 30 September 2023.\n4. Standard Deviation is a measure of risk. It is calculated as any volatility in returns over a period of time. The lower the volatility, the more homogeneous the set of returns.\n5. Sharpe Ratio is a risk-adjusted performance measure. It is calculated as the difference as the Fund Manager excess return over the risk-free rate, divided by the Standard Deviation. The greater a portfolio's Sharpe Ratio, the better its risk-adjusted performance.\n6. Tracking Error is a measure of risks. It is calculated as the Standard Deviation between the Fund Manager's return and the Benchmark's return. The lower the Tracking Error, the lower the Fund Manager deviates from the Benchmark.\n7. Beta is a measure of the average historical sensitivity of the Fund's returns compared to market returns. It is calculated by using the covariance of the Fund and the market on the variance of the market.\n8. Alpha measures any excess return achieved by the Fund compared to the performance of the index.\n9. Information Ratio is a risk-adjusted performance measure. It is calculated as the active return of the Fund Manager, divided by its tracking error. The higher the Information ratio, the higher the Fund Manager ability to generate excess returns per Unit of excess risk. Knowing that the performance and risk parameters were calculated based on the Unit's trading prices in the market.",
+   "p": 4,
+   "key": "pr.note"
+  },
+  {
+   "t": "h2",
+   "num": "",
+   "text": "FUND HIGHLIGHTS AND ANY FUNDAMENTAL OR NON-FUNDAMENTAL CHANGES AFFECTING THE PERFORMANCE OF THE FUND",
+   "p": 4,
+   "key": "hl.h"
+  },
+  {
+   "t": "p",
+   "text": "There were no fundamental or non-fundamental developments or changes affecting the performance of the Fund.",
+   "p": 4,
+   "key": "hl.p"
+  },
+  {
+   "t": "h2",
+   "num": "",
+   "text": "OVERVIEW OF THE LEASING, TRADE FINANCE AND SUKUK INDUSTRIES",
+   "p": 4,
+   "key": "ind.h"
+  },
+  {
+   "t": "h3",
+   "num": "",
+   "text": "LEASING INDUSTRY OVERVIEW",
+   "p": 4,
+   "key": "ind.l.h"
+  },
+  {
+   "t": "ul",
+   "items": [
+    "The US Fed has recently signaled to keep interest rates elevated for the time being, continuing with its campaign to control inflation. Despite the higher interest rate environment, many US businesses continue to invest in productive assets, suggesting healthy demand for equipment leasing finance.",
+    "The Equipment Leasing and Finance Association’s (ELFA) Monthly Leasing and Finance Index (MLFI-25), which reports economic activity from twenty-five companies representing a cross section of the USD 1 trillion equipment finance sector, showed their overall new business volume for August 2023 was USD 10.1 billion, up 14.0% YoY from new business volume in August 2022."
+   ],
+   "p": 4,
+   "key": "ind.l.ul"
+  },
+  {
+   "t": "h3",
+   "num": "",
+   "text": "TRADE FINANCE INDUSTRY OVERVIEW",
+   "p": 4,
+   "key": "ind.t.h"
+  },
+  {
+   "t": "ul",
+   "items": [
+    "According to United Nations Conference on Trade and Development (UNCTAD), the global trade reached a record USD 32 trillion in 2022 trade in goods was about USD 25 trillion (an increase of about 10 % from 2021) and trade in services totaled ~USD 7 trillion (an increase of ~15% YoY).",
+    "The record levels are largely due to robust growth in the first half of 2022, however due to deteriorating economic conditions and rising uncertainties, growth turned negative in H2 2022 and is expected to stagnate in 2023.",
+    "The global trade finance gap has widened to USD 2.5 trillion (per recent ADB survey of September 2023), registering a 47% increase from its previous survey which had estimated the 2020 trade finance gap at USD 1.7 trillion. The gap now represents about 10% of global merchandise trade."
+   ],
+   "p": 4,
+   "key": "ind.t.ul"
+  },
+  {
+   "t": "h3",
+   "num": "",
+   "text": "SUKUK INDUSTRY OVERVIEW",
+   "p": 5,
+   "key": "ind.s.h"
+  },
+  {
+   "t": "ul",
+   "items": [
+    "According to the Refinitiv, global Sukuk issuance exceeded market expectations reaching USD 193.9 billion in 2022 despite a record number of consecutive rate hikes during 2022. The year was the second highest year on record after reaching USD 196.5 billion in 2021.",
+    "Moody’s expects global Sukuk issuance to decline by 10% in 2023 due to lower volumes from major sovereign issuers as robust oil prices and sustained economic growth strengthen the fiscal balances.",
+    "In terms of performance, further to the worst year in decades in global Sukuk markets in 2022, the Sukuk market has slightly recovered. The Dow Jones Sukuk Index (ex-reinvestment) gained 0.7% YTD, while S&P GCC Sukuk Index was up 0.8% YTD."
+   ],
+   "p": 5,
+   "key": "ind.s.ul"
+  },
+  {
+   "t": "h2",
+   "num": "",
+   "text": "PERFORMANCE OF THE UNIT PRICE TRADED ON THE EXCHANGE SINCE THE INCEPTION OF THE FUND *",
+   "p": 5,
+   "key": "up.h"
+  },
+  {
+   "t": "chart",
+   "kind": "line",
+   "title": "PERFORMANCE OF THE UNIT PRICE TRADED ON THE EXCHANGE SINCE THE INCEPTION OF THE FUND *",
+   "unit": "SAR",
+   "series": [
+    {
+     "label": "19-Jan-21",
+     "value": 10.0
+    },
+    {
+     "label": "19-Jan-21 (peak)",
+     "value": 11.7
+    },
+    {
+     "label": "19-Feb-21",
+     "value": 9.25
+    },
+    {
+     "label": "19-Mar-21",
+     "value": 9.05
+    },
+    {
+     "label": "19-Apr-21",
+     "value": 9.05
+    },
+    {
+     "label": "19-May-21",
+     "value": 9.3
+    },
+    {
+     "label": "19-Jun-21",
+     "value": 9.15
+    },
+    {
+     "label": "19-Jul-21",
+     "value": 9.2
+    },
+    {
+     "label": "19-Aug-21",
+     "value": 9.1
+    },
+    {
+     "label": "19-Sep-21",
+     "value": 9.05
+    },
+    {
+     "label": "19-Oct-21",
+     "value": 9.0
+    },
+    {
+     "label": "19-Nov-21",
+     "value": 8.75
+    },
+    {
+     "label": "19-Dec-21",
+     "value": 8.75
+    },
+    {
+     "label": "19-Jan-22",
+     "value": 8.85
+    },
+    {
+     "label": "19-Feb-22",
+     "value": 8.65
+    },
+    {
+     "label": "19-Mar-22",
+     "value": 8.55
+    },
+    {
+     "label": "19-Apr-22",
+     "value": 8.5
+    },
+    {
+     "label": "19-May-22",
+     "value": 7.95
+    },
+    {
+     "label": "19-Jun-22",
+     "value": 7.2
+    },
+    {
+     "label": "19-Jul-22",
+     "value": 7.25
+    },
+    {
+     "label": "19-Aug-22",
+     "value": 7.6
+    },
+    {
+     "label": "19-Sep-22",
+     "value": 7.25
+    },
+    {
+     "label": "19-Oct-22",
+     "value": 7.1
+    },
+    {
+     "label": "19-Nov-22",
+     "value": 6.9
+    },
+    {
+     "label": "19-Dec-22",
+     "value": 6.0
+    },
+    {
+     "label": "19-Jan-23",
+     "value": 6.3
+    },
+    {
+     "label": "19-Feb-23",
+     "value": 6.6
+    },
+    {
+     "label": "19-Mar-23",
+     "value": 6.3
+    },
+    {
+     "label": "19-Apr-23",
+     "value": 6.7
+    },
+    {
+     "label": "19-May-23",
+     "value": 6.85
+    },
+    {
+     "label": "19-Jun-23",
+     "value": 7.0
+    },
+    {
+     "label": "19-Jul-23",
+     "value": 7.3
+    },
+    {
+     "label": "19-Aug-23",
+     "value": 7.1
+    },
+    {
+     "label": "19-Sep-23",
+     "value": 6.97
+    }
+   ],
+   "note": "approximate, measured from the original chart (no data labels; the source x-axis runs right-to-left from 19-Jan-21 to 19-Sep-23; values read monthly plus the January 2021 peak and listed chronologically; last point = closing unit price SAR 6.97 from the report).",
+   "p": 5,
+   "key": "up.chart"
+  },
+  {
+   "t": "note",
+   "text": "* Prices as at 30 September 2023",
+   "p": 5,
+   "key": "up.note"
+  },
+  {
+   "t": "h2",
+   "num": "",
+   "text": "FOR FURTHER INFORMATION",
+   "p": 5,
+   "key": "z.h"
+  },
+  {
+   "t": "p",
+   "text": "Alkhabeer Capital\nPO Box 128289, Jeddah 21362\nKingdom of Saudi Arabia\nTel: +966 12 658 8888\nFax: +966 12 658 6663\nEmail: info@alkhabeer.com\nCR No: 4030177445\nCMA License No: 07074-37\nalkhabeer.com",
+   "p": 5,
+   "key": "z.p"
+  },
+  {
+   "t": "h2",
+   "num": "",
+   "text": "DISCLAIMER",
+   "p": 5,
+   "key": "dc.h"
+  },
+  {
+   "t": "note",
+   "text": "This document does not constitute an offer to buy, subscribe or participate in any way in Alkhabeer Diversified Income Traded Fund, nor shall it (or any part of it) form the basis of, or be relied on, in connection with, or act as inducement to enter into any contract whatsoever. Prospective investors should read carefully Alkhabeer Diversified Income Traded Fund’s Terms and Conditions and their contents related to investment risks, as well as other Alkhabeer Diversified Income Traded Fund documents prior to making any investment decision. Alkhabeer Diversified Income Traded Fund documents are available on Alkhabeer Capital’s website www.alkhabeer.com. This investment is not a cash deposit with a local bank. The value of the amount invested and any other income which may arise therefrom may increase or decrease. All prospective investors are required to make their own determination with their own financial and legal advisors and to evaluate all risks involved. No assurance can be given that the targeted and projected results will be achieved. Moreover, past performance of Alkhabeer Diversified Income Traded Fund is not a guarantee of the Fund’s future results. By investing in the Fund, the investor acknowledges having read and accepted Alkhabeer Diversified Income Traded Fund’s Terms and Conditions, The Fund Manager or any of its affiliates shall not be liable for any financial loss which may be suffered by the Fund, unless such loss is deliberately caused by the Fund Manager.",
+   "p": 5,
+   "key": "dc.note"
+  }
+ ]
+}

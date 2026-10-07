@@ -47,7 +47,7 @@ th{font-size:12px;color:var(--muted);font-weight:600}
 {% block head %}{% endblock %}
 </head>
 <body>
-<header class="top"><a class="brand" href="/">الخبير المالية · البيانات الربعية</a><span class="sp"></span>{% block nav %}{% endblock %}{% if me %}<span class="l" style="color:#DCE3EE">{{ me.name }}{% if me.role != "admin" and roles %} · {{ roles[me.role] }}{% endif %}</span>{% if me.role == "admin" %}<a class="l" href="/users">المستخدمون</a>{% endif %}{% endif %}<a class="l" href="/logout">خروج</a></header>
+<header class="top"><a class="brand" href="/">الخبير المالية · البيانات الربعية</a><span class="sp"></span>{% block nav %}{% endblock %}{% if me %}<a class="l" href="/records">البيانات المنشورة</a><span class="l" style="color:#DCE3EE">{{ me.name }}{% if me.role != "admin" and roles %} · {{ roles[me.role] }}{% endif %}</span>{% if me.role == "admin" %}<a class="l" href="/users">المستخدمون</a>{% endif %}{% endif %}<a class="l" href="/logout">خروج</a></header>
 <div class="wrap">{% block body %}{% endblock %}</div>
 </body>
 </html>

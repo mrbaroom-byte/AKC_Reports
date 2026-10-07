@@ -1,0 +1,29 @@
+{% extends "base.html" %}
+{% block title %}البيانات المنشورة{% endblock %}
+{% block head %}<style>
+.tabs{display:flex;gap:8px;flex-wrap:wrap;margin:14px 0 18px}
+.tabs a{padding:7px 14px;border-radius:999px;border:1px solid var(--line);background:var(--surface);text-decoration:none;font-size:14px}
+.tabs a.on{background:#12284B;color:#fff;border-color:#12284B}
+td a.f{font-size:12.5px;margin-inline-end:8px}
+</style>{% endblock %}
+{% block body %}
+<h1>البيانات الربعية المنشورة</h1>
+<div class="muted">{{ total }} بيانًا مستوردًا من مستندات الصناديق، محفوظة جداول في قاعدة البيانات. التصحيح للمعتمِد فقط، ولا يُعاد نشر بيان إلا بطلب من هيئة السوق المالية.</div>
+<nav class="tabs">{% for f in funds %}<a href="/records?fund={{ f.key }}" class="{{ 'on' if f.key == fund else '' }}">{{ f.name }}</a>{% endfor %}</nav>
+<div class="box tw">
+<table>
+<thead><tr><th>الربع</th><th>الحالة</th><th>اختلافات بين العربي والإنجليزي</th><th>تصحيحات</th><th>الملفات المنشورة</th><th></th></tr></thead>
+<tbody>
+{% for r in rows %}
+<tr>
+  <td><a href="/r/{{ fund }}/{{ r.q }}">{{ r.ql }}</a></td>
+  <td><span class="pill ok">{{ r.status }}</span>{% if r.draft %} <span class="pill warn">مسودة تصحيح</span>{% endif %}</td>
+  <td>{% if r.conf %}<span class="pill warn">{{ r.conf }}</span>{% else %}<span class="muted">—</span>{% endif %}</td>
+  <td>{% if r.corr %}<span class="pill">{{ r.corr }}</span>{% else %}<span class="muted">—</span>{% endif %}</td>
+  <td>{% set pub = r.files.get('published') or {} %}{% for l, f in pub.items() %}{% if f.pdf %}<a class="f" href="/f/{{ fund }}/{{ r.q }}/published/{{ f.pdf }}" target="_blank">PDF {{ 'عربي' if l == 'ar' else 'EN' }}</a>{% endif %}{% endfor %}</td>
+  <td><a class="btn" href="/r/{{ fund }}/{{ r.q }}">فتح</a></td>
+</tr>
+{% endfor %}
+</tbody></table>
+</div>
+{% endblock %}
