@@ -50,6 +50,10 @@ def approvers():
     return store.setting('approver_emails', []) or []
 
 
+def by_roles(roles):
+    return [u['email'] for u in store.users() if u.get('active') and u.get('email') and u.get('role') in roles]
+
+
 def editors():
     return [u['email'] for u in store.users() if u.get('active') and u.get('email')]
 
@@ -99,7 +103,7 @@ def _disclaimer():
             f'<div dir="ltr" style="text-align:left;padding-top:6px;color:{K.SOFT}">{K.e(DISCLAIMER_EN)}</div></td></tr></table></td></tr>')
 
 
-def compose(kind, fund, q, by='', note='', link='', findings=None, by_en='', at=''):
+def compose(kind, fund, q, by='', note='', link='', findings=None, by_en='', at='', stage='', stage_en=''):
     """(subject, html, text) for one alert, in the Alkhabeer «ضوء» e-mail design."""
     e = K.e
     by_en = by_en or ('The approver' if kind in ('returned', 'final') else 'A data-entry user')
@@ -120,6 +124,17 @@ def compose(kind, fund, q, by='', note='', link='', findings=None, by_en='', at=
         if note: extra.append(_quote('ملاحظة المعتمِد', note))
         btn = 'فتح البيان'; subj = f'أُعيد للتعديل: {fa} — {qa}'
         en = (f'Returned for changes — {fe}, {qe}', [f'{e(by_en)} returned the {e(qe)} quarterly statement for changes.'] + ([f'Note: “{e(note)}”'] if note else []))
+    elif kind == 'stage':
+        title, sub = f'بيان بانتظارك: {stage}', f'وصل البيان إلى مرحلة «{stage}» في مسار الاعتماد، وهو بانتظار إجرائك.'
+        facts += [('المرحلة', e(stage)), ('سلّمه', e(by)), ('الوقت', K.ltr(at))]
+        if note: extra.append(_quote('ملاحظة مع التسليم', note))
+        btn = 'فتح البيان'; subj = f'بانتظارك ({stage}): {fa} — {qa}'
+        en = (f'Waiting for you — {stage_en}: {fe}, {qe}', [f'The {e(qe)} quarterly statement has reached the “{e(stage_en)}” stage of the approval route and is waiting for you.'])
+    elif kind == 'done':
+        title, sub = 'اكتمل مسار البيان', 'اعتُمد البيان ونُشر ورُفع على الموقع، وصار أساس بيان الربع التالي.'
+        facts += [('آخر إجراء', e(by)), ('الوقت', K.ltr(at))]
+        btn = 'فتح البيان'; subj = f'اكتمل: {fa} — {qa}'
+        en = (f'Complete — {fe}, {qe}', [f'The {e(qe)} quarterly statement has been approved, published and uploaded to the website.'])
     elif kind == 'final':
         title, sub = 'اعتُمد البيان', 'اعتُمدت النسخة النهائية، والملفات العربية والإنجليزية جاهزة للتنزيل.'
         facts += [('اعتمده', e(by)), ('وقت الاعتماد', K.ltr(at))]
@@ -214,14 +229,14 @@ def _deliver(kind, obj, to, subj, html_, text, actor):
     return False
 
 
-def notify(kind, fund, q, actor, by='', note='', base='', findings=None, exclude=None, to=None, wait=False, by_en=''):
+def notify(kind, fund, q, actor, by='', note='', base='', findings=None, exclude=None, to=None, wait=False, by_en='', stage='', stage_en=''):
     """Send one alert in the background. `actor` = {'user','role'} for the audit row. Returns the recipients."""
     if not provider(): return []
     if to is None: to = approvers() if kind == 'submitted' else editors()
     to = [x for x in dict.fromkeys(to) if x and x != (exclude or '').lower()]
     if not to: return []
     link = f'{base}/s/{fund}/{q}' if base and fund else base
-    subj, html_, text = compose(kind, fund, q, by, note, link, findings, by_en) if fund else compose('test', 'income', 'q1-2026', link=base)
+    subj, html_, text = compose(kind, fund, q, by, note, link, findings, by_en, stage=stage, stage_en=stage_en) if fund else compose('test', 'income', 'q1-2026', link=base)
     t = threading.Thread(target=_deliver, args=(kind, f'{fund}:{q}' if fund else 'mail', to, subj, html_, text, actor), daemon=True)
     t.start()
     if wait: t.join(60)

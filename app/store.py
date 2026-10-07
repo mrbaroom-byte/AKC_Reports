@@ -90,6 +90,11 @@ def create_user(username, name, role='editor'):
     return pw
 
 
+def set_role(username, role):
+    with _lock, _users_c() as c:
+        c.execute('update users set role=? where username=?', (role, username))
+
+
 def set_email(username, email):
     with _lock, _users_c() as c:
         c.execute('update users set email=? where username=?', (email or None, username))

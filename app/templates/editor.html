@@ -52,10 +52,15 @@
     <h1>{{ meta.name }}</h1>
     <div class="sub"><span>{{ meta.ql }}</span><span class="s" style="opacity:.4">·</span><span>يُبنى على البيان المعتمد لـ{{ meta.pql }}</span><span class="pill" id="stPill">{{ status }}</span></div>
   </div>
-  <ol class="steps" id="steps" aria-label="مراحل البيان">
-    {% for n in ['الإدخال','المسودة','الاعتماد','نهائي'] %}<li data-i="{{ loop.index }}"><i>{{ loop.index }}</i>{{ n }}</li>{% endfor %}
-  </ol>
 </div>
+<section class="card route" id="route" aria-label="مسار الاعتماد">
+  <ol class="rsteps" id="rsteps"></ol>
+  <div class="rnow">
+    <div class="rwho"><span class="muted small">المرحلة الحالية</span><b id="rStage"></b><span class="small muted" id="rWho"></span></div>
+    <div class="racts" id="rActs"></div>
+  </div>
+  <div class="rinfo" id="rInfo" hidden></div>
+</section>
 <div class="note" id="lockb" hidden><svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6"><rect x="3" y="7" width="10" height="7" rx="1.5"/><path d="M5.5 7V5a2.5 2.5 0 015 0v2"/></svg><span></span></div>
 <div class="lay">
 <div id="form">
@@ -73,6 +78,11 @@
       <textarea id="notes" placeholder="ملاحظات على المسودة، ومصدر كل رقم يحتاج تأكيدًا…">{{ s.notes or '' }}</textarea>
       <div style="margin-top:10px;display:flex;gap:10px;align-items:center"><button class="btn" id="saveNotes">حفظ الملاحظات</button></div>
     </div>
+    <div class="card" id="cmtCard"><header><h2>التعليقات <span class="count" id="cmtN" hidden></span></h2><span class="src">لكل جهة أن تعلّق في أي مرحلة، ويُغلق التعليق بعد معالجته</span></header>
+      <div class="cmtf"><select id="cmtSec" aria-label="القسم"><option value="general">عام</option><option value="faco">أرقام FACO</option><option value="cm">مدير الصندوق</option><option value="mkt">{{ 'تداول والرسم' if meta.traded else 'رسم الأداء' }}</option></select>
+        <textarea id="cmtBody" placeholder="اكتب تعليقك على المسودة…" rows="2"></textarea><button class="btn sm primary" type="button" id="cmtAdd">إضافة</button></div>
+      <ul class="cmts" id="cmts"><li class="muted small">لا تعليقات بعد.</li></ul></div>
+    <div class="card"><header><h2>مسار الاعتماد</h2><span class="src">كل تسليم وإعادة ومراجعة، بالأحدث أولًا</span></header><ul class="ev" id="wfHist"></ul></div>
     <div class="card"><header><h2>السجل</h2></header><ul class="ev" id="evs2"></ul></div>
   </section>
 </div>
@@ -93,9 +103,7 @@
   <span class="msg"><span class="dot" id="dot"></span><span id="msg">{{ 'آخر حفظ ' ~ s.updated if s.updated else '' }}</span></span>
   <button class="btn" id="save" title="Ctrl+S">حفظ</button>
   <button class="btn blue" id="gen">إصدار المسودات</button>
-  <button class="btn primary" id="sub" hidden>رفع للاعتماد</button>
-  {% if me.role == 'admin' %}<button class="btn" id="ret" hidden>إعادة للتعديل</button>
-  <button class="btn primary" id="fin" hidden>اعتماد النسخة النهائية</button>{% endif %}
+  <span id="abActs" class="abacts"></span>
 </div></div>
 <script>
 const META = {{ meta_json|safe }}, PREV = {{ prev_json|safe }};
@@ -154,7 +162,7 @@ function rCm(){
   <p class="fmt">سطر يبدأ بـ<code>#</code> عنوان فرعي · سطر يبدأ بـ<code>-</code> بند في قائمة · سطر فارغ بين الفقرات</p>
   <div class="lang2">${['ar', 'en'].map(l => `<div class="f" data-f="commentary.${l}" ${l === 'en' ? 'dir="ltr"' : ''}><div class="cmh"><label class="lbl" for="cm-${l}">${l === 'ar' ? 'العربية' : 'English'}</label>
     ${AI && !LOCKED() ? `<span class="cma"><button type="button" class="btn sm ghost" data-cm="improve" data-l="${l}">${l === 'ar' ? 'تحسين الصياغة' : 'Improve wording'}</button><button type="button" class="btn sm ghost" data-cm="translate" data-l="${l}">${l === 'ar' ? 'ترجمة إلى الإنجليزية' : 'ترجمة إلى العربية'}</button></span>` : ''}</div>
-    ${(D.commentary_mt || {})[l] ? `<div class="mt" role="status"><span>${l === 'ar' ? 'مترجم آليًا من الإنجليزية' : 'Machine-translated from Arabic'} — يحتاج مراجعة قبل الرفع للاعتماد.</span><label><input type="checkbox" data-mtok="${l}" ${LOCKED() ? 'disabled' : ''}> راجعتُ الترجمة</label></div>` : ''}
+    ${(D.commentary_mt || {})[l] ? `<div class="mt" role="status"><span>${l === 'ar' ? 'مترجم آليًا من الإنجليزية' : 'Machine-translated from Arabic'} — يراجعه الاتصال المؤسسي قبل اعتماده.</span><label><input type="checkbox" data-mtok="${l}" ${['ccd', 'pdd', 'admin'].includes(META.role) && mayEdit('commentary.' + l) ? '' : 'disabled'}> راجعتُ الترجمة</label></div>` : ''}
     <textarea id="cm-${l}" dir="${l === 'en' ? 'ltr' : 'rtl'}" data-p="commentary.${l}">${esc(D.commentary?.[l] || '')}</textarea><div class="wc" data-wc="${l}"></div></div>`).join('')}</div></div>
   <div class="card" data-sec="top10"><header><h2>أكبر عشرة استثمارات</h2><span class="src">المصدر: إدارة أسواق المال</span></header>${listTable('top10', D.top10, PREV.top10)}
     <div class="sumrow"><button class="btn sm" type="button" data-add="top10">+ بند</button><span class="sum" data-n="top10"></span></div></div>`;
@@ -250,24 +258,76 @@ async function check(){ try{ const r = await api(base + '/check', {data: D}); sh
 
 /* ---------- state ---------- */
 let ST = META.st;
-const LOCKED = () => ['submitted', 'final', 'published', 'corrected'].includes(ST);
+let WF = META.wf;
+const LOCKED = () => !WF.edit;
+const OWN = k => /^(commentary|top10|alloc|ret_|risk|own_|rating|price|perf_points|tollfree|pe$)/.test(k) ? 'cmd' : 'faco';
+function mayEdit(path){
+  const r = META.role, st = WF.stage;
+  if(!['faco', 'cmd', 'ccd', 'english'].includes(st)) return false;
+  if(r === 'admin') return true;
+  if(st === 'faco' || st === 'cmd'){ if(r === 'editor' || r === 'pdd') return true; if(r === 'faco') return OWN(path) === 'faco'; if(r === 'cmd') return st === 'cmd' && OWN(path) === 'cmd'; return false; }
+  if(st === 'ccd') return r === 'ccd' && (/^commentary/.test(path) || /\.(en|title_en)$/.test(path));
+  return r === 'pdd' && (path === 'commentary.en' || /\.(en|title_en)$/.test(path));
+}
+const RLAB = {bdd: 'تطوير الأعمال', compliance: 'الالتزام'};
+const ACTS = {
+  faco: [['faco_done', 'اكتملت أرقام FACO', 'تُسلَّم الأرقام إلى إدارة أسواق المال لتكمل المحتوى.']],
+  cmd: [['submit', 'رفع للمراجعة', 'يُقفل البيان لدى المراجعين: تطوير الأعمال والالتزام.']],
+  ccd: [['ccd_ok', 'اعتماد التدقيق والترجمة', 'يُسلَّم البيان إلى نائب الرئيس التنفيذي للاعتماد.']],
+  dceo: [['approve', 'اعتماد', 'يُسلَّم البيان إلى مجلس إدارة الصندوق.']],
+  board: [['approve', 'تسجيل اعتماد المجلس للنسخة العربية', 'تُنهي إدارة تطوير المنتجات الإنجليزية بعدها.']],
+  publish: [['published', 'تم النشر', 'يُسلَّم البيان إلى الاتصال المؤسسي لرفعه على الموقع.']],
+  upload: [['uploaded', 'تم الرفع على الموقع', 'يكتمل مسار البيان.']]};
+function wfButtons(){
+  const st = WF.stage, out = [];
+  if(st === 'review'){
+    const mine = META.role === 'admin' ? ['bdd', 'compliance'] : ['bdd', 'compliance'].filter(r => r === META.role);
+    mine.filter(r => !WF.signoffs[r]).forEach(r => out.push(`<button class="btn primary" data-wf="signoff" data-as="${r}" data-msg="تُسجَّل المراجعة، وينتقل البيان إلى التدقيق اللغوي بعد المراجعتين.">تسجيل مراجعة: ${RLAB[r]}</button>`));
+  } else if(st === 'english' && WF.acts){
+    out.push(`<button class="btn primary" id="finBtn">إصدار النسخة النهائية</button>`);
+  } else if(WF.acts || (META.role === 'pdd' && (st === 'faco' || st === 'cmd'))){
+    (ACTS[st] || []).forEach(([a, t, m]) => out.push(`<button class="btn primary" data-wf="${a}" data-msg="${m}">${t}</button>`));
+  }
+  if(WF.can_return) out.push(`<button class="btn" data-wf="return">إعادة للتعديل</button>`);
+  return out.join('');
+}
+function renderRoute(){
+  const i = WF.index;
+  $('#rsteps').innerHTML = WF.stages.filter(x => x.key !== 'done').map((x, k) => `<li class="${k < i || WF.stage === 'done' ? 'done' : k === i ? (ST === 'returned' ? 'back' : 'now') : ''}"><i>${k < i || WF.stage === 'done' ? '✓' : k + 1}</i><span>${esc(x.label)}</span></li>`).join('');
+  const cur = WF.stages[i] || {label: '', roles: []};
+  $('#rStage').textContent = cur.label;
+  $('#rWho').textContent = WF.stage === 'done' ? 'اكتمل مسار البيان.' : 'لدى: ' + cur.roles.join('، ');
+  const info = [];
+  if(WF.stage === 'review') info.push('المراجعات: ' + ['bdd', 'compliance'].map(r => WF.signoffs[r] ? `${RLAB[r]} ✓ (${esc(WF.signoffs[r].name)})` : `${RLAB[r]}: لم تُسجَّل`).join(' · '));
+  if(WF.dirty) info.push('عُدّلت البيانات بعد آخر إصدار؛ أصدر المسودات قبل المتابعة.');
+  if(ST === 'returned') info.push('أُعيد البيان للتعديل. الملاحظة في «التعليقات».');
+  $('#rInfo').hidden = !info.length; $('#rInfo').innerHTML = info.map(x => `<div>${x}</div>`).join('');
+  const b = wfButtons(); $('#rActs').innerHTML = b; $('#abActs').innerHTML = b;
+  $('#wfHist').innerHTML = (WF.history || []).length ? WF.history.map(h => `<li><time>${esc(h.at)}</time>${esc(h.name)}: ${esc(wfName(h))}${h.note ? ' — ' + esc(h.note) : ''}</li>`).join('') : '<li class="muted">لا شيء بعد.</li>';
+}
+const STL = k => (WF.stages.find(x => x.key === k) || {}).label || k;
+function wfName(h){
+  if(h.action === 'return') return 'أعاده إلى: ' + STL(h.to);
+  if(h.action.startsWith('signoff:')) return 'سجّل مراجعة: ' + RLAB[h.action.split(':')[1]];
+  return 'سلّمه إلى: ' + STL(h.to);
+}
 function ui(){
   const locked = LOCKED(), admin = META.role === 'admin';
   const pill = $('#stPill'); pill.textContent = STAT[ST] || ST; pill.className = 'pill ' + (ST === 'final' ? 'navy' : ST === 'returned' ? 'amber' : ST === 'new' ? '' : 'blue');
   const idx = {new: 0, draft: 1, returned: 1, generated: 2, submitted: 3, final: 4}[ST] ?? 4;
   $$('#steps li').forEach(li => { const i = +li.dataset.i; const c = idx === 4 || i < idx ? 'done' : i === idx ? (ST === 'returned' ? 'back' : 'now') : ''; li.className = c; li.querySelector('i').textContent = c === 'done' ? '✓' : i; });
   $('#form').classList.toggle('ro', locked);
-  $$('#form input, #form textarea').forEach(i => i.readOnly = locked);
-  const lb = $('#lockb'); lb.hidden = !locked && ST !== 'returned';
-  lb.className = 'note' + (ST === 'returned' ? ' amber' : '');
-  lb.querySelector('span').textContent = ST === 'returned' ? 'أُعيد البيان للتعديل. راجع ملاحظات المعتمِد في تبويب «الملاحظات والسجل»، ثم عدّل وأصدر المسودات من جديد.'
-    : ST === 'submitted' ? (admin ? 'البيان مرفوع للاعتماد. راجع المسودة في «الملفات»، ثم اعتمدها أو أعدها للتعديل مع ملاحظاتك.' : 'البيان مرفوع للاعتماد، ولا يُعدَّل حتى يعتمده المعتمِد أو يعيده للتعديل.')
-    : 'البيان معتمد نهائيًا وصار أساس الربع التالي.' + (admin ? ' يمكنك إعادته للتعديل عند الحاجة.' : '');
+  $$('#form [data-p]').forEach(i => { const no = locked || !mayEdit(i.dataset.p); if(i.matches('select,input[type=checkbox],input[type=radio]')) i.disabled = no; else if(i.matches('input,textarea')) i.readOnly = no; });
+  $$('#form [data-add]').forEach(b => b.hidden = locked || !mayEdit(b.dataset.add));
+  $$('#form [data-del]').forEach(b => b.hidden = locked || !mayEdit(b.dataset.del));
+  const lb = $('#lockb'); lb.hidden = !locked;
+  lb.className = 'note';
+  lb.querySelector('span').textContent = WF.stage === 'done' ? 'اكتمل مسار البيان: اعتُمد ونُشر ورُفع على الموقع، وصار أساس الربع التالي.'
+    : 'لا تعديل لك على البيان في مرحلته الحالية، ويمكنك قراءته والتعليق عليه.';
   $('#save').hidden = locked; $('#gen').hidden = locked;
   $('#gen').disabled = BLOCKS > 0; $('#gen').title = BLOCKS ? 'أكمل النقص المذكور في «التحقق» أولًا' : '';
-  $('#sub').hidden = ST !== 'generated';
-  if($('#ret')) $('#ret').hidden = !(ST === 'submitted' || ST === 'final');
-  if($('#fin')) $('#fin').hidden = ST !== 'submitted';
+  $('#xlcard').hidden = locked;
+  renderRoute();
 }
 function showEvents(ev){
   EVENTS = ev || EVENTS;
@@ -289,39 +349,70 @@ function showFiles(f, cmp){
 }
 
 /* ---------- actions ---------- */
-async function save(){ const r = await api(base, {data: D}); isDirty = false; ST = r.st; msg('حُفظ ' + r.updated, 'ok'); showVal(r.validation, r.derived); showEvents(r.events); return r; }
+async function save(){ const r = await api(base, {data: D}); isDirty = false; ST = r.st; if(r.wf) WF = r.wf; msg('حُفظ ' + r.updated, 'ok'); showVal(r.validation, r.derived); showEvents(r.events); return r; }
 $('#save').onclick = async () => { busy($('#save'), true, 'يُحفظ'); try{ await save(); toast('حُفظت البيانات.'); }catch(e){ msg(e.message, 'dirty'); toast(e.message, 'amber'); } busy($('#save'), false); ui(); };
 $('#gen').onclick = async () => {
   busy($('#gen'), true, 'يُصدر');
   try{ await save(); if(BLOCKS){ busy($('#gen'), false); ui(); return toast('أكمل النقص المذكور في «التحقق» أولًا.', 'amber'); } await api(base + '/generate', {final: false}); poll(false); }
   catch(e){ busy($('#gen'), false); ui(); toast(e.message, 'amber'); }
 };
-$('#sub').onclick = async () => {
-  if(isDirty) return toast('احفظ وأصدر المسودات بعد آخر تعديل أولًا.', 'amber');
-  if(!await ask({title: 'رفع البيان للاعتماد؟', text: 'يُقفل البيان للتعديل حتى يعتمده المعتمِد أو يعيده إليك مع ملاحظاته.', ok: 'رفع للاعتماد'})) return;
-  try{ await api(base + '/submit'); ST = 'submitted'; msg('رُفع البيان للاعتماد.', 'ok'); toast('رُفع البيان للاعتماد.'); ui(); getj(base + '/job').then(r => showEvents(r.events)); }catch(e){ toast(e.message, 'amber'); }
+async function wfAct(btn){
+  const act = btn.dataset.wf;
+  if(isDirty) return toast('احفظ تعديلاتك أولًا.', 'amber');
+  let note = '', to = 'cmd';
+  if(act === 'return'){
+    const o = {title: 'إعادة البيان للتعديل', ok: 'إعادة للتعديل', required: 3, input: 'ما الذي يحتاج تعديلًا؟',
+      html: `<p style="margin:0 0 10px">يعود البيان إلى المرحلة التي تختارها، وتصل ملاحظتك إليها وإلى تطوير المنتجات.</p><label class="small" style="display:flex;gap:8px;align-items:center;margin-bottom:6px"><input type="radio" name="to" value="cmd" checked> إلى إدارة أسواق المال</label><label class="small" style="display:flex;gap:8px;align-items:center;margin-bottom:10px"><input type="radio" name="to" value="faco"> إلى FACO (الأرقام)</label>`,
+      collect: d => ($('input[name=to]:checked', d) || {}).value};
+    const n = await ask(o); if(n === null) return; note = n; to = o.collected || 'cmd';
+  } else {
+    const n = await ask({title: btn.textContent + '؟', text: btn.dataset.msg || '', input: 'ملاحظة مع التسليم (اختياري)', ok: btn.textContent});
+    if(n === null) return; note = n === true ? '' : n;
+  }
+  busy(btn, true, 'يُرسل');
+  try{
+    const r = await api(base + '/wf', {action: act, note, to, as: btn.dataset.as});
+    WF = r.wf; if(r.st) ST = r.st; if(r.notes !== undefined) $('#notes').value = r.notes; showEvents(r.events); toast('تم.'); renderAll(); loadComments();
+  }catch(e){ toast(e.message, 'amber'); busy(btn, false); }
+}
+document.addEventListener('click', async e => {
+  const b = e.target.closest('[data-wf]'); if(b){ e.preventDefault(); return wfAct(b); }
+  if(e.target.closest('#finBtn')){
+    if(isDirty) return toast('احفظ تعديلاتك أولًا.', 'amber');
+    if(!await ask({title: 'إصدار النسخة النهائية؟', text: 'تُصدر النسخة النهائية بالعربية والإنجليزية، ويُسلَّم البيان إلى الالتزام للنشر.', ok: 'إصدار'})) return;
+    try{ await api(base + '/generate', {final: true}); msg('تُصدر النسخة النهائية…', 'dirty'); poll(true); }catch(err){ toast(err.message, 'amber'); }
+  }
+});
+/* ---------- comments ---------- */
+const SECN = {general: 'عام', faco: 'أرقام FACO', cm: 'مدير الصندوق', mkt: 'تداول والرسم', return: 'إعادة للتعديل'};
+function showComments(items){
+  const open = items.filter(c => !c.resolved_at).length;
+  $('#cmtN').hidden = !open; $('#cmtN').textContent = open;
+  $('#cmts').innerHTML = items.length ? items.map(c => `<li class="${c.resolved_at ? 'done' : ''}"><div class="ch"><b>${esc(c.name)}</b><span class="muted small">${esc(SECN[c.section] || c.section)} · ${esc(STL(c.stage))} · <span class="ltr">${esc(c.at)}</span></span></div><p>${esc(c.body)}</p>${c.resolved_at ? `<span class="small muted">أُغلق: ${esc(c.resolved_by)}</span>` : `<button class="btn sm ghost" type="button" data-resolve="${c.id}">إغلاق</button>`}</li>`).join('') : '<li class="muted small">لا تعليقات بعد.</li>';
+}
+function loadComments(){ getj(base + '/comments').then(r => showComments(r.items)).catch(() => {}); }
+$('#cmtAdd').onclick = async () => {
+  const body = $('#cmtBody').value.trim(); if(!body) return toast('اكتب التعليق.', 'amber');
+  busy($('#cmtAdd'), true, 'يُضاف');
+  try{ const r = await api(base + '/comments', {body, section: $('#cmtSec').value}); $('#cmtBody').value = ''; showComments(r.items); toast('أُضيف التعليق.'); }catch(e){ toast(e.message, 'amber'); }
+  busy($('#cmtAdd'), false);
 };
-if($('#fin')) $('#fin').onclick = async () => {
-  if(!await ask({title: 'اعتماد النسخة النهائية؟', text: 'تُصدر النسخة النهائية بالعربية والإنجليزية، وتصبح أساس بيان الربع التالي.', ok: 'اعتماد'})) return;
-  busy($('#fin'), true, 'يُعتمد'); try{ await api(base + '/generate', {final: true}); poll(true); }catch(e){ busy($('#fin'), false); toast(e.message, 'amber'); }
-};
-if($('#ret')) $('#ret').onclick = async () => {
-  const n = await ask({title: 'إعادة البيان للتعديل', text: 'تُضاف ملاحظاتك إلى «الملاحظات» ويُفتح البيان لمُدخل البيانات.', input: 'ما الذي يحتاج تعديلًا؟ (اختياري)', ok: 'إعادة للتعديل'});
-  if(n === null) return;
-  try{ const r = await api(base + '/return', {note: n === true ? '' : n}); ST = 'returned'; $('#notes').value = r.notes || $('#notes').value; toast('أُعيد البيان للتعديل.'); ui(); getj(base + '/job').then(r => showEvents(r.events)); }catch(e){ toast(e.message, 'amber'); }
-};
+document.addEventListener('click', async e => {
+  const b = e.target.closest('[data-resolve]'); if(!b) return;
+  try{ const r = await api(base + '/comments/' + b.dataset.resolve + '/resolve', {}); showComments(r.items); }catch(err){ toast(err.message, 'amber'); }
+});
 async function poll(final){
   let r; try{ r = await getj(base + '/job'); }catch(e){ return setTimeout(() => poll(final), 3000); }
   const j = r.job;
   if(j.state === 'running'){ msg((final ? 'يُعتمد: ' : 'يُصدر: ') + j.step + '…', 'dirty'); setTimeout(() => poll(final), 1500); return; }
-  ST = r.st; busy($('#gen'), false); if($('#fin')) busy($('#fin'), false); showFiles(r.files, r.cmp); showEvents(r.events);
+  ST = r.st; if(r.wf) WF = r.wf; busy($('#gen'), false); showFiles(r.files, r.cmp); showEvents(r.events);
   if(j.state === 'error'){ msg(j.msg, 'dirty'); toast(j.msg, 'amber', 7000); }
-  else if(j.state === 'done'){ msg(final ? 'اعتُمدت النسخة النهائية.' : 'صدرت المسودات. راجعها ثم ارفعها للاعتماد.', 'ok'); toast(final ? 'اعتُمدت النسخة النهائية.' : 'صدرت المسودات بالعربية والإنجليزية.'); $('#jobMsg').textContent = (r.log || []).join(' · '); }
+  else if(j.state === 'done'){ msg(final ? 'صدرت النسخة النهائية وسُلّم البيان إلى الالتزام.' : 'صدرت المسودات بالعربية والإنجليزية.', 'ok'); toast(final ? 'صدرت النسخة النهائية.' : 'صدرت المسودات بالعربية والإنجليزية.'); $('#jobMsg').textContent = (r.log || []).join(' · '); }
   ui(); check();
 }
 $('#saveNotes').onclick = async () => { busy($('#saveNotes'), true, 'يُحفظ'); try{ const r = await api(base + '/notes', {notes: $('#notes').value}); showEvents(r.events); toast('حُفظت الملاحظات.'); }catch(e){ toast(e.message, 'amber'); } busy($('#saveNotes'), false); };
 
-renderAll(); showEvents(); check();
+renderAll(); showEvents(); check(); loadComments();
 /* ---------- intake: any file → proposed values with their source ---------- */
 async function intake(list){
   if(!list.length) return;
@@ -384,6 +475,6 @@ document.addEventListener('change', e => {
   const c = e.target.closest('[data-mtok]'); if(!c) return;
   if(c.checked){ D.commentary_mt = D.commentary_mt || {}; delete D.commentary_mt[c.dataset.mtok]; renderAll(); dirty(); toast('سُجّلت مراجعة الترجمة.'); }
 });
-getj(base + '/job').then(r => { showFiles(r.files, r.cmp); $('#jobMsg').textContent = (r.log || []).join(' · '); if(r.job.state === 'running'){ busy($('#gen'), true, 'يُصدر'); poll(false); } });
+getj(base + '/job').then(r => { if(r.wf){ WF = r.wf; renderRoute(); } showFiles(r.files, r.cmp); $('#jobMsg').textContent = (r.log || []).join(' · '); if(r.job.state === 'running'){ busy($('#gen'), true, 'يُصدر'); poll(false); } });
 </script>
 {% endblock %}
