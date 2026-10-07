@@ -1,212 +1,237 @@
 {% extends "base.html" %}
 {% block title %}{{ name }} · {{ ql }}{% endblock %}
+{% block bodyclass %}{% if meta.admin %}has-bar{% endif %}{% endblock %}
 {% block head %}<style>
-.hd{display:flex;gap:12px;align-items:flex-start;flex-wrap:wrap;justify-content:space-between;margin-bottom:12px}
-.files a{font-size:13px;margin-inline-end:10px}
-.bar{position:sticky;top:0;z-index:5;background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:12px 14px;margin-bottom:14px;display:flex;gap:8px;flex-wrap:wrap;align-items:center}
-.bar .sp{flex:1}
-.tabs{display:flex;gap:6px;flex-wrap:wrap;margin:6px 0 14px;border-bottom:1px solid var(--line)}
-.tabs button{font:600 14px var(--body);background:none;border:0;border-bottom:3px solid transparent;padding:9px 12px;color:var(--muted);cursor:pointer}
-.tabs button.on{color:var(--navy);border-bottom-color:#3B7DD8}
-details.sec{background:var(--surface);border:1px solid var(--line);border-radius:12px;margin-bottom:10px}
-details.sec>summary{cursor:pointer;padding:12px 16px;font:600 15px var(--display);color:var(--navy);list-style:none;display:flex;gap:8px;align-items:center}
+.hd{display:flex;gap:18px;align-items:flex-start;flex-wrap:wrap;margin-bottom:20px}
+.hd .t{flex:1;min-width:280px}
+.hd .logo{height:40px;margin-bottom:12px}
+.hd .row{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px}
+.docs{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:12px 14px;min-width:280px}
+.docs .k{display:grid;grid-template-columns:auto 1fr;gap:6px 12px;align-items:center;font-size:13px}
+.docs .k>span{color:var(--muted)}
+.docs .k div{display:flex;gap:6px;flex-wrap:wrap}
+.docs a{font:500 12.5px var(--latin);text-decoration:none;border:1px solid var(--line);border-radius:7px;padding:3px 8px}
+.docs a:hover{border-color:var(--sky)}
+.tools{display:flex;gap:8px;align-items:center;margin:-6px 0 12px;flex-wrap:wrap}
+.tools .sp{flex:1}
+details.sec{background:var(--surface);border:1px solid var(--line);border-radius:12px;margin-bottom:8px;transition:box-shadow .2s var(--ease)}
+details.sec[open]{box-shadow:var(--sh)}
+details.sec>summary{cursor:pointer;padding:13px 18px;font:600 15px var(--body);color:var(--navy);list-style:none;display:flex;gap:10px;align-items:center}
 details.sec>summary::-webkit-details-marker{display:none}
-details.sec>summary::before{content:'›';display:inline-block;transition:transform .15s;color:var(--muted)}
-details.sec[open]>summary::before{transform:rotate(90deg)}
-.sec .in{padding:0 16px 14px}
-.blk{margin:10px 0 14px}
-.blk .lbl{font-size:12px;color:var(--muted);margin-bottom:4px}
-.blk textarea{min-height:70px}
-.blk table input{padding:5px 7px;font-size:13px}
-.chg{background:var(--warn-bg)!important;border-color:#C98A2E!important}
-.ro input,.ro textarea{background:transparent;border-color:transparent;padding-inline:2px;resize:none}
-.ltr{direction:ltr;text-align:left}
-.sumbox{display:none}
-.sumbox.show{display:block}
+details.sec>summary::before{content:'‹';font:400 20px/1 var(--latin);color:var(--faint);width:12px;text-align:center;transition:transform .15s var(--ease);flex-shrink:0}
+[dir=ltr] details.sec>summary::before{content:'›'}
+details.sec[open]>summary::before{transform:rotate(-90deg)}
+[dir=ltr] details.sec[open]>summary::before{transform:rotate(90deg)}
+details.sec>summary .n{font:500 12px var(--latin);color:var(--faint)}
+details.sec>summary .c{margin-inline-start:auto}
+.sec .in{padding:2px 18px 16px;border-top:1px solid var(--line)}
+.blk{margin:14px 0 4px}
+.blk .lbl{font-size:11.5px;font-weight:600;color:var(--faint);margin-bottom:5px;text-transform:none}
+.blk textarea{min-height:64px;line-height:1.75}
+.blk table input{padding:6px 8px;font-size:13.5px}
+.blk table td,.blk table th{padding:4px}
+.blk thead th input{font-weight:600;color:var(--ink-2)}
+.chg{background:var(--amber-bg)!important;border-color:var(--amber-line)!important}
+.ro input,.ro textarea{background:transparent;border-color:transparent;padding-inline:2px;resize:none;box-shadow:none}
 .chlist td{font-size:13px;vertical-align:top}
-.chlist .b{color:var(--bad-fg);text-decoration:line-through}
-.chlist .a{color:var(--ok-fg);font-weight:600}
-.msg{font-size:13.5px}
-#apv{display:none;margin-top:10px;width:100%}
-#apv.show{display:block}
+.chlist .b{color:var(--muted);text-decoration:line-through;text-decoration-color:var(--bronze)}
+.chlist .a{color:var(--navy);font-weight:600}
+.sumbox{border-color:var(--amber-line)}
 </style>{% endblock %}
 {% block body %}
 <div class="hd">
-  <div>
-    <div class="muted"><a href="/records?fund={{ fund }}">البيانات المنشورة</a> · {{ name }}</div>
+  <div class="t">
+    <div class="crumbs"><a href="/records?fund={{ fund }}">البيانات المنشورة</a><span class="s">/</span>{{ name }}</div>
     <h1>{{ ql }}</h1>
-    <span class="pill ok">{{ status }}</span>{% if meta.draft %} <span class="pill warn">مسودة تصحيح: {{ pend }} تعديل</span>{% endif %}
+    <div class="row">
+      <span class="pill {{ 'navy' if s.status == 'corrected' else 'blue' }}">{{ status }}</span>
+      {% if meta.draft %}<span class="pill amber">مسودة تصحيح · {{ pend }} تعديل</span>{% endif %}
+      {% if conflicts %}<span class="pill amber plain"><span class="count amber">{{ conflicts|length }}</span> اختلاف بين اللغتين</span>{% endif %}
+    </div>
   </div>
-  <div class="files">
-    {% set fs = s.files or {} %}
-    {% for kind, title in (('published','المنشور'),('corrected','آخر تصحيح معتمد'),('corr','معاينة التصحيح')) %}{% if fs.get(kind) %}
-    <div><span class="muted">{{ title }}:</span>
-      {% for l, f in fs[kind].items() %}{% if f.pdf %}<a href="/f/{{ fund }}/{{ q }}/{{ kind }}/{{ f.pdf }}" target="_blank">PDF {{ 'عربي' if l == 'ar' else 'EN' }}</a>{% endif %}{% if f.docx %}<a href="/f/{{ fund }}/{{ q }}/{{ kind }}/{{ f.docx }}?dl=1">Word {{ 'عربي' if l == 'ar' else 'EN' }}</a>{% endif %}{% endfor %}
-    </div>{% endif %}{% endfor %}
+  {% set fs = s.files or {} %}
+  <div class="docs" aria-label="الملفات">
+    <div class="k">
+    {% for kind, title in (('published','المنشور'),('corrected','آخر تصحيح'),('corr','معاينة')) %}{% if fs.get(kind) %}
+      <span>{{ title }}</span>
+      <div>{% for l in ['ar','en'] %}{% set f = fs[kind].get(l) or {} %}{% if f.pdf %}<a href="/f/{{ fund }}/{{ q }}/{{ kind }}/{{ f.pdf }}" target="_blank" rel="noopener">PDF {{ 'ع' if l == 'ar' else 'EN' }}</a>{% endif %}{% if f.docx %}<a href="/f/{{ fund }}/{{ q }}/{{ kind }}/{{ f.docx }}?dl=1">Word {{ 'ع' if l == 'ar' else 'EN' }}</a>{% endif %}{% endfor %}</div>
+    {% endif %}{% endfor %}
+    </div>
   </div>
 </div>
 
-{% if meta.admin %}
-<div class="bar" id="bar">
-  <button class="btn primary" id="save" disabled>حفظ التعديلات</button>
-  <button class="btn" id="prev" {% if not meta.draft %}disabled{% endif %}>معاينة PDF وWord</button>
-  <button class="btn" id="fin" {% if not meta.draft %}disabled{% endif %}>اعتماد التصحيح…</button>
-  <button class="btn" id="dis" {% if not meta.draft %}hidden{% endif %}>إلغاء المسودة</button>
-  <span class="sp"></span><span class="msg muted" id="msg">{% if meta.draft %}توجد مسودة تصحيح محفوظة.{% else %}عدّل أي قيمة ثم احفظ. يبقى المنشور كما هو حتى تعتمد التصحيح.{% endif %}</span>
-  <div id="apv" class="box" style="margin:10px 0 0">
-    <h3 style="margin-top:0">اعتماد التصحيح</h3>
-    {% if meta.deps %}<p class="msg"><span class="pill warn">تنبيه</span> البيانات اللاحقة لهذا الصندوق ({{ meta.deps|join('، ') }}) قد تتضمن أرقامًا من هذا البيان، ولا تُعدَّل تلقائيًا. راجعها إن لزم.</p>{% endif %}
-    <p class="msg">يُحفظ الأصل المنشور مرة واحدة، ويُسجَّل كل تعديل في سجل التصحيحات، وتُصدر نسخة مصحّحة (PDF وWord) دون استبدال الملفات المنشورة.</p>
-    <label class="muted" for="reason">سبب التصحيح</label>
-    <textarea id="reason" style="min-height:70px" placeholder="مثال: طلب هيئة السوق المالية رقم … بتاريخ …"></textarea>
-    <div style="margin-top:8px;display:flex;gap:8px"><button class="btn primary" id="go">اعتماد وإصدار النسخة المصحّحة</button><button class="btn" id="cancel">رجوع</button></div>
-  </div>
-</div>
-{% else %}
-<div class="box msg">عرض فقط. تصحيح البيانات المنشورة للمعتمِد.</div>
-{% endif %}
+{% if not meta.admin %}<div class="note"><svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="8" cy="8" r="6.5"/><path d="M8 7v4M8 4.6v.2"/></svg>عرض فقط. تصحيح البيانات المنشورة للمعتمِد.</div>{% endif %}
 
-<div class="box sumbox" id="sum"><h2>التعديلات المحفوظة في المسودة</h2><div class="tw"><table class="chlist"><thead><tr><th>اللغة</th><th>القسم</th><th>البند</th><th>قبل</th><th>بعد</th></tr></thead><tbody id="sumb"></tbody></table></div></div>
+<div class="card sumbox" id="sum" hidden><header><h2>التعديلات المحفوظة في المسودة</h2><span class="src">لم تُعتمد بعد، والمنشور كما هو</span></header>
+  <div class="tw"><table class="chlist"><thead><tr><th>اللغة</th><th>القسم</th><th>البند</th><th>قبل</th><th>بعد</th></tr></thead><tbody id="sumb"></tbody></table></div></div>
 
 <nav class="tabs" role="tablist">
-  <button data-t="ar" class="on">العربية</button>
-  <button data-t="en">English</button>
-  <button data-t="conf">الاختلافات بين النسختين ({{ conflicts|length }})</button>
-  <button data-t="log">سجل التصحيحات ({{ corrections|length }})</button>
-  <button data-t="ev">السجل</button>
+  <button role="tab" data-t="ar" aria-selected="true">النسخة العربية</button>
+  <button role="tab" data-t="en" aria-selected="false">English version</button>
+  <button role="tab" data-t="conf" aria-selected="false">الاختلافات بين النسختين <span class="count {{ 'amber' if conflicts else '' }}">{{ conflicts|length }}</span></button>
+  <button role="tab" data-t="log" aria-selected="false">سجل التصحيحات <span class="count">{{ corrections|length }}</span></button>
+  <button role="tab" data-t="ev" aria-selected="false">السجل</button>
 </nav>
+<div class="tools" id="tools"><span class="muted small" id="hint">{{ 'عدّل أي قيمة ثم احفظ. تُبرز الخانات المعدّلة.' if meta.admin else 'افتح القسم لعرض محتواه.' }}</span><span class="sp"></span>
+  <button class="btn ghost sm" id="openAll" type="button">فتح الكل</button><button class="btn ghost sm" id="closeAll" type="button">طي الكل</button></div>
 <div id="p-ar" class="pane"></div>
-<div id="p-en" class="pane ltr" dir="ltr" hidden></div>
+<div id="p-en" class="pane" dir="ltr" hidden></div>
 <div id="p-conf" class="pane" hidden>
-  <div class="box">
+  <div class="card {{ 'flush' if conflicts else '' }}">
   {% if conflicts %}
-  <p class="msg muted">أرقام تختلف بين النسخة العربية والإنجليزية من البيان نفسه، رُصدت آليًا عند الاستيراد. بعضها قد يكون اختلافًا في الترتيب لا في القيمة. صحّح النسخة الخاطئة من تبويبها. لا تُقارن منحنيات الأداء لأن قيمها قُرئت من صور الرسوم المنشورة.</p>
+  <p class="muted small" style="margin:16px 18px">أرقام تختلف بين النسختين العربية والإنجليزية من البيان نفسه، رُصدت آليًا. تُقارن رسوم التوزيع بقيمها لا بترتيبها، وتُتجاهل فروق التقريب ومنحنيات الأداء (قُرئت من صور الرسوم المنشورة). صحّح النسخة الخاطئة من تبويبها.</p>
   <div class="tw"><table><thead><tr><th>النوع</th><th>القسم</th><th>البند</th><th>العربي</th><th>الإنجليزي</th></tr></thead><tbody>
-  {% for c in conflicts|sort(attribute='kind', reverse=true) %}<tr><td>{{ 'رقم في جدول' if c.kind == 'figure' else 'رسم بياني' }}</td><td>{{ c.section }}</td><td>{{ c.label }}<div class="muted ltr">{{ c.label_en }}</div></td><td>{{ c.ar }}</td><td class="ltr">{{ c.en }}</td></tr>{% endfor %}
+  {% for c in conflicts|sort(attribute='kind', reverse=true) %}<tr><td><span class="pill plain">{{ 'جدول' if c.kind == 'figure' else 'رسم' }}</span></td><td class="small">{{ c.section }}</td><td>{{ c.label }}<div class="muted small ltr" style="text-align:left">{{ c.label_en }}</div></td><td class="tnum">{{ c.ar }}</td><td class="ltr tnum">{{ c.en }}</td></tr>{% endfor %}
   </tbody></table></div>
-  {% else %}<p class="msg">لا اختلاف في الأرقام بين النسختين.</p>{% endif %}
+  {% else %}<div class="empty">لا اختلاف في الأرقام بين النسختين.</div>{% endif %}
   </div>
 </div>
 <div id="p-log" class="pane" hidden>
-  <div class="box">
+  <div class="card {{ 'flush' if corrections else '' }}">
   {% if corrections %}<div class="tw"><table class="chlist"><thead><tr><th>التاريخ</th><th>بواسطة</th><th>اللغة</th><th>القسم</th><th>البند</th><th>قبل</th><th>بعد</th><th>السبب</th></tr></thead><tbody>
-  {% for c in corrections %}<tr><td>{{ c.at }}</td><td>{{ c.by }}</td><td>{{ 'عربي' if c.lang == 'ar' else 'EN' }}</td><td>{{ c.section }}</td><td>{{ c.label }}</td><td class="b">{{ c.before }}</td><td class="a">{{ c.after }}</td><td>{{ c.reason }}</td></tr>{% endfor %}
-  </tbody></table></div>{% else %}<p class="msg">لم يُصحَّح هذا البيان منذ نشره.</p>{% endif %}
+  {% for c in corrections %}<tr><td class="tnum" style="white-space:nowrap">{{ c.at }}</td><td>{{ c.by }}</td><td>{{ 'ع' if c.lang == 'ar' else 'EN' }}</td><td>{{ c.section }}</td><td>{{ c.label }}</td><td class="b">{{ c.before }}</td><td class="a">{{ c.after }}</td><td>{{ c.reason }}</td></tr>{% endfor %}
+  </tbody></table></div>{% else %}<div class="empty">لم يُصحَّح هذا البيان منذ نشره.</div>{% endif %}
   </div>
 </div>
-<div id="p-ev" class="pane" hidden><div class="box">{% for e in events %}<div class="msg"><span class="muted">{{ e.at }}</span> · {{ e.what }}</div>{% endfor %}</div></div>
+<div id="p-ev" class="pane" hidden><div class="card flush"><table><tbody>{% for e in events %}<tr><td class="tnum muted small" style="width:150px;white-space:nowrap">{{ e.at }}</td><td>{{ e.what }}</td></tr>{% else %}<tr><td class="empty">لا شيء بعد.</td></tr>{% endfor %}</tbody></table></div></div>
+
+{% if meta.admin %}
+<div class="abar"><div class="in">
+  <span class="msg"><span class="dot" id="dot"></span><span id="msg">{% if meta.draft %}توجد مسودة تصحيح محفوظة. عاينها ثم اعتمدها.{% else %}عدّل أي قيمة ثم احفظ. يبقى المنشور كما هو حتى تعتمد التصحيح.{% endif %}</span></span>
+  <button class="btn" id="dis" {% if not meta.draft %}hidden{% endif %}>إلغاء المسودة</button>
+  <button class="btn" id="prev" {% if not meta.draft %}disabled{% endif %}>معاينة PDF وWord</button>
+  <button class="btn" id="save" disabled>حفظ التعديلات</button>
+  <button class="btn primary" id="fin" {% if not meta.draft %}disabled{% endif %}>اعتماد التصحيح</button>
+</div></div>
+{% endif %}
 
 <script>
 const CUR = {{ cur_json|safe }}, WORK = {{ work_json|safe }}, META = {{ meta_json|safe }};
 const F = META.fund, Q = META.q, ED = META.admin;
-const $ = s => document.querySelector(s);
-const AR = '٠١٢٣٤٥٦٧٨٩';
-function num(v){ v = String(v).trim().replace(/[٠-٩]/g, d => AR.indexOf(d)).replace(/[,٬\s%]/g,'').replace('٫','.');
-  let neg = /-$/.test(v); v = v.replace(/-$/,''); if(neg) v = '-' + v; const n = Number(v); return v !== '' && isFinite(n) ? n : null; }
+const L = {ar: {sec: 'عنوان القسم', sub: 'عنوان فرعي', p: 'فقرة', note: 'ملاحظة', ul: 'قائمة (بند في كل سطر)', chart: 'رسم بياني', lab: 'البند', grp: 'المجموعة', val: 'القيمة', intro: 'مقدمة'},
+           en: {sec: 'Section title', sub: 'Subheading', p: 'Paragraph', note: 'Note', ul: 'List (one item per line)', chart: 'Chart', lab: 'Label', grp: 'Group', val: 'Value', intro: 'Introduction'}};
 function get(o, path){ return path.split('.').reduce((a,k)=> a == null ? a : a[k], o); }
 function set(o, path, v){ const ks = path.split('.'); const last = ks.pop(); ks.reduce((a,k)=>a[k], o)[last] = v; }
 function input(l, i, f, v, opt={}){
   const e = document.createElement(opt.area ? 'textarea' : 'input');
   e.value = v == null ? '' : (opt.lines ? v.join('\n') : v); e.dataset.l = l; e.dataset.i = i; e.dataset.f = f;
-  if(opt.num) e.dataset.num = 1; if(opt.lines) e.dataset.lines = 1;
-  if(opt.num) e.className = 'num';
+  if(opt.num){ e.dataset.num = 1; e.className = 'num'; e.inputMode = 'decimal'; }
+  if(opt.lines) e.dataset.lines = 1;
   if(!ED) e.readOnly = true;
-  if(opt.area){ e.rows = Math.min(14, Math.max(2, Math.ceil(String(e.value).length / 95) + (e.value.match(/\n/g)||[]).length)); }
+  if(opt.area) e.rows = Math.min(14, Math.max(2, Math.ceil(String(e.value).length / 95) + (e.value.match(/\n/g)||[]).length));
   mark(e); return e;
 }
-function val(e){ if(e.dataset.lines) return e.value.split('\n').map(x=>x.trim()).filter(Boolean); if(e.dataset.num) return num(e.value); return e.value; }
+function val(e){ if(e.dataset.lines) return e.value.split('\n').map(x=>x.trim()).filter(Boolean); if(e.dataset.num) return toNum(e.value); return e.value; }
 function mark(e){
   const a = get(CUR[e.dataset.l].blocks[+e.dataset.i], e.dataset.f), b = get(WORK[e.dataset.l].blocks[+e.dataset.i], e.dataset.f);
   e.classList.toggle('chg', JSON.stringify(a) !== JSON.stringify(b));
 }
-function cell(el){ const td = document.createElement('td'); td.appendChild(el); return td; }
+const clean = t => String(t || '').replace(/\*+/g, '').trim();
+function cell(el, tag='td'){ const td = document.createElement(tag); td.appendChild(el); return td; }
 function render(l){
-  const pane = $('#p-' + l); pane.innerHTML = '';
-  const bl = WORK[l].blocks; let sec = null, inner = null, n = 0;
-  const open = () => { sec = document.createElement('details'); sec.className = 'sec' + (ED ? '' : ' ro'); const s = document.createElement('summary'); sec.appendChild(s); inner = document.createElement('div'); inner.className = 'in'; sec.appendChild(inner); pane.appendChild(sec); return s; };
+  const pane = $('#p-' + l); pane.innerHTML = ''; const T = L[l];
+  const bl = WORK[l].blocks; let sec = null, inner = null, k = 0;
+  const open = (title) => { sec = document.createElement('details'); sec.className = 'sec' + (ED ? '' : ' ro'); const s = document.createElement('summary');
+    k++; s.innerHTML = `<span class="n">${String(k).padStart(2,'0')}</span><span>${esc(title)}</span><span class="c"></span>`; sec.appendChild(s);
+    inner = document.createElement('div'); inner.className = 'in'; sec.appendChild(inner); pane.appendChild(sec); };
   bl.forEach((b, i) => {
-    if(b.t === 'h2'){ const s = open(); s.textContent = (b.num ? b.num + ' ' : '') + (b.text || ''); const w = document.createElement('div'); w.className='blk'; w.innerHTML = '<div class="lbl">' + (l==='ar'?'عنوان القسم':'Section title') + '</div>'; w.appendChild(input(l,i,'text',b.text)); inner.appendChild(w); return; }
-    if(!sec) open().textContent = l === 'ar' ? 'مقدمة' : 'Introduction';
+    if(b.t === 'h2'){ open(clean(b.text)); const w = document.createElement('div'); w.className='blk'; w.innerHTML = '<div class="lbl">' + T.sec + '</div>'; w.appendChild(input(l,i,'text',b.text)); inner.appendChild(w); return; }
+    if(!sec) open(T.intro);
     const w = document.createElement('div'); w.className = 'blk'; inner.appendChild(w);
     const lab = t => { const d = document.createElement('div'); d.className='lbl'; d.textContent = t; w.appendChild(d); };
-    if(b.t === 'h3'){ lab(l==='ar'?'عنوان فرعي':'Subheading'); w.appendChild(input(l,i,'text',b.text)); }
-    else if(b.t === 'p' || b.t === 'note'){ lab(b.t==='p' ? (l==='ar'?'فقرة':'Paragraph') : (l==='ar'?'ملاحظة':'Note')); w.appendChild(input(l,i,'text',b.text,{area:1})); }
-    else if(b.t === 'ul'){ lab(l==='ar'?'قائمة (بند في كل سطر)':'List (one item per line)'); w.appendChild(input(l,i,'items',b.items,{area:1,lines:1})); }
+    if(b.t === 'h3'){ lab(T.sub); w.appendChild(input(l,i,'text',b.text)); }
+    else if(b.t === 'p' || b.t === 'note'){ lab(b.t === 'p' ? T.p : T.note); w.appendChild(input(l,i,'text',b.text,{area:1})); }
+    else if(b.t === 'ul'){ lab(T.ul); w.appendChild(input(l,i,'items',b.items,{area:1,lines:1})); }
     else if(b.t === 'kv' || b.t === 'table'){
-      if(b.caption) lab(b.caption);
+      if(b.caption) lab(clean(b.caption));
       const tw = document.createElement('div'); tw.className='tw'; const t = document.createElement('table'); tw.appendChild(t); w.appendChild(tw);
-      if(b.head){ const tr = t.insertRow(); b.head.forEach((h,k)=>{ const th = document.createElement('th'); th.appendChild(input(l,i,'head.'+k,h)); tr.appendChild(th); }); }
-      (b.rows||[]).forEach((r,ri)=>{ const tr = t.insertRow(); r.forEach((c,k)=> tr.appendChild(cell(input(l,i,'rows.'+ri+'.'+k,c)))); });
+      if(b.head){ const th = t.createTHead().insertRow(); b.head.forEach((h,c)=> th.appendChild(cell(input(l,i,'head.'+c,h),'th'))); }
+      const tb = t.createTBody();
+      (b.rows||[]).forEach((r,ri)=>{ const tr = tb.insertRow(); r.forEach((c,ci)=> tr.appendChild(cell(input(l,i,'rows.'+ri+'.'+ci,c)))); });
     }
     else if(b.t === 'chart'){
-      lab((l==='ar'?'رسم بياني':'Chart') + (b.kind ? ' · ' + b.kind : ''));
+      lab(T.chart + (b.kind ? ' · ' + b.kind : ''));
       w.appendChild(input(l,i,'title',b.title||''));
-      const tw = document.createElement('div'); tw.className='tw'; const t = document.createElement('table'); tw.appendChild(t); w.appendChild(tw);
+      const tw = document.createElement('div'); tw.className='tw'; tw.style.marginTop = '6px'; const t = document.createElement('table'); tw.appendChild(t); w.appendChild(tw);
       const hasG = (b.series||[]).some(s=>'group' in s);
-      const h = t.insertRow(); [l==='ar'?'البند':'Label'].concat(hasG?[l==='ar'?'المجموعة':'Group']:[]).concat([l==='ar'?'القيمة':'Value']).forEach(x=>{const th=document.createElement('th');th.textContent=x;h.appendChild(th);});
-      (b.series||[]).forEach((s,si)=>{ const tr = t.insertRow(); tr.appendChild(cell(input(l,i,'series.'+si+'.label',s.label)));
+      const h = t.createTHead().insertRow(); [T.lab].concat(hasG?[T.grp]:[]).concat([T.val]).forEach(x=>{const th=document.createElement('th');th.textContent=x;h.appendChild(th);});
+      const tb = t.createTBody();
+      (b.series||[]).forEach((s,si)=>{ const tr = tb.insertRow(); tr.appendChild(cell(input(l,i,'series.'+si+'.label',s.label)));
         if(hasG) tr.appendChild(cell(input(l,i,'series.'+si+'.group',s.group)));
-        tr.appendChild(cell(input(l,i,'series.'+si+'.value',s.value,{num:1}))); });
+        const v = cell(input(l,i,'series.'+si+'.value',s.value,{num:1})); v.style.width = '130px'; tr.appendChild(v); });
     }
-    n++;
   });
+  counts(pane);
   pane.querySelectorAll('.chg').forEach(e => { const d = e.closest('details'); if(d) d.open = true; });
   if(!pane.querySelector('details[open]') && pane.firstChild) pane.firstChild.open = true;
 }
+function counts(pane){ pane.querySelectorAll('details.sec').forEach(d => { const n = d.querySelectorAll('.chg').length; d.querySelector('summary .c').innerHTML = n ? `<span class="pill amber">${n} ${pane.dir === 'ltr' ? 'edited' : 'معدّل'}</span>` : ''; }); }
 render('ar'); render('en');
-document.querySelectorAll('.tabs button').forEach(b => b.onclick = () => {
-  document.querySelectorAll('.tabs button').forEach(x => x.classList.toggle('on', x === b));
-  document.querySelectorAll('.pane').forEach(p => p.hidden = p.id !== 'p-' + b.dataset.t);
-});
-let dirty = false;
-function msg(t, bad){ const m = $('#msg'); if(m){ m.textContent = t; m.style.color = bad ? 'var(--bad-fg)' : ''; } }
-document.addEventListener('input', e => {
-  const x = e.target; if(!ED || !x.dataset || !x.dataset.f) return;
-  const v = val(x);
-  if(x.dataset.num && v === null && x.value.trim() !== ''){ x.classList.add('bad'); return; }
-  x.classList.remove('bad');
-  set(WORK[x.dataset.l].blocks[+x.dataset.i], x.dataset.f, v); mark(x);
-  dirty = true; $('#save').disabled = false; msg('تعديلات غير محفوظة.');
-});
-window.addEventListener('beforeunload', e => { if(dirty){ e.preventDefault(); e.returnValue = ''; } });
-async function post(url, body){
-  const r = await fetch(url, {method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify(body||{})});
-  const j = await r.json().catch(()=>({})); if(!r.ok) throw new Error(j.msg || ('خطأ ' + r.status)); return j;
+
+function tab(t){
+  $$('.tabs button').forEach(x => x.setAttribute('aria-selected', x.dataset.t === t));
+  $$('.pane').forEach(p => p.hidden = p.id !== 'p-' + t);
+  $('#tools').hidden = !(t === 'ar' || t === 'en');
+  history.replaceState(null, '', t === 'ar' ? location.pathname : '#' + t);
 }
+$$('.tabs button').forEach(b => b.onclick = () => tab(b.dataset.t));
+if(['en','conf','log','ev'].includes(location.hash.slice(1))) tab(location.hash.slice(1));
+const curPane = () => $$('.pane').find(p => !p.hidden);
+$('#openAll').onclick = () => curPane().querySelectorAll('details').forEach(d => d.open = true);
+$('#closeAll').onclick = () => curPane().querySelectorAll('details').forEach(d => d.open = false);
+
+let dirty = false;
+function msg(t, kind){ const m = $('#msg'); if(m){ m.textContent = t; } const d = $('#dot'); if(d) d.className = 'dot ' + (kind || ''); }
 function showSum(ch){
   const tb = $('#sumb'); tb.innerHTML = '';
-  ch.forEach(c => { const tr = tb.insertRow(); [c.lang==='ar'?'عربي':'EN', c.section, c.label, c.before, c.after].forEach((v,k)=>{ const td = tr.insertCell(); td.textContent = v; if(k===3) td.className='b'; if(k===4) td.className='a'; if(c.lang==='en' && k>1) td.classList.add('ltr'); }); });
-  $('#sum').classList.toggle('show', ch.length > 0);
+  ch.forEach(c => { const tr = tb.insertRow(); [c.lang==='ar'?'ع':'EN', c.section, c.label, c.before, c.after].forEach((v,k)=>{ const td = tr.insertCell(); td.textContent = clean(v) || v; if(k===3) td.className='b'; if(k===4) td.className='a'; if(c.lang==='en' && k>1) td.classList.add('ltr'); }); });
+  $('#sum').hidden = !ch.length;
 }
 async function poll(done){
-  const r = await fetch(`/api/s/${F}/${Q}/job`); const j = await r.json();
-  if(j.job.state === 'running'){ msg('جارٍ: ' + (j.job.step || '') + '…'); return setTimeout(()=>poll(done), 2500); }
-  if(j.job.state === 'error'){ msg(j.job.msg, true); document.querySelectorAll('#bar .btn').forEach(b=>b.disabled=false); return; }
+  const j = await getj(`/api/s/${F}/${Q}/job`);
+  if(j.job.state === 'running'){ msg('جارٍ: ' + (j.job.step || '') + '…', 'dirty'); return setTimeout(()=>poll(done), 2000); }
+  if(j.job.state === 'error'){ msg(j.job.msg); toast(j.job.msg, 'amber', 6000); $$('.abar .btn').forEach(b=>busy(b,false)); return; }
   done();
 }
 if(ED){
+  document.addEventListener('input', e => {
+    const x = e.target; if(!x.dataset || !x.dataset.f) return;
+    const v = val(x);
+    if(x.dataset.num && v === null && x.value.trim() !== ''){ x.classList.add('bad'); return; }
+    x.classList.remove('bad');
+    set(WORK[x.dataset.l].blocks[+x.dataset.i], x.dataset.f, v); mark(x); counts(x.closest('.pane'));
+    dirty = true; $('#save').disabled = false; msg('تعديلات غير محفوظة.', 'dirty');
+  });
+  window.addEventListener('beforeunload', e => { if(dirty){ e.preventDefault(); e.returnValue = ''; } });
+  document.addEventListener('keydown', e => { if((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 's'){ e.preventDefault(); if(!$('#save').disabled) $('#save').click(); } });
   $('#save').onclick = async () => {
-    try{ $('#save').disabled = true; msg('جارٍ الحفظ…');
-      const j = await post(`/api/r/${F}/${Q}/draft`, {ar: WORK.ar, en: WORK.en}); dirty = false;
-      showSum(j.changes);
+    try{ busy($('#save'), true, 'يُحفظ');
+      const j = await api(`/api/r/${F}/${Q}/draft`, {ar: WORK.ar, en: WORK.en}); dirty = false;
+      busy($('#save'), false); $('#save').disabled = true; showSum(j.changes);
       $('#prev').disabled = $('#fin').disabled = !j.draft; $('#dis').hidden = !j.draft;
-      msg(j.draft ? `حُفظت المسودة: ${j.changes.length} تعديل. المنشور لم يتغير.` : 'لا فرق عن المنشور، فلم تُحفظ مسودة.');
-    }catch(e){ $('#save').disabled = false; msg(e.message, true); }
+      msg(j.draft ? `حُفظت المسودة: ${j.changes.length} تعديل. المنشور لم يتغير.` : 'لا فرق عن المنشور، فلم تُحفظ مسودة.', 'ok');
+      toast(j.draft ? 'حُفظت مسودة التصحيح.' : 'لا تعديلات.');
+    }catch(e){ busy($('#save'), false); msg(e.message); toast(e.message, 'amber'); }
   };
   $('#prev').onclick = async () => {
-    if(dirty) return msg('احفظ التعديلات أولًا.', true);
-    try{ document.querySelectorAll('#bar .btn').forEach(b=>b.disabled=true); await post(`/api/r/${F}/${Q}/run`, {}); poll(()=>location.reload()); }
-    catch(e){ msg(e.message, true); document.querySelectorAll('#bar .btn').forEach(b=>b.disabled=false); }
+    if(dirty) return toast('احفظ التعديلات أولًا.', 'amber');
+    try{ busy($('#prev'), true, 'تُصدر المعاينة'); await api(`/api/r/${F}/${Q}/run`, {}); poll(()=>location.reload()); }
+    catch(e){ busy($('#prev'), false); toast(e.message, 'amber'); }
   };
-  $('#fin').onclick = () => { if(dirty) return msg('احفظ التعديلات أولًا.', true); $('#apv').classList.add('show'); $('#reason').focus(); };
-  $('#cancel').onclick = () => $('#apv').classList.remove('show');
-  $('#go').onclick = async () => {
-    try{ document.querySelectorAll('#bar .btn').forEach(b=>b.disabled=true);
-      await post(`/api/r/${F}/${Q}/run`, {approve: true, reason: $('#reason').value}); poll(()=>location.reload()); }
-    catch(e){ msg(e.message, true); document.querySelectorAll('#bar .btn').forEach(b=>b.disabled=false); }
+  $('#fin').onclick = async () => {
+    if(dirty) return toast('احفظ التعديلات أولًا.', 'amber');
+    const deps = META.deps.length ? `<p class="note amber" style="margin:0 0 10px">البيانات اللاحقة (${esc(META.deps.join('، '))}) قد تتضمن أرقامًا من هذا البيان، ولا تُعدَّل تلقائيًا.</p>` : '';
+    const reason = await ask({title: 'اعتماد التصحيح', html: deps + '<p style="margin:0">يُحفظ الأصل المنشور مرة واحدة، ويُسجَّل كل تعديل مع سببه، وتصدر نسخة مصحّحة (PDF وWord) دون استبدال الملفات المنشورة.</p><label class="l" style="margin-top:14px">سبب التصحيح</label>',
+      input: 'مثال: طلب هيئة السوق المالية رقم … بتاريخ …', required: 5, ok: 'اعتماد وإصدار النسخة المصحّحة'});
+    if(!reason) return;
+    try{ busy($('#fin'), true, 'يُعتمد'); await api(`/api/r/${F}/${Q}/run`, {approve: true, reason}); poll(()=>location.reload()); }
+    catch(e){ busy($('#fin'), false); toast(e.message, 'amber'); }
   };
-  $('#dis').onclick = async () => { try{ await post(`/api/r/${F}/${Q}/discard`); dirty = false; location.reload(); }catch(e){ msg(e.message, true); } };
-  if(META.draft) fetch(`/api/r/${F}/${Q}/changes`).then(r=>r.json()).then(j=>showSum(j.changes||[]));
+  $('#dis').onclick = async () => {
+    if(!await ask({title: 'إلغاء مسودة التصحيح؟', text: 'تُحذف التعديلات المحفوظة ومعاينتها، ويبقى المنشور كما هو.', ok: 'إلغاء المسودة'})) return;
+    try{ await api(`/api/r/${F}/${Q}/discard`); dirty = false; location.reload(); }catch(e){ toast(e.message, 'amber'); }
+  };
+  if(META.draft) getj(`/api/r/${F}/${Q}/changes`).then(j=>showSum(j.changes||[]));
 }
 </script>
 {% endblock %}
