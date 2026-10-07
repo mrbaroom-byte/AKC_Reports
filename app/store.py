@@ -56,3 +56,47 @@ def struct_path(fund, q, lang):
 
 def out_dir(fund, q):
     d = os.path.join(DATA, 'out', fund, q); os.makedirs(d, exist_ok=True); return d
+
+
+# ---------- users (editors; the admin signs in with ADMIN_PASSWORD) ----------
+import hashlib as _h, secrets as _s
+
+
+def _users_c():
+    c = _c()
+    c.execute('''create table if not exists users(username text primary key, name text, role text, salt text, hash text,
+                 active integer, created text, last_login text)''')
+    return c
+
+
+def _hash(pw, salt):
+    return _h.scrypt(pw.encode(), salt=bytes.fromhex(salt), n=2 ** 14, r=8, p=1).hex()
+
+
+def users():
+    with _lock, _users_c() as c:
+        return [dict(r) for r in c.execute('select username,name,role,active,created,last_login from users order by created')]
+
+
+def create_user(username, name, role='editor'):
+    """Returns a one-time password shown to the admin only once."""
+    pw = '-'.join(_s.token_hex(2) for _ in range(3)).upper()
+    salt = _s.token_hex(16)
+    with _lock, _users_c() as c:
+        c.execute('insert or replace into users values(?,?,?,?,?,1,?,NULL)', (username, name, role, salt, _hash(pw, salt), now()))
+    return pw
+
+
+def set_active(username, active):
+    with _lock, _users_c() as c:
+        c.execute('update users set active=? where username=?', (1 if active else 0, username))
+
+
+def check_user(username, pw):
+    pw = (pw or '').strip().upper()
+    with _lock, _users_c() as c:
+        r = c.execute('select * from users where username=? and active=1', (username,)).fetchone()
+        if not r: return None
+        if not _s.compare_digest(_hash(pw, r['salt']), r['hash']): return None
+        c.execute('update users set last_login=? where username=?', (now(), username))
+        return dict(r)

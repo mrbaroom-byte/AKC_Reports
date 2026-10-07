@@ -1,0 +1,30 @@
+{% extends "base.html" %}
+{% block title %}المستخدمون{% endblock %}
+{% block nav %}<a class="l" href="/">كل الصناديق</a>{% endblock %}
+{% block body %}
+<h1>المستخدمون</h1>
+<p class="muted">مُدخل البيانات يُدخل الأرقام، ويُصدر المسودات، ويرفعها للاعتماد. ولا يعتمد النسخة النهائية إلا المعتمِد.</p>
+{% if pw %}
+<div class="box" style="border-color:var(--sky)">
+  <h2>كلمة المرور المؤقتة لـ {{ new }}</h2>
+  <p style="font:600 22px 'IBM Plex Sans',monospace;direction:ltr;text-align:right;margin:6px 0 10px">{{ pw }}</p>
+  <p class="muted">تظهر مرة واحدة فقط ولا تُحفظ نصًا. سلّمها للمستخدم مع اسم المستخدم <b dir="ltr">{{ new }}</b>. إن فُقدت فاضغط «كلمة مرور جديدة».</p>
+</div>
+{% endif %}
+<div class="box"><h2>مستخدم جديد</h2>
+<form method="post" action="/users" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:12px;align-items:end">
+  <div><label style="display:block;font-size:13px;font-weight:600;margin-bottom:4px">الاسم</label><input name="name" required placeholder="مثل: إدارة تطوير المنتجات"></div>
+  <div><label style="display:block;font-size:13px;font-weight:600;margin-bottom:4px">اسم المستخدم (بالإنجليزية)</label><input name="username" required dir="ltr" pattern="[A-Za-z0-9._-]+" placeholder="productdev"></div>
+  <div><button class="btn primary" type="submit">إنشاء</button></div>
+</form></div>
+<div class="box"><h2>الحسابات</h2>
+<div class="tw"><table><thead><tr><th>الاسم</th><th>اسم المستخدم</th><th>الصلاحية</th><th>آخر دخول</th><th>الحالة</th><th></th></tr></thead><tbody>
+<tr><td>المعتمِد</td><td dir="ltr">admin</td><td>المعتمِد</td><td>—</td><td><span class="pill ok">نشط</span></td><td class="muted">كلمة المرور في إعدادات Railway</td></tr>
+{% for u in users %}
+<tr><td>{{ u.name }}</td><td dir="ltr">{{ u.username }}</td><td>{{ roles[u.role] }}</td><td>{{ u.last_login or '—' }}</td>
+<td>{% if u.active %}<span class="pill ok">نشط</span>{% else %}<span class="pill">موقوف</span>{% endif %}</td>
+<td style="white-space:nowrap"><form method="post" action="/users/{{ u.username }}/reset" style="display:inline"><button class="btn" type="submit">كلمة مرور جديدة</button></form>
+<form method="post" action="/users/{{ u.username }}/toggle" style="display:inline"><button class="btn" type="submit">{{ 'إيقاف' if u.active else 'تفعيل' }}</button></form></td></tr>
+{% endfor %}
+</tbody></table></div></div>
+{% endblock %}

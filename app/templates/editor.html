@@ -31,11 +31,14 @@ nav.tabs button[aria-selected=true]{color:var(--navy);border-bottom-color:var(--
 .bar{position:fixed;inset-inline:0;bottom:0;background:var(--surface);border-top:1px solid var(--line);padding:10px 16px;display:flex;gap:10px;align-items:center;justify-content:flex-end;z-index:5}
 .bar .msg{flex:1;font-size:13px;color:var(--muted)}
 .sum{font-size:12.5px;color:var(--muted);margin-top:6px}
+.lockb{background:var(--soft);border:1px solid var(--line);border-radius:10px;padding:10px 14px;margin:0 0 14px;font-size:14px}
+.ro input,.ro textarea{pointer-events:none;opacity:.75}.ro [data-add],.ro [data-del]{display:none}
 </style>{% endblock %}
 {% block body %}
 <div class="hd">
   <div class="t"><h1>{{ meta.name }}</h1><div class="muted">{{ meta.ql }} · يُبنى على البيان المعتمد للربع السابق ({{ meta.pql }}) · الحالة: <span class="pill" id="stPill">{{ status }}</span></div></div>
 </div>
+<div class="lockb" id="lockb" hidden></div>
 <div class="lay">
 <div>
   <nav class="tabs" role="tablist">
@@ -49,7 +52,7 @@ nav.tabs button[aria-selected=true]{color:var(--navy);border-bottom-color:var(--
   <section data-p="mkt" hidden></section>
   <section data-p="notes" hidden>
     <div class="box"><h2>ملاحظات المراجعين</h2>
-      <p class="muted">اجمع هنا ملاحظات تطوير المنتجات والالتزام وأسواق المال على المسودة، ثم عدّل البيانات وأعد الإصدار.</p>
+      <p class="muted">ملاحظات المراجعين والمعتمِد على المسودة. تظهر هنا أيضًا ملاحظات الإعادة للتعديل.</p>
       <textarea id="notes">{{ s.notes or '' }}</textarea>
       <div style="margin-top:8px"><button class="btn" id="saveNotes">حفظ الملاحظات</button> <span class="muted" id="notesMsg"></span></div>
     </div>
@@ -64,8 +67,10 @@ nav.tabs button[aria-selected=true]{color:var(--navy);border-bottom-color:var(--
 </div>
 <div class="bar"><span class="msg" id="msg"></span>
   <button class="btn" id="save">حفظ</button>
-  <button class="btn primary" id="gen">إصدار المسودات</button>
-  <button class="btn" id="fin">اعتماد النسخة النهائية</button>
+  <button class="btn" id="gen">إصدار المسودات</button>
+  <button class="btn primary" id="sub">رفع للاعتماد</button>
+  {% if me.role == 'admin' %}<button class="btn" id="ret">إعادة للتعديل</button>
+  <button class="btn primary" id="fin">اعتماد النسخة النهائية</button>{% endif %}
 </div>
 <script>
 const META={{ meta_json|safe }}, PREV={{ prev_json|safe }};
@@ -162,15 +167,28 @@ function showVal(v,der){
   $('#der').innerHTML=[['صافي الأصول',nf(der.net_assets,0)+' ر.س.'],[META.traded?'تغير السعر':'تغير صافي القيمة',pc(der.price_change)],['نسبة المصاريف (TER)',pc(der.ter_pct)],
     ...(META.traded?[['الخصم عن صافي القيمة',pc(der.discount)]]:[]),['فارق الأداء (3 أشهر)',pc((der.spread||[])[0])]].map(r=>`<span>${r[0]}</span><b>${r[1]}</b>`).join('');
   (D.alloc||[]).forEach((a,k)=>{const s=a.items.reduce((t,x)=>t+(parseFloat(String(x.pct??'').replace(/[^\d.\-]/g,''))||0),0);const el=$(`[data-sum="${k}"]`);if(el)el.textContent='المجموع: '+s.toFixed(1)+'%'});
-  const blocks=v.filter(x=>x.level==='block').length;$('#gen').disabled=blocks>0;$('#gen').title=blocks?'أكمل النقص أولًا':'';
+  BLOCKS=v.filter(x=>x.level==='block').length;ui();
 }
 async function check(){try{const r=await api(base+'/check',{data:D});showVal(r.validation,r.derived)}catch(e){}}
-$('#save').onclick=async()=>{$('#msg').textContent='يُحفظ…';const r=await api(base,{data:D});isDirty=false;$('#msg').textContent='حُفظ '+r.updated;$('#stPill').textContent=r.status;showVal(r.validation,r.derived)};
-async function run(final){
-  if(final&&!confirm('اعتماد النسخة النهائية يجعلها أساس الربع التالي. هل تتابع؟'))return;
-  $('#msg').textContent='يُحفظ…';await api(base,{data:D});isDirty=false;
-  $('#gen').disabled=$('#fin').disabled=true;await api(base+'/generate',{final});poll(final)}
-$('#gen').onclick=()=>run(false);$('#fin').onclick=()=>run(true);
+let ST=META.st, BLOCKS=0;
+const LABEL={new:'لم يبدأ',draft:'قيد الإدخال',generated:'مسودة جاهزة',submitted:'بانتظار الاعتماد',returned:'أُعيد للتعديل',final:'نهائي'};
+function ui(){
+  const locked=ST==='submitted'||ST==='final', admin=META.role==='admin';
+  $('#stPill').textContent=LABEL[ST]||ST;
+  document.querySelector('.lay').classList.toggle('ro',locked);
+  const lb=$('#lockb');lb.hidden=!locked;
+  lb.textContent=ST==='submitted'?(admin?'البيان مرفوع للاعتماد. راجع المسودة، ثم اعتمدها أو أعدها للتعديل مع ملاحظاتك.':'البيان مرفوع للاعتماد، ولا يُعدَّل حتى يعتمده المعتمِد أو يعيده للتعديل.'):'البيان معتمد نهائيًا وصار أساس الربع التالي.'+(admin?' يمكنك إعادته للتعديل عند الحاجة.':'');
+  $('#save').disabled=locked;$('#gen').disabled=locked||BLOCKS>0;$('#gen').title=BLOCKS?'أكمل النقص أولًا':'';
+  $('#sub').hidden=ST!=='generated';
+  if($('#ret'))$('#ret').hidden=!(ST==='submitted'||ST==='final');
+  if($('#fin'))$('#fin').hidden=ST!=='submitted';
+}
+async function post(path,body){const r=await fetch(path,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(body||{})});if(r.status===401){location.href='/login';throw 0}const j=await r.json();if(!r.ok){$('#msg').textContent=j.msg||'تعذّر الإجراء.';throw 0}return j}
+$('#save').onclick=async()=>{$('#msg').textContent='يُحفظ…';const r=await post(base,{data:D});isDirty=false;ST='draft';$('#msg').textContent='حُفظ '+r.updated;showVal(r.validation,r.derived);ui()};
+$('#gen').onclick=async()=>{$('#msg').textContent='يُحفظ…';await post(base,{data:D});isDirty=false;$('#gen').disabled=true;await post(base+'/generate',{final:false});poll(false)};
+$('#sub').onclick=async()=>{if(isDirty){$('#msg').textContent='احفظ وأصدر المسودات أولًا.';return}const r=await post(base+'/submit');ST='submitted';$('#msg').textContent='رُفع البيان للاعتماد.';ui()};
+if($('#fin'))$('#fin').onclick=async()=>{if(!confirm('اعتماد النسخة النهائية يجعلها أساس الربع التالي. هل تتابع؟'))return;$('#fin').disabled=true;await post(base+'/generate',{final:true});poll(true)};
+if($('#ret'))$('#ret').onclick=async()=>{const n=prompt('ملاحظاتك لمُدخل البيانات (اختياري):')??null;if(n===null)return;const r=await post(base+'/return',{note:n});ST='returned';$('#notes').value=r.notes||$('#notes').value;$('#msg').textContent='أُعيد البيان للتعديل.';ui()};
 function showFiles(f){
   if(!f)return;let h='';
   for(const kind of ['final','draft']){const x=f[kind];if(!x)continue;
@@ -183,12 +201,12 @@ function showFiles(f){
 async function poll(final){
   const r=await (await fetch(base+'/job')).json();const j=r.job;
   if(j.state==='running'){$('#msg').textContent=(final?'يُعتمد: ':'يُصدر: ')+j.step+'…';setTimeout(()=>poll(final),1500);return}
-  $('#gen').disabled=$('#fin').disabled=false;$('#stPill').textContent=r.status;showFiles(r.files);
+  ST=r.st;if($('#fin'))$('#fin').disabled=false;showFiles(r.files);ui();
   if(j.state==='error')$('#msg').textContent=j.msg;
   else{$('#msg').textContent=final?'اعتُمدت النسخة النهائية.':'صدرت المسودات.';$('#jobMsg').textContent=(r.log||[]).join(' · ')}
   check();
 }
 $('#saveNotes').onclick=async()=>{await api(base+'/notes',{notes:$('#notes').value});$('#notesMsg').textContent='حُفظت.'};
-renderAll();fetch(base+'/job').then(r=>r.json()).then(r=>{showFiles(r.files);if(r.job.state==='running')poll(false)});
+renderAll();ui();fetch(base+'/job').then(r=>r.json()).then(r=>{showFiles(r.files);if(r.job.state==='running')poll(false)});
 </script>
 {% endblock %}

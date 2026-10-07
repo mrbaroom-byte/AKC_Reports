@@ -8,7 +8,13 @@ import model as M, store, pipeline as P
 
 APP = os.path.dirname(os.path.abspath(__file__))
 ENG = P.ENG
-SECRET = os.environ.get('SESSION_SECRET') or hashlib.sha256((os.environ.get('ADMIN_PASSWORD', '') + 'akc-q').encode()).hexdigest()
+def _secret():
+    if os.environ.get('SESSION_SECRET'): return os.environ['SESSION_SECRET']
+    f = os.path.join(store.DATA, '.session_secret')
+    if not os.path.exists(f):
+        import secrets; open(f, 'w').write(secrets.token_hex(32)); os.chmod(f, 0o600)
+    return open(f).read().strip()
+SECRET = _secret()
 SER = URLSafeTimedSerializer(SECRET, salt='akc-q-session')
 DOC_CENTRE = os.environ.get('DOC_CENTRE_URL', 'https://claude.ai/artifact/7bddTJzzSApLduLWWzKwXv')
 SEED_Q = 'q2-2026'
@@ -18,15 +24,26 @@ JOBS = {}
 
 
 # ---------- auth ----------
-def authed(req: Request):
+ROLE_AR = {'admin': 'المعتمِد', 'editor': 'مُدخل البيانات'}
+
+
+def who(req: Request):
+    """{'user','name','role'} for a signed-in viewer, else None."""
     tok = req.cookies.get('akcq')
-    if not tok: return False
-    try: SER.loads(tok, max_age=60 * 60 * 12); return True
-    except BadSignature: return False
+    if not tok: return None
+    try: u = SER.loads(tok, max_age=60 * 60 * 12)
+    except BadSignature: return None
+    if isinstance(u, str): u = {'user': 'admin', 'name': 'المعتمِد', 'role': 'admin'}
+    if u.get('role') != 'admin':
+        if not any(x['username'] == u['user'] and x['active'] for x in store.users()): return None
+    return u
 
 
-def need(req: Request):
-    if not authed(req): raise HTTPException(status_code=401)
+def need(req: Request, role=None):
+    u = who(req)
+    if not u: raise HTTPException(status_code=401)
+    if role and u['role'] != role: raise HTTPException(status_code=403)
+    return u
 
 
 @app.exception_handler(401)
@@ -35,24 +52,71 @@ async def _401(req, exc):
     return RedirectResponse('/login', status_code=303)
 
 
+@app.exception_handler(403)
+async def _403(req, exc):
+    if req.url.path.startswith('/api/'): return JSONResponse({'error': 'forbidden', 'msg': 'هذا الإجراء للمعتمِد فقط.'}, status_code=403)
+    return HTMLResponse('<p style="font-family:sans-serif;padding:24px" dir="rtl">هذه الصفحة للمعتمِد فقط. <a href="/">العودة</a></p>', status_code=403)
+
+
 @app.get('/login', response_class=HTMLResponse)
 def login_page(req: Request, e: str = ''):
     return env.get_template('login.html').render(err=bool(e), configured=bool(os.environ.get('ADMIN_PASSWORD')))
 
 
+def _set(resp, u):
+    resp.set_cookie('akcq', SER.dumps(u), httponly=True, secure=os.environ.get('RAILWAY_ENVIRONMENT') is not None, samesite='lax', max_age=60 * 60 * 12)
+    return resp
+
+
 @app.post('/login')
-def login(password: str = Form(...)):
-    pw = os.environ.get('ADMIN_PASSWORD', '').strip().strip('"').strip("'").strip()
-    if not pw or not hmac.compare_digest(password.strip().encode(), pw.encode()):
+def login(password: str = Form(...), username: str = Form('')):
+    username = (username or '').strip().lower()
+    if username in ('', 'admin'):
+        pw = os.environ.get('ADMIN_PASSWORD', '').strip().strip('"').strip("'").strip()
+        if pw and hmac.compare_digest(password.strip().encode(), pw.encode()):
+            return _set(RedirectResponse('/', status_code=303), {'user': 'admin', 'name': 'المعتمِد', 'role': 'admin'})
         return RedirectResponse('/login?e=1', status_code=303)
-    r = RedirectResponse('/', status_code=303)
-    r.set_cookie('akcq', SER.dumps('admin'), httponly=True, secure=os.environ.get('RAILWAY_ENVIRONMENT') is not None, samesite='lax', max_age=60 * 60 * 12)
-    return r
+    r = store.check_user(username, password.strip().upper())
+    if not r: return RedirectResponse('/login?e=1', status_code=303)
+    return _set(RedirectResponse('/', status_code=303), {'user': r['username'], 'name': r['name'], 'role': r['role']})
 
 
 @app.get('/logout')
 def logout():
     r = RedirectResponse('/login', status_code=303); r.delete_cookie('akcq'); return r
+
+
+@app.get('/users', response_class=HTMLResponse)
+def users_page(req: Request, new: str = '', pw: str = ''):
+    u = need(req, 'admin')
+    return env.get_template('users.html').render(me=u, users=store.users(), roles=ROLE_AR, new=new, pw=pw)
+
+
+@app.post('/users')
+def users_add(req: Request, username: str = Form(...), name: str = Form(...)):
+    need(req, 'admin')
+    username = re.sub(r'[^a-z0-9._-]', '', username.strip().lower())[:40]
+    if not username or username == 'admin': return RedirectResponse('/users', status_code=303)
+    pw = store.create_user(username, name.strip()[:80], 'editor')
+    # the one-time password is shown on the next page only; it is never stored in clear
+    return HTMLResponse(env.get_template('users.html').render(me=who(req), users=store.users(), roles=ROLE_AR, new=username, pw=pw), headers={'Cache-Control': 'no-store'})
+
+
+@app.post('/users/{username}/toggle')
+def users_toggle(req: Request, username: str):
+    need(req, 'admin')
+    cur = next((x for x in store.users() if x['username'] == username), None)
+    if cur: store.set_active(username, not cur['active'])
+    return RedirectResponse('/users', status_code=303)
+
+
+@app.post('/users/{username}/reset')
+def users_reset(req: Request, username: str):
+    need(req, 'admin')
+    cur = next((x for x in store.users() if x['username'] == username), None)
+    if not cur: return RedirectResponse('/users', status_code=303)
+    pw = store.create_user(username, cur['name'], cur['role'])
+    return HTMLResponse(env.get_template('users.html').render(me=who(req), users=store.users(), roles=ROLE_AR, new=username, pw=pw), headers={'Cache-Control': 'no-store'})
 
 
 @app.get('/health')
@@ -107,13 +171,14 @@ def blank(prev, fund, q):
     return d
 
 
-STATUS = {'new': 'لم يبدأ', 'draft': 'قيد الإدخال', 'generated': 'مسودة جاهزة', 'final': 'نهائي'}
+STATUS = {'new': 'لم يبدأ', 'draft': 'قيد الإدخال', 'generated': 'مسودة جاهزة', 'submitted': 'بانتظار الاعتماد', 'returned': 'أُعيد للتعديل', 'final': 'نهائي'}
+LOCKED = ('submitted', 'final')
 
 
 # ---------- pages ----------
 @app.get('/', response_class=HTMLResponse)
 def home(req: Request, q: str = ''):
-    need(req); q = q if re.match(r'q[1-4]-\d{4}$', q or '') else current_q()
+    me = need(req); q = q if re.match(r'q[1-4]-\d{4}$', q or '') else current_q()
     cards = []
     for fund, F in M.FUNDS.items():
         s = store.get(fund, q) or {}
@@ -123,12 +188,12 @@ def home(req: Request, q: str = ''):
                       'updated': s.get('updated', ''), 'blocks': sum(1 for x in v if x['level'] == 'block'),
                       'warns': sum(1 for x in v if x['level'] == 'warn'), 'base_ok': prev is not None, 'pq': pq})
     qn, y = M.qparse(q); end = M.qend(qn, y); due = end + datetime.timedelta(days=10)
-    return env.get_template('home.html').render(q=q, ql=M.qlabel(q, 'ar'), cards=cards, due=M.ar_date(due), prevq=M.prev_q(q), nextq=M.next_q(q), doc_centre=DOC_CENTRE)
+    return env.get_template('home.html').render(q=q, ql=M.qlabel(q, 'ar'), cards=cards, due=M.ar_date(due), prevq=M.prev_q(q), nextq=M.next_q(q), doc_centre=DOC_CENTRE, me=me, roles=ROLE_AR)
 
 
 @app.get('/s/{fund}/{q}', response_class=HTMLResponse)
 def editor(req: Request, fund: str, q: str):
-    need(req)
+    me = need(req)
     if fund not in M.FUNDS or not re.match(r'q[1-4]-\d{4}$', q): raise HTTPException(404)
     prev, pq, _ = prev_values(fund, q)
     if prev is None:
@@ -136,10 +201,10 @@ def editor(req: Request, fund: str, q: str):
     s = store.get(fund, q) or store.put(fund, q, data=blank(prev, fund, q), status='new')
     F = M.FUNDS[fund]
     meta = {'fund': fund, 'q': q, 'ql': M.qlabel(q, 'ar'), 'pql': M.qlabel(pq, 'ar'), 'name': F['ar'], 'traded': F['traded'], 'wad': F['wad'],
-            'pe': F['pe'], 'perf': F['perf'], 'symbol': F['symbol'], 'periods': prev.get('periods_ar'), 'risk_names': M.RISK_AR, 'risk_keys': M.RISK}
+            'pe': F['pe'], 'perf': F['perf'], 'symbol': F['symbol'], 'periods': prev.get('periods_ar'), 'risk_names': M.RISK_AR, 'risk_keys': M.RISK, 'role': me['role'], 'st': s['status'], 'locked': s['status'] in LOCKED}
     return env.get_template('editor.html').render(meta=meta, data_json=json.dumps(s['data'], ensure_ascii=False), prev_json=json.dumps(prev, ensure_ascii=False),
                                                   meta_json=json.dumps(meta, ensure_ascii=False), s=s, status=STATUS.get(s['status']), doc_centre=DOC_CENTRE,
-                                                  events=store.events(fund, q))
+                                                  events=store.events(fund, q), me=me, roles=ROLE_AR)
 
 
 def _clean(d):
@@ -160,13 +225,16 @@ def _clean(d):
 
 @app.post('/api/s/{fund}/{q}')
 async def save(req: Request, fund: str, q: str):
-    need(req); body = await req.json(); d = _clean(body.get('data') or {})
+    me = need(req)
+    cur0 = store.get(fund, q) or {}
+    if cur0.get('status') in LOCKED: return JSONResponse({'error': 'locked', 'msg': 'البيان ' + STATUS[cur0['status']] + '، فلا يُعدَّل إلا بعد إعادته للتعديل.'}, status_code=409)
+    body = await req.json(); d = _clean(body.get('data') or {})
     if not M.FUNDS[fund]['traded']: d['price'] = d.get('nav_unit')
     prev, pq, _ = prev_values(fund, q)
     cur = store.get(fund, q) or {}
-    st = cur.get('status', 'new'); st = 'draft' if st in ('new', 'generated', 'final') else st
+    st = 'draft'
     s = store.put(fund, q, data=d, status=st)
-    store.event(fund, q, 'حُفظت البيانات')
+    store.event(fund, q, f"{me['name']}: حفظ البيانات")
     v = M.validate(fund, d, prev, q); der = M.derive(d, prev)
     return {'ok': True, 'status': STATUS[s['status']], 'validation': v, 'derived': der, 'updated': s['updated']}
 
@@ -181,11 +249,11 @@ async def check(req: Request, fund: str, q: str):
 
 @app.post('/api/s/{fund}/{q}/notes')
 async def notes(req: Request, fund: str, q: str):
-    need(req); body = await req.json(); store.put(fund, q, notes=body.get('notes', '')); store.event(fund, q, 'حُدّثت الملاحظات')
+    me = need(req); body = await req.json(); store.put(fund, q, notes=body.get('notes', '')); store.event(fund, q, f"{me['name']}: تحديث الملاحظات")
     return {'ok': True}
 
 
-def _generate(fund, q, final=False):
+def _generate(fund, q, final=False, by=''):
     key = f'{fund}:{q}'
     try:
         JOBS[key] = {'state': 'running', 'step': 'تجهيز البيانات'}
@@ -214,10 +282,10 @@ def _generate(fund, q, final=False):
             for lang in ('ar', 'en'):
                 json.dump(structs[lang], open(store.struct_path(fund, q, lang), 'w', encoding='utf-8'), ensure_ascii=False)
             store.put(fund, q, status='final', final_at=store.now(), files={'draft': (s.get('files') or {}).get('draft'), 'final': files}, log=notes_)
-            store.event(fund, q, 'اعتُمدت النسخة النهائية')
+            store.event(fund, q, f'{by}: اعتماد النسخة النهائية')
         else:
             store.put(fund, q, status='generated', generated=store.now(), files={'draft': files, 'final': (s.get('files') or {}).get('final')}, log=notes_)
-            store.event(fund, q, 'صدرت المسودات')
+            store.event(fund, q, f'{by}: إصدار المسودات')
         JOBS[key] = {'state': 'done', 'notes': notes_}
     except Exception as e:
         traceback.print_exc(); JOBS[key] = {'state': 'error', 'msg': 'تعذّر الإخراج: ' + str(e)[:300]}
@@ -225,18 +293,47 @@ def _generate(fund, q, final=False):
 
 @app.post('/api/s/{fund}/{q}/generate')
 async def generate(req: Request, fund: str, q: str):
-    need(req); body = await req.json() if (await req.body()) else {}
+    me = need(req); body = await req.json() if (await req.body()) else {}
     final = bool(body.get('final'))
+    cur = store.get(fund, q) or {}
+    if final and me['role'] != 'admin': raise HTTPException(403)
+    if final and cur.get('status') != 'submitted':
+        return JSONResponse({'error': 'state', 'msg': 'يُعتمد البيان بعد أن يُرفع للاعتماد.'}, status_code=409)
+    if not final and cur.get('status') in LOCKED:
+        return JSONResponse({'error': 'locked', 'msg': 'البيان ' + STATUS[cur['status']] + '.'}, status_code=409)
     key = f'{fund}:{q}'
     if JOBS.get(key, {}).get('state') == 'running': return {'ok': True, 'running': True}
-    threading.Thread(target=_generate, args=(fund, q, final), daemon=True).start()
+    threading.Thread(target=_generate, args=(fund, q, final, me['name']), daemon=True).start()
     return {'ok': True}
+
+
+@app.post('/api/s/{fund}/{q}/submit')
+async def submit(req: Request, fund: str, q: str):
+    me = need(req); cur = store.get(fund, q) or {}
+    if cur.get('status') != 'generated':
+        return JSONResponse({'error': 'state', 'msg': 'أصدر المسودات بعد آخر تعديل، ثم ارفعها للاعتماد.'}, status_code=409)
+    store.put(fund, q, status='submitted')
+    store.event(fund, q, f"{me['name']}: رفع المسودة للاعتماد")
+    return {'ok': True, 'status': STATUS['submitted']}
+
+
+@app.post('/api/s/{fund}/{q}/return')
+async def return_(req: Request, fund: str, q: str):
+    me = need(req, 'admin'); body = await req.json() if (await req.body()) else {}
+    cur = store.get(fund, q) or {}
+    if cur.get('status') not in ('submitted', 'final'): return JSONResponse({'error': 'state', 'msg': 'لا شيء بانتظار الاعتماد.'}, status_code=409)
+    note = (body.get('note') or '').strip()
+    notes_ = (cur.get('notes') or '')
+    if note: notes_ = (notes_ + '\n\n' if notes_ else '') + f"[{store.now()} · {me['name']}] {note}"
+    store.put(fund, q, status='returned', notes=notes_)
+    store.event(fund, q, f"{me['name']}: إعادة البيان للتعديل" + (f' — {note}' if note else ''))
+    return {'ok': True, 'status': STATUS['returned'], 'notes': notes_}
 
 
 @app.get('/api/s/{fund}/{q}/job')
 def job(req: Request, fund: str, q: str):
     need(req); s = store.get(fund, q) or {}
-    return {'job': JOBS.get(f'{fund}:{q}', {'state': 'idle'}), 'files': s.get('files'), 'status': STATUS.get(s.get('status', 'new')), 'log': s.get('log')}
+    return {'st': s.get('status', 'new'), 'job': JOBS.get(f'{fund}:{q}', {'state': 'idle'}), 'files': s.get('files'), 'status': STATUS.get(s.get('status', 'new')), 'log': s.get('log')}
 
 
 @app.get('/f/{fund}/{q}/{kind}/{name:path}')

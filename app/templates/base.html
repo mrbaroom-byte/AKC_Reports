@@ -14,6 +14,7 @@
 @media (prefers-color-scheme:dark){:root{--bg:#0A1426;--surface:#111E36;--ink:#E8EDF6;--muted:#9AA7BF;--line:#22324F;--navy:#D3DEF1;--accent:#7FB0EA;--sky:#7FB0EA;--soft:#16294A;
  --ok-bg:#16294A;--ok-fg:#A9C8F0;--warn-bg:#3B2A12;--warn-fg:#F1C98A;--bad-bg:#3A1717;--bad-fg:#F0B4B4;--mute-bg:#1A2740;--mute-fg:#B5C0D3;color-scheme:dark}}
 *{box-sizing:border-box}
+[hidden]{display:none!important}
 html{-webkit-text-size-adjust:100%}
 body{margin:0;background:var(--bg);color:var(--ink);font:15px/1.65 var(--body)}
 a{color:var(--accent)}
@@ -46,7 +47,7 @@ th{font-size:12px;color:var(--muted);font-weight:600}
 {% block head %}{% endblock %}
 </head>
 <body>
-<header class="top"><a class="brand" href="/">الخبير المالية · البيانات الربعية</a><span class="sp"></span>{% block nav %}{% endblock %}<a class="l" href="/logout">خروج</a></header>
+<header class="top"><a class="brand" href="/">الخبير المالية · البيانات الربعية</a><span class="sp"></span>{% block nav %}{% endblock %}{% if me %}<span class="l" style="color:#DCE3EE">{{ me.name }}{% if me.role != "admin" and roles %} · {{ roles[me.role] }}{% endif %}</span>{% if me.role == "admin" %}<a class="l" href="/users">المستخدمون</a>{% endif %}{% endif %}<a class="l" href="/logout">خروج</a></header>
 <div class="wrap">{% block body %}{% endblock %}</div>
 </body>
 </html>
