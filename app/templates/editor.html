@@ -275,13 +275,15 @@ function showEvents(ev){
   $('#evs').innerHTML = EVENTS.length ? EVENTS.slice(0, 5).map(e => `<li><time>${esc(e.at)}</time>${esc(e.what)}</li>`).join('') : '<li class="muted">لا شيء بعد.</li>';
   $('#evs2').innerHTML = html;
 }
-function showFiles(f){
-  if(!f) return; let h = '';
+function showFiles(f, cmp){
+  if(!f) return; let h = ''; cmp = cmp || {};
   for(const kind of ['final', 'draft']){ const x = f[kind]; if(!x) continue;
     const u = `/f/${META.fund}/${META.q}/${kind}/`;
     h += `<div class="set"><b>${kind === 'final' ? 'النسخة النهائية' : 'المسودة'} <a class="small" href="/zip/${META.fund}/${META.q}/${kind}" style="font-weight:500">تنزيل الكل</a></b>`;
     for(const lang of ['ar', 'en']){ const n = x[lang]; if(!n) continue;
       h += `<div class="ln"><span>${lang === 'ar' ? 'العربية' : 'English'}</span>${n.html ? `<a href="${u + n.html}" target="_blank" rel="noopener">معاينة</a>` : ''}<a href="${u + n.pdf}" target="_blank" rel="noopener">PDF</a>${n.docx ? `<a href="${u + n.docx}?dl=1">Word</a>` : ''}</div>`; }
+    const c = cmp[kind];
+    if(c) h += `<div class="ln cmpl"><a href="/s/${META.fund}/${META.q}/compare?kind=${kind}">المقارنة بالربع السابق</a>${c.warn ? `<span class="count amber" title="ملاحظات تحتاج مراجعة">${c.warn}</span>` : '<span class="small muted">لا ملاحظات</span>'}</div>`;
     h += '</div>'; }
   $('#files').innerHTML = h || '<span class="muted small">لم تصدر مسودة بعد.</span>';
 }
@@ -312,7 +314,7 @@ async function poll(final){
   let r; try{ r = await getj(base + '/job'); }catch(e){ return setTimeout(() => poll(final), 3000); }
   const j = r.job;
   if(j.state === 'running'){ msg((final ? 'يُعتمد: ' : 'يُصدر: ') + j.step + '…', 'dirty'); setTimeout(() => poll(final), 1500); return; }
-  ST = r.st; busy($('#gen'), false); if($('#fin')) busy($('#fin'), false); showFiles(r.files); showEvents(r.events);
+  ST = r.st; busy($('#gen'), false); if($('#fin')) busy($('#fin'), false); showFiles(r.files, r.cmp); showEvents(r.events);
   if(j.state === 'error'){ msg(j.msg, 'dirty'); toast(j.msg, 'amber', 7000); }
   else if(j.state === 'done'){ msg(final ? 'اعتُمدت النسخة النهائية.' : 'صدرت المسودات. راجعها ثم ارفعها للاعتماد.', 'ok'); toast(final ? 'اعتُمدت النسخة النهائية.' : 'صدرت المسودات بالعربية والإنجليزية.'); $('#jobMsg').textContent = (r.log || []).join(' · '); }
   ui(); check();
@@ -382,6 +384,6 @@ document.addEventListener('change', e => {
   const c = e.target.closest('[data-mtok]'); if(!c) return;
   if(c.checked){ D.commentary_mt = D.commentary_mt || {}; delete D.commentary_mt[c.dataset.mtok]; renderAll(); dirty(); toast('سُجّلت مراجعة الترجمة.'); }
 });
-getj(base + '/job').then(r => { showFiles(r.files); $('#jobMsg').textContent = (r.log || []).join(' · '); if(r.job.state === 'running'){ busy($('#gen'), true, 'يُصدر'); poll(false); } });
+getj(base + '/job').then(r => { showFiles(r.files, r.cmp); $('#jobMsg').textContent = (r.log || []).join(' · '); if(r.job.state === 'running'){ busy($('#gen'), true, 'يُصدر'); poll(false); } });
 </script>
 {% endblock %}

@@ -1,0 +1,96 @@
+{% extends "base.html" %}
+{% block title %}المقارنة بالربع السابق · {{ h.name }}{% endblock %}
+{% block head %}<style>
+.cmp-tools{display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin:4px 0 18px}
+.cmp-tools .sp{flex:1}
+.cmp-tools label{white-space:nowrap}
+.seg{display:inline-flex;border:1px solid var(--line);border-radius:10px;padding:3px;background:var(--surface)}
+.seg button{border:0;background:none;font:600 13px var(--body);color:var(--muted);padding:7px 14px;border-radius:7px;cursor:pointer;min-height:36px}
+.seg button[aria-pressed=true]{background:var(--mist);color:var(--blue)}
+.seg button:focus-visible{outline:2px solid var(--sky);outline-offset:1px}
+.tiles{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px;margin-bottom:16px}
+.tile{background:var(--surface);border:1px solid var(--line);border-radius:var(--r);padding:14px 16px}
+.tile .k{font-size:12.5px;color:var(--muted)}
+.tile .v{font:700 22px/1.3 var(--latin);color:var(--heading);margin-top:4px;font-variant-numeric:tabular-nums}
+.tile .v small{font:500 13px var(--body);color:var(--muted)}
+.iss{list-style:none;margin:0;padding:0;display:grid;gap:8px}
+.iss li{display:flex;gap:10px;align-items:flex-start;font-size:14px}
+.iss li::before{content:'';flex:0 0 8px;height:8px;border-radius:50%;margin-top:7px;background:var(--grey)}
+.iss li.warn::before{background:var(--amber)}
+.iss li.ok::before{background:var(--blue)}
+.pg{margin-bottom:16px}
+.pg>header{display:flex;align-items:center;gap:10px;margin-bottom:12px}
+.pg>header h3{margin:0;font-size:15px}
+.pair{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.pair figure{margin:0}
+.pair figcaption{font-size:12px;color:var(--muted);margin-bottom:6px;font-weight:600}
+.pair a{display:block;border:1px solid var(--line);border-radius:8px;overflow:hidden;background:#fff}
+.pair a:hover{border-color:var(--sky)}
+.pair img{display:block;width:100%;height:auto}
+.pair .none{display:grid;place-items:center;aspect-ratio:210/297;border:1px dashed var(--line);border-radius:8px;color:var(--faint);font-size:13px}
+.tbl td.v{white-space:pre-wrap;max-width:420px}
+.tbl td.v .clip{display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden}
+@media (max-width:760px){.tiles{grid-template-columns:1fr 1fr}.pair{grid-template-columns:1fr}.pair figure.old{order:2}}
+</style>{% endblock %}
+{% block body %}
+<nav class="crumbs small muted" aria-label="مسار التنقل"><a href="/s/{{ h.fund }}/{{ h.q }}">{{ h.name }} · {{ h.ql }}</a></nav>
+<div class="ph"><div class="t"><h1>المقارنة بالربع السابق</h1>
+<p class="lede">{{ 'المسودة' if h.kind == 'draft' else 'النسخة النهائية' }} لـ{{ h.ql }} مقارنةً ببيان {{ h.pql }}. المناطق المحاطة بإطار في الصفحة الجديدة هي ما تغيّر نصه أو أرقامه، وما انتقل من مكانه دون أن يتغيّر لا يُحاط.</p></div></div>
+
+<div class="cmp-tools">
+  <div class="seg" role="group" aria-label="اللغة"><button type="button" data-lang="ar">العربية</button><button type="button" data-lang="en">English</button></div>
+  {% if h.has_final and h.has_draft %}<div class="seg" role="group" aria-label="النسخة"><a class="btn sm {{ 'primary' if h.kind == 'draft' else 'ghost' }}" href="?kind=draft">المسودة</a><a class="btn sm {{ 'primary' if h.kind == 'final' else 'ghost' }}" href="?kind=final">النسخة النهائية</a></div>{% endif %}
+  <span class="sp"></span>
+  <label class="small" style="display:inline-flex;gap:8px;align-items:center;min-height:36px"><input type="checkbox" id="hl" checked> إبراز التغييرات</label>
+</div>
+
+<div class="tiles" id="tiles"></div>
+<div class="card"><header><h2>ملاحظات المراجعة</h2><span class="src" id="built"></span></header><ul class="iss" id="iss"></ul></div>
+
+<details class="card" id="pairsBox"><summary><h2 style="display:inline">أرقام تختلف بين العربي والإنجليزي</h2> <span class="count" id="pairsN"></span></summary>
+  <div class="tw" style="margin-top:12px"><table class="tbl"><thead><tr><th>القسم</th><th>البند</th><th>العربية</th><th>English</th></tr></thead><tbody id="pairs"></tbody></table></div></details>
+<details class="card" id="chgBox"><summary><h2 style="display:inline">ما تغيّر عن الربع السابق</h2> <span class="count" id="chgN"></span></summary>
+  <div class="tw" style="margin-top:12px"><table class="tbl"><thead><tr><th>القسم</th><th>البند</th><th>السابق</th><th>الجديد</th></tr></thead><tbody id="chg"></tbody></table></div></details>
+
+<h2 style="margin:24px 0 12px">الصفحات</h2>
+<div id="pages"></div>
+
+<script>
+const REP = {{ rep_json|safe }}, H = {{ head_json|safe }};
+const UI = document.documentElement.lang === 'en' ? 'en' : 'ar';
+const base = `/f/${H.fund}/${H.q}/${H.kind}/`;
+let LANG = new URLSearchParams(location.search).get('lang') || UI;
+if(!REP.langs[LANG]) LANG = Object.keys(REP.langs)[0];
+
+function render(){
+  $$('.seg [data-lang]').forEach(b => b.setAttribute('aria-pressed', b.dataset.lang === LANG));
+  const L = REP.langs[LANG] || {page: []}, hl = $('#hl').checked;
+  const areas = L.page.reduce((t, p) => t + (p.areas || 0), 0);
+  $('#tiles').innerHTML =
+    `<div class="tile"><div class="k">الصفحات</div><div class="v">${L.pages}${L.prev_found ? ` <small>· ${'السابق'} ${L.prev_pages}</small>` : ''}</div></div>` +
+    `<div class="tile"><div class="k">مناطق تغيّرت</div><div class="v">${L.prev_found ? areas : '—'}</div></div>` +
+    `<div class="tile"><div class="k">اختلاف عربي/إنجليزي</div><div class="v">${REP.pairs.length}</div></div>`;
+  const iss = REP.issues || [];
+  $('#iss').innerHTML = iss.length ? iss.map(i => `<li class="${i.level}">${esc(i[UI] || i.ar)}</li>`).join('')
+    : `<li class="ok">لا ملاحظات: عدد الصفحات كما في الربع السابق، ولا نص يتجاوز الهوامش، والأرقام متطابقة بين النسختين.</li>`;
+  $('#built').textContent = 'أُعدّت ' + REP.built;
+  $('#pairsN').textContent = REP.pairs.length; $('#pairsBox').hidden = !REP.pairs.length;
+  $('#pairs').innerHTML = REP.pairs.map(p => `<tr><td>${esc(p.section)}</td><td>${esc(p.label)}</td><td class="num">${esc(p.ar)}</td><td class="num" dir="ltr">${esc(p.en)}</td></tr>`).join('');
+  const ch = (REP.changes || []).filter(c => c.lang === LANG);
+  $('#chgN').textContent = ch.length; $('#chgBox').hidden = !ch.length;
+  const d = LANG === 'en' ? 'dir="ltr"' : 'dir="rtl"';
+  $('#chg').innerHTML = ch.map(c => `<tr><td ${d}>${esc(c.section)}</td><td ${d}>${esc(c.label)}</td><td class="v" ${d}><div class="clip">${esc(c.before)}</div></td><td class="v" ${d}><div class="clip">${esc(c.after)}</div></td></tr>`).join('');
+  $('#pages').innerHTML = L.page.map(p => {
+    const nw = hl && p.diff ? p.diff : p.new;
+    const old = p.old ? `<a href="${base + p.old}" target="_blank" rel="noopener"><img loading="lazy" src="${base + p.old}" width="${p.w}" height="${p.h}" alt="صفحة ${p.n} من بيان الربع السابق"></a>` : `<div class="none">لا صفحة مقابلة</div>`;
+    const badge = p.diff ? `<span class="count ${p.areas ? 'blue' : ''}">${p.areas}</span> <span class="small muted">${'منطقة تغيّرت'}</span>` : '';
+    return `<section class="card pg"><header><h3>صفحة ${p.n}</h3>${badge}</header><div class="pair">
+      <figure class="old"><figcaption>${esc(H.pql)}</figcaption>${old}</figure>
+      <figure><figcaption>${esc(H.ql)}</figcaption><a href="${base + nw}" target="_blank" rel="noopener"><img loading="lazy" src="${base + nw}" width="${p.w}" height="${p.h}" alt="صفحة ${p.n} من البيان الجديد"></a></figure></div></section>`;
+  }).join('');
+}
+$$('.seg [data-lang]').forEach(b => b.addEventListener('click', () => { LANG = b.dataset.lang; const u = new URL(location); u.searchParams.set('lang', LANG); history.replaceState(null, '', u); render(); }));
+$('#hl').addEventListener('change', render);
+render();
+</script>
+{% endblock %}
