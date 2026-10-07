@@ -171,13 +171,13 @@ function showVal(v,der){
 }
 async function check(){try{const r=await api(base+'/check',{data:D});showVal(r.validation,r.derived)}catch(e){}}
 let ST=META.st, BLOCKS=0;
-const LABEL={new:'لم يبدأ',draft:'قيد الإدخال',generated:'مسودة جاهزة',submitted:'بانتظار الاعتماد',returned:'أُعيد للتعديل',final:'نهائي'};
+const LABEL={new:'لم يبدأ',draft:'قيد الإدخال',generated:'مسودة جاهزة',submitted:'بانتظار الاعتماد',returned:'أُعيد للتعديل',final:'نهائي',published:'منشور'};
 function ui(){
-  const locked=ST==='submitted'||ST==='final', admin=META.role==='admin';
+  const locked=ST==='submitted'||ST==='final'||ST==='published', admin=META.role==='admin';
   $('#stPill').textContent=LABEL[ST]||ST;
   document.querySelector('.lay').classList.toggle('ro',locked);
   const lb=$('#lockb');lb.hidden=!locked;
-  lb.textContent=ST==='submitted'?(admin?'البيان مرفوع للاعتماد. راجع المسودة، ثم اعتمدها أو أعدها للتعديل مع ملاحظاتك.':'البيان مرفوع للاعتماد، ولا يُعدَّل حتى يعتمده المعتمِد أو يعيده للتعديل.'):'البيان معتمد نهائيًا وصار أساس الربع التالي.'+(admin?' يمكنك إعادته للتعديل عند الحاجة.':'');
+  lb.textContent=ST==='published'?'هذا البيان منشور، واستُورد من مستندات الصناديق ليُبنى عليه الربع التالي. وتعديل البيانات المنشورة يُتاح للمعتمِد في المرحلة التالية.':ST==='submitted'?(admin?'البيان مرفوع للاعتماد. راجع المسودة، ثم اعتمدها أو أعدها للتعديل مع ملاحظاتك.':'البيان مرفوع للاعتماد، ولا يُعدَّل حتى يعتمده المعتمِد أو يعيده للتعديل.'):'البيان معتمد نهائيًا وصار أساس الربع التالي.'+(admin?' يمكنك إعادته للتعديل عند الحاجة.':'');
   $('#save').disabled=locked;$('#gen').disabled=locked||BLOCKS>0;$('#gen').title=BLOCKS?'أكمل النقص أولًا':'';
   $('#sub').hidden=ST!=='generated';
   if($('#ret'))$('#ret').hidden=!(ST==='submitted'||ST==='final');
@@ -191,10 +191,10 @@ if($('#fin'))$('#fin').onclick=async()=>{if(!confirm('اعتماد النسخة 
 if($('#ret'))$('#ret').onclick=async()=>{const n=prompt('ملاحظاتك لمُدخل البيانات (اختياري):')??null;if(n===null)return;const r=await post(base+'/return',{note:n});ST='returned';$('#notes').value=r.notes||$('#notes').value;$('#msg').textContent='أُعيد البيان للتعديل.';ui()};
 function showFiles(f){
   if(!f)return;let h='';
-  for(const kind of ['final','draft']){const x=f[kind];if(!x)continue;
-    h+=`<div style="margin-bottom:8px"><b>${kind==='final'?'النهائي':'المسودة'}</b><br>`;
+  for(const kind of ['published','final','draft']){const x=f[kind];if(!x)continue;
+    h+=`<div style="margin-bottom:8px"><b>${kind==='final'?'النهائي':kind==='published'?'المنشور':'المسودة'}</b><br>`;
     for(const [lang,n] of Object.entries(x)){const L=lang==='ar'?'العربي':'الإنجليزي';const u=`/f/${META.fund}/${META.q}/${kind}/`;
-      h+=`${L}: <a href="${u+n.html}" target="_blank">معاينة</a><a href="${u+n.pdf}?dl=1">PDF</a>${n.docx?`<a href="${u+n.docx}?dl=1">Word</a>`:''}<br>`}
+      h+=`${L}: ${n.html?`<a href="${u+n.html}" target="_blank">معاينة</a>`:`<a href="${u+n.pdf}" target="_blank">عرض</a>`}<a href="${u+n.pdf}?dl=1">PDF</a>${n.docx?`<a href="${u+n.docx}?dl=1">Word</a>`:''}<br>`}
     h+=`<a href="/zip/${META.fund}/${META.q}/${kind}">تنزيل الكل</a></div>`}
   $('#files').innerHTML=h||'<span class="muted">لم تصدر مسودة بعد.</span>';
 }

@@ -171,8 +171,32 @@ def blank(prev, fund, q):
     return d
 
 
-STATUS = {'new': 'لم يبدأ', 'draft': 'قيد الإدخال', 'generated': 'مسودة جاهزة', 'submitted': 'بانتظار الاعتماد', 'returned': 'أُعيد للتعديل', 'final': 'نهائي'}
-LOCKED = ('submitted', 'final')
+STATUS = {'new': 'لم يبدأ', 'draft': 'قيد الإدخال', 'generated': 'مسودة جاهزة', 'submitted': 'بانتظار الاعتماد', 'returned': 'أُعيد للتعديل', 'final': 'نهائي', 'published': 'منشور'}
+LOCKED = ('submitted', 'final', 'published')
+PUB = os.path.join(ENG, 'published')
+
+
+def seed_published():
+    """Statements already published before the platform (Q2 2026): imported once as records the next quarter builds on."""
+    for fund, F in M.FUNDS.items():
+        if store.get(fund, SEED_Q): continue
+        st = {l: json.load(open(os.path.join(ENG, F['dir'], 'struct', f'{SEED_Q}.{l}.json'), encoding='utf-8')) for l in ('ar', 'en')}
+        d = M.extract(st['ar'], st['en'], fund)
+        d['valuation_date'] = '2026-06-29' if fund == 'gif' else '2026-06-30'
+        d['perf_points'] = []
+        for l in ('ar', 'en'):
+            json.dump(st[l], open(store.struct_path(fund, SEED_Q, l), 'w', encoding='utf-8'), ensure_ascii=False)
+        fs = {}
+        pd = os.path.join(PUB, fund, SEED_Q)
+        if os.path.isdir(pd):
+            for n in os.listdir(pd):
+                l = 'ar' if n.endswith(('-AR.pdf', '-AR.docx')) else 'en'
+                fs.setdefault(l, {})['pdf' if n.endswith('.pdf') else 'docx'] = n
+        store.put(fund, SEED_Q, data=d, status='published', final_at='2026-07', files={'published': fs})
+        store.event(fund, SEED_Q, 'استيراد البيان المنشور من مستندات الصناديق')
+
+
+seed_published()
 
 
 # ---------- pages ----------
@@ -182,8 +206,10 @@ def home(req: Request, q: str = ''):
     cards = []
     for fund, F in M.FUNDS.items():
         s = store.get(fund, q) or {}
-        prev, pq, _ = prev_values(fund, q)
-        v = M.validate(fund, s['data'], prev, q) if s.get('data') and prev else []
+        if s.get('status') == 'published': prev, pq, v = s['data'], M.prev_q(q), []
+        else:
+            prev, pq, _ = prev_values(fund, q)
+            v = M.validate(fund, s['data'], prev, q) if s.get('data') and prev else []
         cards.append({'fund': fund, 'name': F['ar'], 'en': F['en'], 'status': STATUS.get(s.get('status', 'new')), 'st': s.get('status', 'new'),
                       'updated': s.get('updated', ''), 'blocks': sum(1 for x in v if x['level'] == 'block'),
                       'warns': sum(1 for x in v if x['level'] == 'warn'), 'base_ok': prev is not None, 'pq': pq})
@@ -195,7 +221,11 @@ def home(req: Request, q: str = ''):
 def editor(req: Request, fund: str, q: str):
     me = need(req)
     if fund not in M.FUNDS or not re.match(r'q[1-4]-\d{4}$', q): raise HTTPException(404)
-    prev, pq, _ = prev_values(fund, q)
+    s0 = store.get(fund, q)
+    if s0 and s0.get('status') == 'published':
+        prev, pq = s0['data'], M.prev_q(q)
+    else:
+        prev, pq, _ = prev_values(fund, q)
     if prev is None:
         return HTMLResponse(env.get_template('nobase.html').render(fund=M.FUNDS[fund]['ar'], ql=M.qlabel(q, 'ar'), pql=M.qlabel(pq, 'ar')))
     s = store.get(fund, q) or store.put(fund, q, data=blank(prev, fund, q), status='new')
@@ -339,7 +369,7 @@ def job(req: Request, fund: str, q: str):
 @app.get('/f/{fund}/{q}/{kind}/{name:path}')
 def files(req: Request, fund: str, q: str, kind: str, name: str):
     need(req)
-    base_ = store.out_dir(fund, q) if kind == 'draft' else os.path.join(store.out_dir(fund, q), 'final')
+    base_ = os.path.join(PUB, fund, q) if kind == 'published' else (store.out_dir(fund, q) if kind == 'draft' else os.path.join(store.out_dir(fund, q), 'final'))
     p = os.path.abspath(os.path.join(base_, name))
     if not p.startswith(os.path.abspath(base_)) or not os.path.exists(p): raise HTTPException(404)
     dl = p.endswith(('.pdf', '.docx')) and req.query_params.get('dl')
@@ -349,7 +379,7 @@ def files(req: Request, fund: str, q: str, kind: str, name: str):
 @app.get('/zip/{fund}/{q}/{kind}')
 def zipall(req: Request, fund: str, q: str, kind: str):
     need(req); s = store.get(fund, q) or {}; fs = (s.get('files') or {}).get(kind) or {}
-    base_ = store.out_dir(fund, q) if kind == 'draft' else os.path.join(store.out_dir(fund, q), 'final')
+    base_ = os.path.join(PUB, fund, q) if kind == 'published' else (store.out_dir(fund, q) if kind == 'draft' else os.path.join(store.out_dir(fund, q), 'final'))
     buf = io.BytesIO()
     with zipfile.ZipFile(buf, 'w', zipfile.ZIP_DEFLATED) as z:
         for lang, f in fs.items():

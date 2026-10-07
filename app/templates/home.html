@@ -23,7 +23,7 @@
   <a class="card" href="/s/{{ c.fund }}/{{ q }}">
     <div><div class="n">{{ c.name }}</div><div class="en">{{ c.en }}</div></div>
     <div class="row">
-      <span class="pill {{ 'ok' if c.st=='final' else ('warn' if c.st in ('draft','generated','submitted','returned') else '') }}">{{ c.status }}</span>
+      <span class="pill {{ 'ok' if c.st in ('final','published') else ('warn' if c.st in ('draft','generated','submitted','returned') else '') }}">{{ c.status }}</span>
       {% if c.blocks %}<span class="pill bad">{{ c.blocks }} نقص يمنع الإصدار</span>{% endif %}
       {% if c.warns %}<span class="pill warn">{{ c.warns }} تنبيه</span>{% endif %}
       {% if not c.base_ok %}<span class="pill bad">لا يوجد بيان معتمد للربع السابق</span>{% endif %}
