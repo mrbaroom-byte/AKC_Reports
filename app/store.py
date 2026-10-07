@@ -106,14 +106,24 @@ def check_user(username, pw):
 def _rec_c():
     c = _c()
     c.execute('create table if not exists conflicts(sid text primary key, items text, at text)')
+    if 'ver' not in [r[1] for r in c.execute('pragma table_info(conflicts)')]:
+        c.execute('alter table conflicts add column ver integer default 1')
     c.execute('''create table if not exists corrections(id integer primary key autoincrement, sid text, at text, by text,
                  lang text, section text, label text, before text, after text, reason text)''')
     return c
 
 
-def set_conflicts(fund, q, items):
+def set_conflicts(fund, q, items, ver=None):
     with _lock, _rec_c() as c:
-        c.execute('insert or replace into conflicts values(?,?,?)', (f'{fund}:{q}', json.dumps(items, ensure_ascii=False), now()))
+        if ver is None:
+            r = c.execute('select ver from conflicts where sid=?', (f'{fund}:{q}',)).fetchone(); ver = r['ver'] if r else 1
+        c.execute('insert or replace into conflicts(sid,items,at,ver) values(?,?,?,?)', (f'{fund}:{q}', json.dumps(items, ensure_ascii=False), now(), ver))
+
+
+def conflicts_version(fund, q):
+    with _lock, _rec_c() as c:
+        r = c.execute('select ver from conflicts where sid=?', (f'{fund}:{q}',)).fetchone()
+        return r['ver'] if r else None
 
 
 def get_conflicts(fund, q):

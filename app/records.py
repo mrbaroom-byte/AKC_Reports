@@ -5,6 +5,7 @@ import model as M, store
 ENG = os.path.abspath(os.path.join(os.path.dirname(__file__), '..', 'engine'))
 PUB = os.path.join(ENG, 'published')
 TYPES = ('kv', 'table', 'chart')
+CONFLICTS_V = 2   # bump when the conflict check changes, so stored results are recomputed at start-up
 
 
 def _sections(st):
@@ -59,24 +60,45 @@ def _match(xs, ys):
     return left, ys
 
 
+def _cells(b):
+    if b['t'] == 'chart':
+        return [(_clean((b.get('title') or '')) + ': ' + str(s.get('group') or s.get('label')), s['value']) for s in b.get('series', [])]
+    head = b.get('head') or []
+    return [(str(r[0]) + (' · ' + str(head[k]) if b['t'] == 'table' and len(head) > k else ''), c)
+            for r in b.get('rows', []) for k, c in enumerate(r[1:], 1) if _isnum(c)]
+
+
+def _clean(t):
+    return re.sub(r'\*+', '', str(t)).strip(' :')
+
+
+def _pair(da, de):
+    """Pair the blocks of one section across languages. Tables and key-value lists keep their order; charts are paired
+    by the values they carry, because the two versions do not always list their charts in the same order."""
+    out = []
+    for t in ('kv', 'table'):
+        out += list(zip([b for b in da if b['t'] == t], [b for b in de if b['t'] == t]))
+    ca = [b for b in da if b['t'] == 'chart' and b.get('kind') != 'line']
+    ce = [b for b in de if b['t'] == 'chart' and b.get('kind') != 'line']
+    pool = list(ce)
+    for a in ca:
+        if not pool: break
+        best = min(pool, key=lambda e: sum(len(x) for x in _match(_cells(a), _cells(e))) + abs(len(a.get('series', [])) - len(e.get('series', []))))
+        pool.remove(best); out.append((a, best))
+    return out
+
+
 def conflicts(A, E):
     """Figures that differ between the Arabic and English versions of the same statement.
-    Values are matched within each block regardless of row order; rounding differences are ignored."""
+    Values are matched within each block regardless of row order; rounding differences are ignored.
+    Performance lines are skipped: they were read point by point from the published images."""
     out = []
-    sa, se = _sections(A), _sections(E)
-    for (ha, ba), (he, be) in zip(sa, se):
-        da = [b for b in ba if b['t'] in TYPES]; de = [b for b in be if b['t'] in TYPES]
-        for a, e in zip(da, de):
-            if a['t'] != e['t']: break
-            if a['t'] == 'chart' and a.get('kind') == 'line': continue   # performance lines were read point by point from the published images
+    for (ha, ba), (he, be) in zip(_sections(A), _sections(E)):
+        for a, e in _pair([b for b in ba if b['t'] in TYPES], [b for b in be if b['t'] in TYPES]):
             kind = 'chart' if a['t'] == 'chart' else 'figure'
-            def cells(b):
-                if b['t'] == 'chart': return [((b.get('title') or '') + ': ' + str(s.get('group') or s.get('label')), s['value']) for s in b.get('series', [])]
-                return [(str(r[0]) + (' · ' + str((b.get('head') or [''] * (k + 1))[k]) if b['t'] == 'table' and len(b.get('head') or []) > k else ''), c)
-                        for r in b.get('rows', []) for k, c in enumerate(r[1:], 1) if _isnum(c)]
-            la, le = _match(cells(a), cells(e))
+            la, le = _match(_cells(a), _cells(e))
             for (xa, va), (xe, ve) in zip(la, le):
-                out.append({'kind': kind, 'section': ha, 'label': xa.strip(' ·:'), 'label_en': xe.strip(' ·:'), 'ar': str(va), 'en': str(ve)})
+                out.append({'kind': kind, 'section': _clean(ha), 'label': _clean(xa).strip(' ·:'), 'label_en': _clean(xe).strip(' ·:'), 'ar': str(va), 'en': str(ve)})
     return out
 
 
@@ -95,10 +117,10 @@ def import_history(seed_q=None):
             if not os.path.exists(pe) or not os.path.isdir(os.path.join(PUB, fund, q)): continue
             rec = store.get(fund, q)
             A = json.load(open(pa, encoding='utf-8')); E = json.load(open(pe, encoding='utf-8'))
-            if store.get_conflicts(fund, q) is None:
+            if store.get_conflicts(fund, q) is None or store.conflicts_version(fund, q) != CONFLICTS_V:
                 cur = {l: (json.load(open(store.struct_path(fund, q, l), encoding='utf-8')) if os.path.exists(store.struct_path(fund, q, l)) else s)
                        for l, s in (('ar', A), ('en', E))}
-                store.set_conflicts(fund, q, conflicts(cur['ar'], cur['en']))
+                store.set_conflicts(fund, q, conflicts(cur['ar'], cur['en']), CONFLICTS_V)
             if rec: continue
             data = {}
             if is_annex4(A):

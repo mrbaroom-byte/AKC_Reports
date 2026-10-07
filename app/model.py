@@ -394,22 +394,23 @@ def _perf_label(last, dt, lang):
 def validate(fund, d, prev, q):
     F = FUNDS[fund]; out = []
 
-    def add(level, msg): out.append({'level': level, 'msg': msg})
+    def add(level, msg, field=None): out.append({'level': level, 'msg': msg, 'field': field})
     req = [('nav_unit', 'صافي قيمة الوحدة'), ('fund_size', 'حجم الصندوق'), ('units', 'عدد الوحدات القائمة'),
            ('avg_nav', 'متوسط صافي الأصول'), ('ter_amount', 'الأتعاب والمصروفات'), ('price', 'سعر الوحدة' if F['traded'] else 'صافي قيمة الوحدة في نهاية الربع')]
     for k, n in req:
-        if d.get(k) in (None, ''): add('block', f'الحقل «{n}» فارغ.')
-    if not (d.get('commentary') or {}).get('ar', '').strip(): add('block', 'تعليق مدير الصندوق بالعربية فارغ.')
-    if not (d.get('commentary') or {}).get('en', '').strip(): add('block', 'تعليق مدير الصندوق بالإنجليزية فارغ.')
+        if d.get(k) in (None, ''): add('block', f'الحقل «{n}» فارغ.', k)
+    if not (d.get('commentary') or {}).get('ar', '').strip(): add('block', 'تعليق مدير الصندوق بالعربية فارغ.', 'commentary.ar')
+    if not (d.get('commentary') or {}).get('en', '').strip(): add('block', 'تعليق مدير الصندوق بالإنجليزية فارغ.', 'commentary.en')
     t10 = [x for x in d.get('top10', []) if x.get('pct') not in (None, '')]
-    if len(t10) != 10: add('warn', f'أكبر الاستثمارات: {len(t10)} بندًا بدل 10.')
+    if len(t10) != 10: add('warn', f'أكبر الاستثمارات: {len(t10)} بندًا بدل 10.', 'top10')
     for x in t10:
-        if not x.get('ar') or not x.get('en'): add('block', 'أكبر الاستثمارات: بند بلا اسم عربي أو إنجليزي.'); break
-    for a in d.get('alloc', []):
+        if not x.get('ar') or not x.get('en'): add('block', 'أكبر الاستثمارات: بند بلا اسم عربي أو إنجليزي.', 'top10'); break
+    for k, a in enumerate(d.get('alloc', [])):
+        t = re.sub(r'\*+', '', a['title_ar']).strip()
         s = sum(float(x['pct']) for x in a['items'] if x.get('pct') not in (None, ''))
-        if a['items'] and abs(s - 100) > 0.5: add('block', f'«{a["title_ar"].strip("*")}»: المجموع {s:.1f}% لا 100%.')
+        if a['items'] and abs(s - 100) > 0.5: add('block', f'«{t}»: المجموع {s:.1f}% لا 100%.', f'alloc.{k}')
         for x in a['items']:
-            if x.get('pct') not in (None, '') and (not x.get('ar') or not x.get('en')): add('block', f'«{a["title_ar"].strip("*")}»: بند بلا اسم في إحدى اللغتين.'); break
+            if x.get('pct') not in (None, '') and (not x.get('ar') or not x.get('en')): add('block', f'«{t}»: بند بلا اسم في إحدى اللغتين.', f'alloc.{k}'); break
     der = derive(d, prev)
     if d.get('fund_size') and der['net_assets'] and der['net_assets'] > d['fund_size'] * 1.001:
         add('warn', 'صافي الأصول المحسوب أكبر من حجم الصندوق (إجمالي الأصول).')
@@ -418,23 +419,24 @@ def validate(fund, d, prev, q):
     if qn == 1:
         for nm, arr in (('الصندوق', rf), ('المؤشر', rb)):
             if len(arr) > 1 and arr[0] is not None and arr[1] is not None and abs(arr[0] - arr[1]) > 0.005:
-                add('block', f'في الربع الأول يجب أن يساوي عائد «منذ بداية السنة» عائد الأشهر الثلاثة ({nm}).')
+                add('block', f'في الربع الأول يجب أن يساوي عائد «منذ بداية السنة» عائد الأشهر الثلاثة ({nm}).', 'ret_fund')
     if prev:
         for k, n in (('nav_unit', 'صافي قيمة الوحدة'), ('units', 'عدد الوحدات')):
             if d.get(k) and prev.get(k) and abs(d[k] / prev[k] - 1) > 0.10:
-                add('warn', f'«{n}» تغيّر أكثر من 10% عن الربع السابق.')
+                add('warn', f'«{n}» تغيّر أكثر من 10% عن الربع السابق.', k)
     rk = d.get('risk') or {}
     if F['wad']:
         for i, v in enumerate(rk.get('beta') or []):
-            if v is not None and abs(v) > 3: add('warn', f'بيتا {v} خارج النطاق المعقول لصندوق دخل.'); break
+            if v is not None and abs(v) > 3: add('warn', f'بيتا {v:g} خارج النطاق المعقول لصندوق دخل.', 'risk.beta'); break
     for i in range(len(RISK)):
         for j in range(i + 1, len(RISK)):
             a, b = rk.get(RISK[i]) or [], rk.get(RISK[j]) or []
-            if a and a == b and any(x is not None for x in a): add('warn', f'«{RISK_AR[i]}» و«{RISK_AR[j]}» متطابقان في كل الفترات.')
+            if a and a == b and any(x is not None for x in a): add('warn', f'«{RISK_AR[i]}» و«{RISK_AR[j]}» متطابقان في كل الفترات.', f'risk.{RISK[i]}')
     ca = re.findall(r'-?\d+(?:\.\d+)?(?=\s*%)', (d.get('commentary') or {}).get('ar', ''))
     ce = re.findall(r'-?\d+(?:\.\d+)?(?=\s*%)', (d.get('commentary') or {}).get('en', ''))
-    if sorted(ca) != sorted(ce): add('warn', 'النسب المذكورة في التعليق العربي لا تطابق المذكورة في الإنجليزي.')
-    if F['traded'] and not d.get('perf_points'): add('warn', 'لم تُضف أسعار الربع إلى رسم سعر السوق.')
+    if sorted(ca) != sorted(ce): add('warn', 'النسب المذكورة في التعليق العربي لا تطابق المذكورة في الإنجليزي.', 'commentary.en')
+    pts = [p for p in d.get('perf_points') or [] if p.get('value') not in (None, '') or p.get('fund') not in (None, '')]
+    if not pts: add('warn', 'لم تُضف نقاط هذا الربع إلى رسم ' + ('سعر السوق.' if F['traded'] else 'الأداء.'), 'perf_points')
     return out
 
 
