@@ -149,7 +149,7 @@ async def _403(req, exc):
 
 @app.get('/login', response_class=HTMLResponse)
 def login_page(req: Request, e: str = ''):
-    return page(req, 'login.html', err=e, configured=bool(os.environ.get('ADMIN_PASSWORD')))
+    return page(req, 'login.html', err=e, configured=bool(os.environ.get('ADMIN_PASSWORD')), stages=[(x[1], x[2]) for x in WF.STAGES if x[0] != 'done'])
 
 
 def _set(resp, u):
