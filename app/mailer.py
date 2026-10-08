@@ -131,10 +131,10 @@ def compose(kind, fund, q, by='', note='', link='', findings=None, by_en='', at=
         btn = 'فتح البيان'; subj = f'بانتظارك ({stage}): {fa} — {qa}'
         en = (f'Waiting for you — {stage_en}: {fe}, {qe}', [f'The {e(qe)} quarterly statement has reached the “{e(stage_en)}” stage of the approval route and is waiting for you.'])
     elif kind == 'done':
-        title, sub = 'اكتمل مسار البيان', 'اعتُمد البيان ونُشر ورُفع على الموقع، وصار أساس بيان الربع التالي.'
+        title, sub = 'اكتمل مسار البيان', 'اعتُمد البيان ونُشر ورُفع على تداول والموقع، وصار أساس بيان الربع التالي.'
         facts += [('آخر إجراء', e(by)), ('الوقت', K.ltr(at))]
         btn = 'فتح البيان'; subj = f'اكتمل: {fa} — {qa}'
-        en = (f'Complete — {fe}, {qe}', [f'The {e(qe)} quarterly statement has been approved, published and uploaded to the website.'])
+        en = (f'Complete — {fe}, {qe}', [f'The {e(qe)} quarterly statement has been approved, published and uploaded to Tadawul and the website.'])
     elif kind == 'final':
         title, sub = 'اعتُمد البيان', 'اعتُمدت النسخة النهائية، والملفات العربية والإنجليزية جاهزة للتنزيل.'
         facts += [('اعتمده', e(by)), ('وقت الاعتماد', K.ltr(at))]

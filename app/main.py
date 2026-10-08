@@ -544,8 +544,9 @@ def _generate_locked(fund, q, final, by):
             w = WF.get(fund, q, 'final')
             if w['stage'] == 'english':
                 w['dirty'] = False
-                WF.record(w, {'user': act.get('user', 'system'), 'name': by, 'role': act.get('role', '')}, 'final', 'publish')
-                _route_mail(fund, q, 'publish', by, act.get('base', ''), act)
+                w['signoffs'] = {}
+                WF.record(w, {'user': act.get('user', 'system'), 'name': by, 'role': act.get('role', '')}, 'final', 'review')
+                _route_mail(fund, q, 'review', by, act.get('base', ''), act)
             else:
                 MAIL.notify('final', fund, q, {'user': act.get('user', 'system'), 'role': act.get('role', '')}, by=by, base=act.get('base', ''))
         else:
@@ -568,7 +569,7 @@ async def generate(req: Request, fund: str, q: str):
     w = WF.get(fund, q, cur.get('status', 'new'))
     if final:
         if w['stage'] != 'english' or me['role'] not in ('pdd', 'admin'):
-            return JSONResponse({'error': 'state', 'msg': 'تصدر النسخة النهائية بعد اعتماد مجلس إدارة الصندوق، وتصدرها إدارة تطوير المنتجات.'}, status_code=409)
+            return JSONResponse({'error': 'state', 'msg': 'تصدر إدارة تطوير المنتجات النسخ النهائية بعد التدقيق اللغوي والترجمة.'}, status_code=409)
     elif w['stage'] not in WF.GEN_STAGES or not WF.can_edit_any(me['role'], w['stage']):
         return JSONResponse({'error': 'locked', 'msg': 'لا تُصدر المسودات في هذه المرحلة، أو ليست لجهتك.'}, status_code=409)
     key = f'{fund}:{q}'
@@ -612,8 +613,8 @@ async def route(req: Request, fund: str, q: str):
         nxt = 'cmd'
     elif act == 'submit':
         if stage != 'cmd' or not (WF.acts(role, 'cmd') or role == 'pdd'): return err('ترفع إدارة أسواق المال البيان للمراجعة بعد إكمال محتواها.', 403)
-        if cur.get('status') != 'generated': return err('أصدر المسودات بعد آخر تعديل، ثم ارفعها للمراجعة.')
-        nxt = 'review'; w['signoffs'] = {}
+        if cur.get('status') != 'generated': return err('أصدر المسودات بعد آخر تعديل، ثم سلّمها للتدقيق اللغوي.')
+        nxt = 'ccd'
     elif act == 'signoff':
         if stage != 'review': return err('لا مراجعة مفتوحة الآن.')
         as_ = body.get('as') if role == 'admin' else role
@@ -623,15 +624,28 @@ async def route(req: Request, fund: str, q: str):
         WF.record(w, me, 'signoff:' + as_, None, note)
         A.log(req, 'statement.wf', f'{fund}:{q}', step='signoff', reviewer=as_, note=note)
         store.event(fund, q, f"{me['name']}: سجّل مراجعة «{WF.role_label(as_)}»" + (f' — {note}' if note else ''))
-        if all(r in w['signoffs'] for r in WF.REVIEWERS): nxt = 'ccd'
+        if all(r in w['signoffs'] for r in WF.REVIEWERS): nxt = 'dceo'
         else: return {'ok': True, 'wf': WF.view(fund, q, cur.get('status'), role, lang_of(req)), 'events': store.events(fund, q)}
-    elif act in ('ccd_ok', 'approve', 'published', 'uploaded'):
-        want = {'ccd_ok': ('ccd',), 'approve': ('dceo', 'board'), 'published': ('publish',), 'uploaded': ('upload',)}[act]
+    elif act == 'uploaded':
+        if stage != 'upload': return err('هذا الإجراء ليس لهذه المرحلة.')
+        who = body.get('as') if role == 'admin' else role
+        where = WF.UPLOADS.get(who)
+        if not where: return err('يرفع البيانَ تطويرُ المنتجات على تداول، والاتصالُ المؤسسي على الموقع.', 403)
+        if where in w['signoffs']: return err('سُجّل هذا الرفع من قبل.')
+        w['signoffs'][where] = {'name': me['name'], 'at': store.now(), 'note': note}
+        WF.record(w, me, 'uploaded:' + where, None, note)
+        A.log(req, 'statement.wf', f'{fund}:{q}', step='uploaded', target=where, note=note)
+        store.event(fund, q, f"{me['name']}: " + ('رفع البيان على تداول' if where == 'tadawul' else 'رفع البيان على الموقع') + (f' — {note}' if note else ''))
+        if all(x in w['signoffs'] for x in WF.UPLOADS.values()): nxt = 'done'
+        else: return {'ok': True, 'wf': WF.view(fund, q, cur.get('status'), role, lang_of(req)), 'events': store.events(fund, q)}
+    elif act in ('ccd_ok', 'approve', 'published'):
+        want = {'ccd_ok': ('ccd',), 'approve': ('dceo', 'board'), 'published': ('publish',)}[act]
         if stage not in want: return err('هذا الإجراء ليس لهذه المرحلة.')
         if not WF.acts(role, stage): return err('هذا الإجراء ليس لجهتك في هذه المرحلة.', 403)
         if stage in ('ccd', 'dceo', 'board') and w['dirty']: return err('عُدّلت البيانات بعد آخر إصدار؛ أصدر المسودات أولًا ليُعتمد ما يراه الجميع.')
         if stage == 'ccd' and mt: return err('أكّد مراجعة الترجمة الآلية في تعليق مدير الصندوق أولًا.')
         nxt = WF.ORDER[WF.ORDER.index(stage) + 1]
+        if act == 'published': w['signoffs'] = {}
     elif act == 'return':
         if not WF.can_return(role, stage): return err('لا يمكنك إعادة البيان في هذه المرحلة.', 403)
         if not note: return err('اكتب ما يحتاج تعديلًا.')
