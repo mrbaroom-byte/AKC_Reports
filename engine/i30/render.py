@@ -22,6 +22,23 @@ FUND = CFG.get("fund") or {"ar": "صندوق الخبير للدخل المتن�
 ACC = CFG.get("accent", "#3B7DD8"); ACC_L = CFG.get("accent_light", "#9DB8E0")
 if CFG.get("palette"): PAL = CFG["palette"]
 ELEC = ACC
+_CO = ' dir="ltr" class="co"'
+_NUMRE = r"[\s\d.,%()\-+*ر.س SAR]+"
+
+
+def _hid(b):
+    return (' id="' + str(b["hid"]) + '"') if b.get("hid") else ""
+
+
+def _tag(tag):
+    return ('<div class="tag">' + e(tag) + '</div>') if tag else ""
+
+
+def _numcls(c):
+    s = str(c or "")
+    return "num" if re.fullmatch(_NUMRE, s) and re.search(r"\d", s) else ""
+
+
 def recolour(h):
     if ACC == "#3B7DD8": return h
     lr = tuple(int(ACC_L[i:i + 2], 16) for i in (1, 3, 5))
@@ -369,21 +386,21 @@ def blocks_html(i, lang, blocks, review, pre="h"):
         if t == "h1":
             brk = " brk" if (sec or (long_doc and not first_h1)) else ""; first_h1 = False
             if b.get("toc_head"): brk = " brk"
-            out.append(f'<h1{f' id="{b["hid"]}"' if b.get("hid") else ""} class="h1{brk}">{n}{e(b["text"])}</h1>')
+            out.append(f'<h1{_hid(b)} class="h1{brk}">{n}{e(b["text"])}</h1>')
             nxt = next((x for x in blocks[bi + 1:] if not x.get("skip") and x["t"] != "image"), None)
             if nxt is not None and nxt.get("prop"): out.append(PROPS_MOD.overview(PROPS, lang, e))
         elif t == "h2" and b.get("prop"):
             out.append(PROPS_MOD.hero(b["prop"], lang, b.get("hid"), sec, _img, e, txt)); after_photo = True; continue
         elif t in ("h2", "h3"):
             cls = ' class="tochd"' if b.get("toc_head") else (' class="brk"' if sec else "")
-            out.append(f'<{t}{f' id="{b["hid"]}"' if b.get("hid") else ""}{cls}>{n}{e(b["text"])}</{t}>')
+            out.append(f'<{t}{_hid(b)}{cls}>{n}{e(b["text"])}</{t}>')
         elif t == "toc":
             cap = f'<h2 class="tochd">{e(b["cap"])}</h2>' if b.get("cap") else ""
             lvl = {x.get("hid"): x["t"] for x in blocks if x.get("hid")}
             rows = "".join(f'<a class="te{" l1" if lvl.get(h) == "h1" else ""}" href="#{h}"><span class="tt">{e(x)}</span><span class="tl"></span><span class="tp">{tp.get(h, "")}</span></a>' if h else
                            f'<div class="te"><span class="tt">{e(x)}</span><span class="tl"></span><span class="tp"></span></div>' for x, h in b["entries"])
             out.append(f'{cap}<nav class="toc">{rows}</nav>')
-        elif t == "p": out.append(f'<p{f' id="{b["hid"]}"' if b.get("hid") else ""}>{txt(b["text"])}</p>')
+        elif t == "p": out.append(f'<p{_hid(b)}>{txt(b["text"])}</p>')
         elif t in ("ul", "ol"):
             items = b.get("items", [])
             if b.get("kind") == "diagram":
@@ -399,13 +416,13 @@ def blocks_html(i, lang, blocks, review, pre="h"):
             hrows = head if head and isinstance(head[0], list) else [head]
             th = f'<thead>{"".join("<tr>" + "".join(f"<th>{txt(h)}</th>" for h in hr) + "</tr>" for hr in hrows)}</thead>' if any(str(h).strip() for hr in hrows for h in hr) else ""
             nc = max([len(hr) for hr in hrows] + [len(r) for r in b.get("rows", [])])
-            rows = "".join("<tr>" + "".join(f'<td class="{ "num" if re.fullmatch(r"[\s\d.,%()\-+*ر.س SAR]+", str(c or "")) and re.search(r"\d", str(c or "")) else ""}">{txt(c)}</td>' for c in (r + [""] * (nc - len(r)))) + "</tr>" for r in b.get("rows", []))
+            rows = "".join("<tr>" + "".join(f'<td class="{_numcls(c)}">{txt(c)}</td>' for c in (r + [""] * (nc - len(r)))) + "</tr>" for r in b.get("rows", []))
             small = " sm" if nc >= 5 else ""
             out.append(f'<div class="tw">{cap}<table class="t{small}">{th}<tbody>{rows}</tbody></table></div>')
         elif t == "kv":
             cap = f'<div class="ct">{e(b.get("caption"))}</div>' if b.get("caption") else ""
             if b.get("rows") and (after_photo or len(b["rows"]) <= 40):   # key–value blocks → fact cards
-                cells = "".join(f'<div class="fc{" w" if len(str(v)) > 90 else ""}"><span>{txt(k)}</span><b{' dir="ltr" class="co"' if "°" in str(v) else ""}>{txt(v)}</b></div>' for k, v in [(r + [""])[:2] for r in b.get("rows", [])])
+                cells = "".join(f'<div class="fc{" w" if len(str(v)) > 90 else ""}"><span>{txt(k)}</span><b{_CO if "°" in str(v) else ""}>{txt(v)}</b></div>' for k, v in [(r + [""])[:2] for r in b.get("rows", [])])
                 out.append(f'<div class="facts{" big" if len(b["rows"]) > 8 else ""}">{cap}<div class="fg">{cells}</div></div>')
             else:
                 rows = "".join(f'<tr><th>{txt(k)}</th><td>{txt(v)}</td></tr>' for k, v in [(r + [""])[:2] for r in b.get("rows", [])])
@@ -603,7 +620,7 @@ def render(i, lang):
     eyb = EYB[lang]
     if kind == "full":
         top = (f'<section class="cover"><div class="art"></div><div class="fade"></div><img class="flogo" src="{FLOGO_W}" alt="">'
-               f'<div class="tx"><div class="eyb">{eyb}</div><div class="fund">{FUND[lang]}</div><div class="doc">{e(title)}</div><div class="dt">{e(date)}</div>{f'<div class="tag">{e(tag)}</div>' if tag else ''}</div>'
+               f'<div class="tx"><div class="eyb">{eyb}</div><div class="fund">{FUND[lang]}</div><div class="doc">{e(title)}</div><div class="dt">{e(date)}</div>{_tag(tag)}</div>'
                f'<div class="ft"><img class="akc" src="{LOGO_W}" alt=""><span>{"مدير الصندوق: الخبير المالية · ترخيص هيئة السوق المالية رقم 07074-37 · alkhabeer.com" if ar else "Fund Manager: Alkhabeer Capital · CMA License No. 07074-37 · alkhabeer.com"}</span></div></section>')
         back = (f'<section class="back"><img class="flogo" src="{FLOGO_W}" alt=""><img class="logo" src="{LOGO_W}" alt=""><div class="ad">'
                 + ("شركة الخبير المالية · ص.ب 128289 جدة 21362 · المملكة العربية السعودية<br>هاتف ‎+966 12 658 8888 · info@alkhabeer.com · www.alkhabeer.com<br>شركة مرخصة من هيئة السوق المالية بترخيص رقم 07074-37 · سجل تجاري 4030177445"
@@ -626,7 +643,7 @@ def render(i, lang):
         css += (".cover .art{top:46mm;height:140mm;background-size:210mm 140mm;background-position:center}")  # edge feather is baked into the image: CSS masks break in iOS/Preview PDF viewers
     fonts = "https://fonts.googleapis.com/css2?family=Alexandria:wght@400;500;600;700&family=IBM+Plex+Sans+Arabic:wght@400;500;600&family=IBM+Plex+Sans:wght@400;500;600&display=swap"
     doc = (f'<!doctype html><html lang="{lang}" dir="{"rtl" if ar else "ltr"}"><head><meta charset="utf-8"><title>{e(FUND[lang])} — {e(title)} {e(date)}</title>'
-           f'<link rel="stylesheet" href="{fonts}"><style>{css}</style></head><body>{tels(top_full + '<main>' + top_band + body + '</main>' + back)}</body></html>')
+           f'<link rel="stylesheet" href="{fonts}"><style>{css}</style></head><body>{tels(top_full + "<main>" + top_band + body + "</main>" + back)}</body></html>')
     if CFG.get("corporate"):  # company documents (identity «ضوء»): no fund logo, company wording, corporate typeface
         doc = re.sub(r'<img class="flogo"[^>]*>', '', doc)
         doc = doc.replace("مدير الصندوق: الخبير المالية · ", "شركة الخبير المالية · ").replace("Fund Manager: Alkhabeer Capital · ", "Alkhabeer Capital · ")

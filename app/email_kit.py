@@ -91,7 +91,8 @@ def card(title, detail, tone="today", tag=None, owner=None, btn=None):
              f'<div style="font-size:14px;color:{MUTED};line-height:1.8">{detail}</div>')
     if owner or btn:
         inner += '<table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="margin-top:10px"><tr>'
-        inner += f'<td style="font-family:{FONT};font-size:12px;color:{MUTED}">{"المسؤول: <b style=\"color:"+INK+"\">"+e(owner)+"</b>" if owner else ""}</td>'
+        who = ('المسؤول: <b style="color:' + INK + '">' + e(owner) + '</b>') if owner else ''
+        inner += f'<td style="font-family:{FONT};font-size:12px;color:{MUTED}">{who}</td>'
         if btn: inner += f'<td align="left" style="text-align:left">{button(btn[0], btn[1], "navy" if tone == "today" else "ghost")}</td>'
         inner += '</tr></table>'
     return _box(inner, stripe)

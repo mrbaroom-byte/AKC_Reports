@@ -296,7 +296,7 @@ function renderRoute(){
   $('#rsteps').innerHTML = WF.stages.filter(x => x.key !== 'done').map((x, k) => `<li class="${k < i || WF.stage === 'done' ? 'done' : k === i ? (ST === 'returned' ? 'back' : 'now') : ''}"><i>${k < i || WF.stage === 'done' ? '✓' : k + 1}</i><span>${esc(x.label)}</span></li>`).join('');
   const cur = WF.stages[i] || {label: '', roles: []};
   $('#rStage').textContent = cur.label;
-  $('#rWho').textContent = WF.stage === 'done' ? 'اكتمل مسار البيان.' : 'لدى: ' + cur.roles.join('، ');
+  $('#rWho').textContent = WF.stage === 'done' ? 'اكتمل مسار البيان.' : 'لدى: ' + cur.roles.join(document.documentElement.lang === 'en' ? ', ' : '، ');
   const info = [];
   if(WF.stage === 'review') info.push('المراجعات: ' + ['bdd', 'compliance'].map(r => WF.signoffs[r] ? `${RLAB[r]} ✓ (${esc(WF.signoffs[r].name)})` : `${RLAB[r]}: لم تُسجَّل`).join(' · '));
   if(WF.dirty) info.push('عُدّلت البيانات بعد آخر إصدار؛ أصدر المسودات قبل المتابعة.');
