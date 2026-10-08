@@ -9,11 +9,16 @@
 /* The page sizes itself from the window (height:100% on html), not from 100vh, so it fills the screen in every browser and embedded view. */
 html{height:100%}
 body{height:auto;min-height:100%;margin:0;background:var(--night);color:#C9D6EA;display:grid;grid-template-columns:minmax(0,1.1fr) minmax(400px,.9fr);grid-template-rows:1fr}
+/* fixed physical layout in both languages: brand panel on the left, sign-in on the right, logo in the top-left corner */
+body{direction:ltr}
+html[dir=rtl] .art,html[dir=rtl] .pane{direction:rtl}
 /* brand side */
 .art{position:relative;overflow:hidden;padding:clamp(28px,4vw,56px) clamp(24px,4.5vw,72px);display:flex;flex-direction:column;justify-content:space-between;gap:40px;isolation:isolate}
 .art img.lines{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;z-index:-2;opacity:.9}
 .art::after{content:'';position:absolute;inset:0;z-index:-1;background:radial-gradient(120% 80% at 85% 20%,rgba(59,125,216,.22),transparent 60%),linear-gradient(180deg,rgba(7,26,58,0) 40%,rgba(7,26,58,.75))}
 .art .logo{height:clamp(40px,3.4vw,54px);width:auto;align-self:flex-start}
+html[dir=rtl] .art .logo{align-self:flex-end}
+html[dir=rtl] .lgbar{justify-content:flex-start}
 .art .eb{font:600 13px/1.4 var(--body);letter-spacing:.02em;color:#9DB8E0;margin:0 0 14px}
 html[lang=en] .art .eb{font-family:var(--latin);letter-spacing:.12em;text-transform:uppercase;font-size:12px}
 .art h1{font:700 clamp(32px,3.6vw,56px)/1.2 var(--head);color:#fff;margin:0 0 18px;max-width:14em;text-wrap:balance}
